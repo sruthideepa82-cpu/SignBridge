@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!frontend/.env.example
+!backend/.env.example
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# AI artifacts (large datasets and trained models are not committed)
+ai-engine/dataset/*
+!ai-engine/dataset/.gitkeep
+ai-engine/models/*
+!ai-engine/models/.gitkeep
+*.h5
+*.keras
+*.tflite
+*.onnx
