@@ -1,7 +1,13 @@
 # SignBridge AI Engine
 
-This folder is reserved for the machine-learning work behind SignBridge. **No model is implemented yet.**
-The current application only captures webcam frames (see `backend/app/services/camera_service.py`).
+This folder holds the machine-learning work behind SignBridge. **No model is implemented yet.**
+The current application captures webcam frames and detects hand landmarks (see `backend/app/services/`).
+
+**Phase 3 (dataset design) status:** the protocol, source register, and recording tool exist. No class is verified and no data has been recorded. See [`dataset/README.md`](dataset/README.md) and `dataset/metadata/vocabulary.json`.
+
+- `collection/collect_static.py` records landmark samples for one verified class from the webcam. It refuses unverified labels, non-pseudonymous participant IDs, and missing consent references.
+- `collection/sample_record.py` holds the pure validation and record logic.
+- `tests/` runs the unit tests: `cd backend; .\.venv\Scripts\python.exe -m pytest ..\ai-engine\tests`.
 
 ## Layout
 

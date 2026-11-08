@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "status": "pending_verification",
+  "note": "No class is active yet. A class becomes usable only when a named human reviewer has checked its label and handshape against an official reference below and set verified to true with the reference filled in. Do not add classes from memory or from unofficial sites.",
+  "class_schema": {
+    "label": "Short English gloss or letter used as the class name (for example A or the gloss in the reference)",
+    "type": "static",
+    "hands": "1 or 2, matching the handshape in the reference",
+    "meaning": "What the sign means in the reference",
+    "reference": "Source id from sources plus the page, video, or entry used",
+    "verified": "true only after a human has checked the sign against the reference",
+    "reviewed_by": "Reviewer role or initials",
+    "reviewed_on": "YYYY-MM-DD"
+  },
+  "sources": [
+    {
+      "id": "ISLRTC-DICT",
+      "name": "ISL Dictionary, Indian Sign Language Research and Training Centre (ISLRTC), DEPwD, MoSJE",
+      "url": "https://islrtc.nic.in",
+      "checked": "search excerpt only (PIB release 17 Feb 2021: 10,000 terms, videos by Deaf signers, validated in national workshops)",
+      "notes": "Primary official reference for sign form and meaning. Confirm each entry against the video, not the description."
+    },
+    {
+      "id": "NCERT-ISL-200",
+      "name": "ISL Dictionary based on Universal Design of Learning (200 words), NCERT and ISLRTC",
+      "url": "https://ncert.nic.in/pdf/accessibility/ISL_200word_v15.pdf",
+      "checked": "listed in search results; full document NOT fetched (the fetch failed)",
+      "notes": "Candidate source for a small everyday vocabulary. Needs a manual check before use."
+    },
+    {
+      "id": "ISLRTC-ALPHABET",
+      "name": "Manual alphabet poster, ISLRTC library",
+      "url": "http://islrtc.nic.in/poster-manual-alphabet-isl",
+      "checked": "NOT fetched (the page returned HTTP 404 when accessed)",
+      "notes": "Needed before any finger-spelling class is added. Check whether each letter is one- or two-handed in the official poster."
+    },
+    {
+      "id": "NIOS-ISL",
+      "name": "Indian Sign Language, National Institute of Open Schooling",
+      "url": "https://www.nios.ac.in/media/documents/230-ISL/Indian-Sign-Language-230.pdf",
+      "checked": "search excerpt only",
+      "notes": "States that ISL fingerspelling is two-handed in the common form, and that ISL is not a manual form of English. Do not treat ASL or BSL letter shapes as ISL without checking."
+    },
+    {
+      "id": "RCI-DTISL",
+      "name": "Diploma in Teaching Indian Sign Language (DTISL) curriculum, Rehabilitation Council of India",
+      "url": "https://cdnbbsr.s3waas.gov.in/s34f4eeef3a8c90dfceaddd5c6d64e4ebb/uploads/2025/07/202507092142739637.pdf",
+      "checked": "search excerpt only",
+      "notes": "Lists the English manual alphabet as two-handed for basic communication and one-handed for deaf-blind learners."
+    }
+  ],
+  "classes": []
+}

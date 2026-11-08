@@ -699,6 +699,14 @@ in which Phase 2 is ISL recognition. Those documents are being aligned.
 
 ### Phase 3 --- ISL scope and dataset design
 
+**Status (2026-11-08): partly done.** Done: protocol (`ai-engine/dataset/README.md`),
+source register and gated vocabulary (`ai-engine/dataset/metadata/vocabulary.json`,
+no class verified yet), and a recording tool with consent and pseudonym checks
+(`ai-engine/collection/collect_static.py`, 14 unit tests passing). Blocked: the
+official ISLRTC references could not be fetched from this environment (see the
+source register). Vocabulary, sign meanings, and consent collection need a human
+reviewer. No samples have been recorded.
+
 Tasks: - Research and define a small, verified ISL vocabulary. -
 Distinguish static signs from dynamic signs. - Document sources and
 labeling rules. - Build a collection tool. - Collect consented samples

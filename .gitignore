@@ -33,6 +33,10 @@ Thumbs.db
 # AI artifacts (large datasets and trained models are not committed)
 ai-engine/dataset/*
 !ai-engine/dataset/.gitkeep
+!ai-engine/dataset/README.md
+!ai-engine/dataset/metadata/
+ai-engine/dataset/metadata/*
+!ai-engine/dataset/metadata/vocabulary.json
 ai-engine/models/*
 !ai-engine/models/.gitkeep
 *.h5
