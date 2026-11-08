@@ -1,9 +1,9 @@
 export const TRANSLATOR_ROADMAP = [
   { label: 'Webcam capture with OpenCV', status: 'Done' },
   { label: 'Hand landmark detection with MediaPipe', status: 'Done' },
-  { label: 'Indian Sign Language gesture classifier', status: 'Next' },
-  { label: 'Sign-to-text output', status: 'Planned' },
-  { label: 'Text-to-speech output', status: 'Planned' },
+  { label: 'Indian Sign Language letter classifier (pilot, needs recorded data)', status: 'In progress' },
+  { label: 'Sign-to-text output with smoothing, undo, and clear', status: 'Built' },
+  { label: 'Text-to-speech of committed text', status: 'Built' },
 ];
 
 export const LESSON_TRACKS = [

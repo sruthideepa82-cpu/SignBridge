@@ -11,6 +11,7 @@ import useBackendHealth from '../hooks/useBackendHealth.js';
 import useCamera, { CAMERA_STATUS } from '../hooks/useCamera.js';
 import useHandLandmarks from '../hooks/useHandLandmarks.js';
 import useRecognition from '../hooks/useRecognition.js';
+import useSignBuffer from '../hooks/useSignBuffer.js';
 
 export default function TranslatorPage() {
   const backend = useBackendHealth();
@@ -18,6 +19,7 @@ export default function TranslatorPage() {
   const cameraLive = camera.status === CAMERA_STATUS.LIVE;
   const { landmarks, error: landmarkError } = useHandLandmarks(cameraLive);
   const { result: recognition, error: recognitionError } = useRecognition(cameraLive);
+  const signBuffer = useSignBuffer(recognition);
 
   return (
     <PageContainer>
@@ -44,7 +46,7 @@ export default function TranslatorPage() {
             </div>
           </div>
           <LandmarkInfoPanel landmarks={landmarks} cameraLive={cameraLive} error={landmarkError} />
-          <TranslationOutputPanel />
+          <TranslationOutputPanel buffer={signBuffer} />
           <RoadmapPanel />
         </aside>
       </div>

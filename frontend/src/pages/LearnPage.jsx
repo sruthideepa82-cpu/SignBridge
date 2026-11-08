@@ -2,6 +2,7 @@ import { GraduationCap, TrendingUp } from 'lucide-react';
 import PageContainer from '../components/common/PageContainer.jsx';
 import PageHeader from '../components/common/PageHeader.jsx';
 import StatusBadge from '../components/common/StatusBadge.jsx';
+import AlphabetCards from '../components/learn/AlphabetCards.jsx';
 import LessonTrackCard from '../components/learn/LessonTrackCard.jsx';
 import { LESSON_TRACKS } from '../data/moduleContent.js';
 
@@ -14,6 +15,10 @@ export default function LearnPage() {
         description="Guided Indian Sign Language lessons with practice feedback are being designed. The lesson content below is a preview of the planned tracks."
         badge={<StatusBadge label="Under development" tone="warning" />}
       />
+
+      <div className="mb-6">
+        <AlphabetCards />
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section className="lg:col-span-2" aria-labelledby="lesson-tracks-title">
@@ -33,12 +38,12 @@ export default function LearnPage() {
           </span>
           <h2 className="mt-5 text-lg font-semibold">Progress tracking</h2>
           <p className="mt-2 text-sm leading-relaxed text-blue-50">
-            Lesson completion and practice scores will be saved here once user accounts and the MongoDB database
-            are connected.
+            Finger-spelling progress is saved only in this browser. Lesson completion and scores will be saved once
+            accounts and the database are added.
           </p>
           <div className="mt-6 flex items-center gap-2 rounded-xl bg-white/10 px-4 py-3 text-sm text-blue-50">
             <GraduationCap size={18} aria-hidden="true" />
-            No progress recorded yet
+            Stored on this device only
           </div>
         </aside>
       </div>

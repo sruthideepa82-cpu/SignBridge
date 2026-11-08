@@ -323,7 +323,7 @@ npm test
 | --- | --- | --- |
 | Backend unit/API (`tests/test_*.py`, excluding hardware) | 57 | Health, CORS, error shapes, camera lifecycle, MJPEG framing, 503/409 handling, release on stop, single-instance start; MediaPipe detection on real images (no hand, one hand = 21 landmarks, two hands = 42, connections drawn, source frame unchanged); landmarks API with a hand appearing and then removed; detector load failure reported without breaking the camera |
 | Backend hardware (`tests/test_camera_hardware.py`) | 3 | Real webcam: start, receive JPEG frames over HTTP, stop, reopen, and read the landmarks endpoint |
-| Frontend (`src/**/*.test.*`) | 38 | Routes and page content, API error mapping, camera hook states, landmark polling, landmark panel (no coordinates without a hand, 21 rows per hand, two tables for two hands), status badges |
+| Frontend (`src/**/*.test.*`) | 67 | Routes and page content, API error mapping, camera hook states, landmark polling and panel, letter recognition panel, text buffer rules (hold, no repeats, reset, undo, clear), speech (spoken text equals visible text), finger-spelling progress |
 
 The hand detection tests use real MediaPipe inference on fixture photos in `backend/tests/fixtures/` (see the README there for sources and licenses). The "hand removed" test uses a test camera that switches between a hand image and a blank frame, so the real detector runs on both states. Test results are reported from actual runs; tests that need the model or fixtures are skipped with a message if they are missing.
 
@@ -376,9 +376,12 @@ Phase numbers follow `PLAN.md`, which is the master plan.
 2. **Phase 2, MediaPipe hand detection (done):** automated and hardware tests pass, and manual checks confirmed left/right labels, moving hands, and repeated start/stop. Open for later testing: a live two-hand session, a long soak test, and frame-rate measurements.
 3. **Phase 3, ISL scope and dataset design (started, not complete):** protocol, gated vocabulary, recording tool, and split tooling exist. A reviewer must verify the vocabulary, consent must be collected, and samples must be recorded. See `ai-engine/dataset/README.md`.
 4. **Phase 4, static sign classification (pipeline built, no model trained):** the feature code, training script, live endpoint, and panel are in place. A model needs recorded samples from several participants (see `ai-engine/dataset/README.md`). Install ML dependencies with `pip install -r requirements-ai.txt`.
-5. **Phase 5, text output and stabilization:** smoothing, clear and undo, and confidence handling.
-6. **Phase 6, text-to-speech:** browser SpeechSynthesis for committed text only.
-7. **Phases 7 to 10:** dynamic signs, NLP, learning and persistence, and final testing and deployment.
+5. **Phase 5, text output and stabilization (done in code):** a letter is committed only after a steady hold, repeats are blocked, and undo, clear, and space are available. Live use needs a trained model.
+6. **Phase 6, text-to-speech (done in code):** the browser speaks only the committed text, on request. An audible check is still needed.
+7. **Phase 7, dynamic signs (blocked):** needs recorded landmark sequences.
+8. **Phase 8, text assembly (deterministic stage done):** letters and spaces only. No language model is used.
+9. **Phase 9, learning (partly done):** sourced finger-spelling cards with local progress. Practice and quizzes need the recognizer.
+10. **Phase 10, testing and documentation (partly done):** see `docs/TEST_PLAN.md`.
 
 The `docs/DEVELOPMENT_PLAN.md` file uses an older numbering. `PLAN.md` takes precedence.
 

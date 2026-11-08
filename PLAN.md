@@ -788,6 +788,14 @@ mislabeled. - Live prediction is demonstrably based on model inference.
 
 ### Phase 5 --- Text output and temporal stabilization
 
+**Status (2026-11-08): complete in code and automated tests.** Implemented in
+`frontend/src/lib/signBuffer.js` (hold rule, no repeats while held, reset on
+uncertain or missing results, undo, clear, space) with the hook
+`useSignBuffer.js` and the panel `TranslationOutputPanel.jsx`. Each committed
+item keeps its confidence. Tests: `signBuffer.test.js`, `useSignBuffer.test.jsx`,
+`TranslationOutputPanel.test.jsx`. Live check still needs a trained model (Phase
+4), because the buffer has nothing to commit until a letter is recognized.
+
 Tasks: - Add prediction smoothing/debouncing. - Prevent repeated word
 insertion for a held gesture. - Add clear/undo controls. - Display
 committed text. - Preserve confidence and uncertainty information.
@@ -798,6 +806,13 @@ safely.
 
 ### Phase 6 --- Text-to-speech
 
+**Status (2026-11-08): complete in code and automated tests; audible check
+pending.** Implemented in `frontend/src/lib/speech.js` with Speak, Pause or
+Resume, and Stop in `TranslationOutputPanel.jsx`. Only the committed text is
+spoken, and only when the user presses Speak. Unsupported browsers and
+missing voices are reported. Tests: `speech.test.js` and the panel test, which
+checks that the spoken text equals the visible text.
+
 Tasks: - Integrate browser SpeechSynthesis. - Add play/cancel
 controls. - Speak committed text only. - Handle unavailable voices.
 
@@ -805,6 +820,11 @@ Acceptance: - Visible translated text matches spoken text. - Speech does
 not trigger repeatedly from raw frame predictions.
 
 ### Phase 7 --- Dynamic sign recognition and non-manual features
+
+**Status (2026-11-08): blocked, not started.** Dynamic signs need recorded
+landmark sequences from several participants, and none exist. No sequence
+model has been built. Non-manual features also need consented data, and the
+plan forbids treating them as generic emotion detection.
 
 Tasks: - Collect temporal landmark sequences. - Define sign boundaries
 and sequence labels. - Evaluate temporal model architectures. -
@@ -818,6 +838,13 @@ documented.
 
 ### Phase 8 --- NLP / optional LLM assistance
 
+**Status (2026-11-08): deterministic stage complete; LLM deliberately not added.**
+Sentence text is the committed letters plus user-added spaces, with no
+language model involved (`toText` in `signBuffer.js`). Every item keeps its
+label and confidence and can be undone, so raw recognized labels stay visible
+and recoverable. An LLM is not added, because the plan requires reliable
+recognition first and no recognized data exists yet.
+
 Tasks: - Start with deterministic sentence assembly. - Explore
 constrained post-processing only if needed. - Keep original recognized
 labels visible or recoverable. - Handle uncertainty without guessing.
@@ -828,6 +855,14 @@ are distinguishable.
 
 ### Phase 9 --- Learning module and persistence
 
+**Status (2026-11-08): partly done.** Done: finger-spelling cards for the six
+pilot letters (C, L, O, S, U, V) that link to the official ISLRTC chart, with
+local practice progress and a reset control (`AlphabetCards.jsx`,
+`usePracticeProgress.js`). Progress stays in the browser and is never sent to a
+server. Not done: practice mode and quizzes, which need a trained recognizer
+(Phase 4); the lesson browser for word-level content, which needs sourced
+references; and any database, which the plan defers.
+
 Tasks: - Build verified ISL sign cards and practice flows. - Add quizzes
 and feedback. - Add local progress first. - Introduce MongoDB only when
 persistence is needed.
@@ -837,6 +872,13 @@ saved only with appropriate privacy controls. - No database secrets are
 exposed to the browser.
 
 ### Phase 10 --- Testing, deployment, and final documentation
+
+**Status (2026-11-08): partly done.** Done: the test plan and results in
+`docs/TEST_PLAN.md` (automated results, measured detection latency of about 30 ms
+per frame, manual checklist, browser support, and the local-first deployment
+decision). Not done: a final demo, the report, and the presentation, which
+need the results of Phases 4 and 7. Manual rows marked "Not run" are still
+open.
 
 Tasks: - Add unit, integration, and manual test plans. - Measure latency
 and model performance. - Document supported devices/browsers. - Decide
