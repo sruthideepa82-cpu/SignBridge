@@ -699,13 +699,29 @@ in which Phase 2 is ISL recognition. Those documents are being aligned.
 
 ### Phase 3 --- ISL scope and dataset design
 
-**Status (2026-11-08): partly done.** Done: protocol (`ai-engine/dataset/README.md`),
-source register and gated vocabulary (`ai-engine/dataset/metadata/vocabulary.json`,
-no class verified yet), and a recording tool with consent and pseudonym checks
-(`ai-engine/collection/collect_static.py`, 14 unit tests passing). Blocked: the
-official ISLRTC references could not be fetched from this environment (see the
-source register). Vocabulary, sign meanings, and consent collection need a human
-reviewer. No samples have been recorded.
+**Status (2026-11-08): in progress, started.** Phase 3 is open. Its acceptance
+criteria are not met.
+
+Done:
+-   Protocol: `ai-engine/dataset/README.md` (consent, pseudonyms, recording,
+    storage, split rules).
+-   Source register and gated vocabulary: `ai-engine/dataset/metadata/vocabulary.json`.
+    It has zero verified classes.
+-   Reviewer worksheet, consent form draft, and offline participant register
+    template: `ai-engine/dataset/templates/`.
+-   Recording tool with consent, pseudonym, and verified-label gates:
+    `ai-engine/collection/collect_static.py`.
+-   Dataset report, reproducible participant-level split, and coverage/leakage
+    checks: `ai-engine/collection/dataset_stats.py`.
+-   Tests: `ai-engine/tests/` (23 passing). They use synthetic data only.
+
+Blocked on people and access (this environment cannot do these):
+-   Official ISLRTC references could not be read. The poster page returns 404,
+    and the dictionary is video, which cannot be watched here. No class can be
+    verified until a qualified reviewer checks the videos or poster.
+-   Ethics approval and signed consent from signers. The consent form is a draft.
+-   Recording sessions. No samples exist, so no class counts or split results
+    are real yet.
 
 Tasks: - Research and define a small, verified ISL vocabulary. -
 Distinguish static signs from dynamic signs. - Document sources and

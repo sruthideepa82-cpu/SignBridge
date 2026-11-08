@@ -7,7 +7,9 @@ The current application captures webcam frames and detects hand landmarks (see `
 
 - `collection/collect_static.py` records landmark samples for one verified class from the webcam. It refuses unverified labels, non-pseudonymous participant IDs, and missing consent references.
 - `collection/sample_record.py` holds the pure validation and record logic.
-- `tests/` runs the unit tests: `cd backend; .\.venv\Scripts\python.exe -m pytest ..\ai-engine\tests`.
+- `collection/dataset_stats.py` prints class counts and checks the participant-level split.
+- `dataset/templates/` holds the reviewer worksheet, consent draft, and participant register template.
+- `tests/` runs the unit tests (23 passing, synthetic data only): `cd backend; .\.venv\Scripts\python.exe -m pytest ..\ai-engine\tests`.
 
 ## Layout
 

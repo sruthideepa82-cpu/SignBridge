@@ -66,12 +66,26 @@ ai-engine/dataset/
 
 Raw files are one JSON object per line. Each line has `label`, `participant`, `session`, `sample_index`, `captured_at`, and `hands` (handedness, score, and 21 `[x, y, z]` points per hand). Each session also writes a `.session.json` manifest with the consent reference, camera settings, and start time.
 
-## 6. Splitting (Phase 4 onward)
+## 6. Splitting and counts
 
 - Split by participant, not by sample. All samples from one participant go to one split.
+- `collection/dataset_stats.assign_splits` gives a reproducible participant-level split for a given seed (70/15/15 by default). Save the result as `metadata/split_table.csv` (`participant,split`). This file is not committed.
 - Training, validation, and test splits are fixed before any tuning. Tuning uses validation only. The test split is used once for the final report.
-- Report the number of samples and participants per class and per split. Classes with few participants must be flagged as limited.
-- A participant's session is never split across train and test.
+- Run the report after each recording session:
+
+```powershell
+python ..\ai-engine\collection\dataset_stats.py --raw ..\ai-engine\dataset\raw `
+    --split-table ..\ai-engine\dataset\metadata\split_table.csv --min-participants 2
+```
+
+  It prints counts per class and flags participants without a split and classes with fewer than the minimum number of participants in any split.
+- Classes with few participants must be flagged as limited in the results.
+
+## 6a. Templates
+
+- `templates/reviewer_worksheet.md`: one per candidate class. A class is verified only when a reviewer completes it.
+- `templates/consent_form_template.md`: draft wording. Needs ethics approval before use.
+- `templates/participant_register_template.csv`: header only. The real register is kept offline or in `metadata/` (not committed).
 
 ## 7. Known limitations of this dataset (to be updated)
 

@@ -373,7 +373,7 @@ Phase numbers follow `PLAN.md`, which is the master plan.
 
 1. **Phases 0 and 1, foundation and webcam (done):** React and FastAPI scaffold, OpenCV capture, and MJPEG streaming. Tests pass.
 2. **Phase 2, MediaPipe hand detection (implemented, not yet closed):** automated and hardware tests pass. Still open: live handedness and two-hand checks, a start/stop soak test, and the stale-landmark fixes listed under known limitations.
-3. **Phase 3, ISL scope and dataset design (next):** choose and document a small verified vocabulary, build the collection tool, and split data by signer.
+3. **Phase 3, ISL scope and dataset design (started, not complete):** protocol, gated vocabulary, recording tool, and split tooling exist. A reviewer must verify the vocabulary, consent must be collected, and samples must be recorded. See `ai-engine/dataset/README.md`.
 4. **Phase 4, static sign classification:** feature normalization, a baseline classifier, and held-out evaluation.
 5. **Phase 5, text output and stabilization:** smoothing, clear and undo, and confidence handling.
 6. **Phase 6, text-to-speech:** browser SpeechSynthesis for committed text only.

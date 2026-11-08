@@ -34,6 +34,7 @@ Thumbs.db
 ai-engine/dataset/*
 !ai-engine/dataset/.gitkeep
 !ai-engine/dataset/README.md
+!ai-engine/dataset/templates/
 !ai-engine/dataset/metadata/
 ai-engine/dataset/metadata/*
 !ai-engine/dataset/metadata/vocabulary.json
