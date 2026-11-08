@@ -9,7 +9,7 @@ This file separates what was run, what passed, and what still needs a person at 
 | Suite | Command | Result |
 | --- | --- | --- |
 | Backend unit and API | `cd backend; python -m pytest` | 57 passed, 3 skipped (hardware tests are opt-in) |
-| Backend hardware (real webcam) | `$env:SIGNBRIDGE_RUN_CAMERA_TESTS="1"; python -m pytest -m hardware` | 3 passed (run before the Phase 5 to 9 changes; re-run before release) |
+| Backend hardware (real webcam) | `$env:SIGNBRIDGE_RUN_CAMERA_TESTS="1"; python -m pytest -m hardware` | 3 passed (re-run on 2026-11-09, after the Phase 5 to 9 changes) |
 | AI engine (pipeline, real detector on fixtures) | `cd backend; python -m pytest ..\ai-engine\tests` | 30 passed |
 | Frontend unit and component | `cd frontend; npm test` | 67 passed |
 | Frontend production build | `cd frontend; npm run build` | Succeeded |
@@ -77,5 +77,4 @@ These need a person. Mark each one with the date, the browser, and the result.
 1. Live two-hand check and the remaining manual rows above.
 2. Recognition accuracy, using a trained model on held-out participants (Phase 4).
 3. Speech check with audible output.
-4. Re-run the hardware tests after the Phase 5 to 9 changes.
 5. Long soak test (for example, 30 minutes of start and stop with a memory and handle check).
