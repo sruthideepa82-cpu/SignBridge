@@ -19,7 +19,7 @@ class HandResponse(BaseModel):
 
 
 class HandLandmarksResponse(BaseModel):
-    status: Literal["camera_off", "detection_unavailable", "no_hand", "hand_detected"]
+    status: Literal["camera_off", "detection_unavailable", "processing_error", "no_hand", "hand_detected"]
     running: bool
     detection_available: bool
     detection_error: str | None = None

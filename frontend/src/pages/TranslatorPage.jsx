@@ -37,7 +37,7 @@ export default function TranslatorPage() {
               <BackendStatusIndicator status={backend.status} onRefresh={backend.refresh} />
             </div>
           </div>
-          <LandmarkInfoPanel landmarks={landmarks} cameraLive={cameraLive} />
+          <LandmarkInfoPanel landmarks={landmarks} cameraLive={cameraLive} error={landmarkError} />
           <TranslationOutputPanel />
           <RoadmapPanel />
         </aside>

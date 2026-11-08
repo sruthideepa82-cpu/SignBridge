@@ -47,6 +47,8 @@ def landmark_status(snapshot: LandmarkSnapshot) -> str:
         return "camera_off"
     if not snapshot.detection_available:
         return "detection_unavailable"
+    if snapshot.detection_error:
+        return "processing_error"
     if snapshot.hands:
         return "hand_detected"
     return "no_hand"

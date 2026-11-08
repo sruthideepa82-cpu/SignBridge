@@ -48,6 +48,16 @@ describe('useHandLandmarks', () => {
     expect(result.current.landmarks).toBeNull();
   });
 
+  it('drops the last landmarks when a later request fails', async () => {
+    cameraService.getHandLandmarks.mockResolvedValueOnce({ status: 'hand_detected', hand_count: 1, hands: [] });
+    cameraService.getHandLandmarks.mockRejectedValue(new Error('Cannot reach the SignBridge backend.'));
+
+    const { result } = renderHook(() => useHandLandmarks(true));
+
+    await waitFor(() => expect(result.current.error).toBe('Cannot reach the SignBridge backend.'));
+    expect(result.current.landmarks).toBeNull();
+  });
+
   it('reports request errors', async () => {
     cameraService.getHandLandmarks.mockRejectedValue(new Error('Cannot reach the SignBridge backend.'));
 

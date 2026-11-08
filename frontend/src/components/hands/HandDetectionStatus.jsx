@@ -3,6 +3,7 @@ import StatusBadge from '../common/StatusBadge.jsx';
 const LANDMARK_STATUS_BADGES = {
   camera_off: { label: 'Waiting for camera', tone: 'neutral' },
   detection_unavailable: { label: 'Detection unavailable', tone: 'danger' },
+  processing_error: { label: 'Processing error', tone: 'danger' },
   no_hand: { label: 'No hand detected', tone: 'warning' },
   hand_detected: { label: 'Hand detected', tone: 'success', pulse: true },
 };
@@ -29,7 +30,7 @@ export default function HandDetectionStatus({ landmarks, error }) {
       >
         Hands detected: {handCount}
       </span>
-      {landmarks?.status === 'detection_unavailable' && landmarks.detection_error && (
+      {(landmarks?.status === 'detection_unavailable' || landmarks?.status === 'processing_error') && landmarks.detection_error && (
         <span className="text-xs text-slate-500">{landmarks.detection_error}</span>
       )}
     </div>

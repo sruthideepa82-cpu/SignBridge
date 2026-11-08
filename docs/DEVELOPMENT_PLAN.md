@@ -3,6 +3,8 @@
 This plan describes the phases of the SignBridge capstone. Each phase ends with a working, testable increment.
 Status markers: **Done**, **In progress**, **Planned**.
 
+> **Note:** The master plan is [`PLAN.md`](../PLAN.md) in the project root, and its phase numbers differ from this file. In `PLAN.md`, Phase 1 is webcam capture, Phase 2 is MediaPipe hand detection, Phase 3 is ISL scope and dataset design, and Phase 4 is static sign classification. So "Phase 1: Hand Detection" below is `PLAN.md` Phase 2, and "Phase 2: ISL Gesture Recognition" covers `PLAN.md` Phases 3 and 4. As of 2026-11-08, `PLAN.md` Phase 2 is implemented but not closed. See the verification log in `PLAN.md`, Section 6.
+
 ## Phase 0: Foundation (Done)
 
 - Project structure for frontend, backend, AI engine, and docs.

@@ -211,7 +211,7 @@ Base URL: `http://127.0.0.1:8000/api`. Errors use one JSON shape:
 | GET | `/camera/landmarks` | Latest hand landmarks, matched to the most recent annotated frame | `200` `{status, running, detection_available, detection_error, frame_sequence, hand_count, hands, timestamp}` | — |
 | GET | `/camera/stream` | MJPEG stream of annotated frames (`multipart/x-mixed-replace; boundary=frame`) | `200` stream of JPEG frames | `409 camera_not_running` |
 
-`status` is one of `camera_off`, `detection_unavailable`, `no_hand`, or `hand_detected`. Each hand has `handedness` (`Left`/`Right`), `score`, and 21 `landmarks` with `index`, `name`, and normalized `x`, `y` (0–1 across the frame, origin top-left) and `z` (depth relative to the wrist).
+`status` is one of `camera_off`, `detection_unavailable` (the hand model did not load), `processing_error` (the latest frame could not be processed; `hands` is empty), `no_hand`, or `hand_detected`. Each hand has `handedness` (`Left`/`Right`), `score`, and 21 `landmarks` with `index`, `name`, and normalized `x`, `y` (0–1 across the frame, origin top-left) and `z` (depth relative to the wrist).
 
 Example landmark response with one hand (abbreviated):
 
@@ -263,7 +263,7 @@ Hand detection runs on the same OpenCV frames as the camera preview. The backend
 - **Color:** OpenCV delivers BGR frames. They are converted to RGB before inference.
 - **Threads:** a capture thread reads frames at the camera rate. A separate processing thread always works on the newest frame, so slow inference skips frames instead of building a backlog. The FastAPI event loop is never blocked.
 - **Drawing:** `mediapipe.tasks.python.vision.drawing_utils` draws landmarks and `HAND_CONNECTIONS` onto a copy of the frame.
-- **Consistency:** the streamed image and the `/api/camera/landmarks` response come from the same processed frame (`frame_sequence` matches).
+- **Consistency:** the streamed JPEG and the landmark snapshot are published together under one lock, so they come from the same processed frame. The MJPEG stream does not carry `frame_sequence`, so a client cannot check the match directly.
 
 ### Installation requirements
 
@@ -299,6 +299,8 @@ curl -X POST http://127.0.0.1:8000/api/camera/stop
 - **Coordinates are for the unmirrored image.** The preview is mirrored in CSS for a natural selfie view, but landmark X values refer to the original camera image.
 - **Two-hand accuracy depends on tracking.** The detector runs in VIDEO mode, which tracks hands between frames to save computation, so a second hand that enters mid-stream can take a few frames to appear.
 - **CPU only.** Inference runs on the CPU. Frame rate on your machine depends on hardware and is not benchmarked in this release.
+- **Handedness is not yet validated.** Labels are reported, but the left/right answer has not been checked on a live camera with a known hand. Tests on two fixture photos gave inconsistent results when mirrored.
+- **Errors never show old hands.** When a frame fails to process, the status is `processing_error` and no hands are reported. When a landmark request fails in the browser, the coordinate panel hides its data until the backend responds.
 
 ## Testing
 
@@ -318,9 +320,9 @@ npm test
 
 | Suite | Count | What it covers |
 | --- | --- | --- |
-| Backend unit/API (`tests/test_*.py`, excluding hardware) | 31 | Health, CORS, error shapes, camera lifecycle, MJPEG framing, 503/409 handling, release on stop, single-instance start; MediaPipe detection on real images (no hand, one hand = 21 landmarks, two hands = 42, connections drawn, source frame unchanged); landmarks API with a hand appearing and then removed; detector load failure reported without breaking the camera |
+| Backend unit/API (`tests/test_*.py`, excluding hardware) | 47 | Health, CORS, error shapes, camera lifecycle, MJPEG framing, 503/409 handling, release on stop, single-instance start; MediaPipe detection on real images (no hand, one hand = 21 landmarks, two hands = 42, connections drawn, source frame unchanged); landmarks API with a hand appearing and then removed; detector load failure reported without breaking the camera |
 | Backend hardware (`tests/test_camera_hardware.py`) | 3 | Real webcam: start, receive JPEG frames over HTTP, stop, reopen, and read the landmarks endpoint |
-| Frontend (`src/**/*.test.*`) | 27 | Routes and page content, API error mapping, camera hook states, landmark polling, landmark panel (no coordinates without a hand, 21 rows per hand, two tables for two hands), status badges |
+| Frontend (`src/**/*.test.*`) | 32 | Routes and page content, API error mapping, camera hook states, landmark polling, landmark panel (no coordinates without a hand, 21 rows per hand, two tables for two hands), status badges |
 
 The hand detection tests use real MediaPipe inference on fixture photos in `backend/tests/fixtures/` (see the README there for sources and licenses). The "hand removed" test uses a test camera that switches between a hand image and a blank frame, so the real detector runs on both states. Test results are reported from actual runs; tests that need the model or fixtures are skipped with a message if they are missing.
 
@@ -348,7 +350,7 @@ The browser never accesses the webcam directly; only the backend does. Browser p
 - Backend: `GET /api/health`, environment-based settings, CORS for the Vite dev server, structured errors, and a camera service with MJPEG streaming.
 - Frontend camera panel: Start and Stop, status badges, connecting and error states, live preview, and automatic status checks while live.
 - MediaPipe hand landmark detection on live OpenCV frames: up to two hands, 21 landmarks each, drawn on the stream, with a hand count, status badge, and coordinate panel.
-- Verified: frontend build and 27 frontend tests; 31 backend tests; 3 hardware tests on the real webcam; and a browser run in Chrome that started the camera, saw decoded frames, showed the hand status, and confirmed the camera was released.
+- Verified on 2026-11-08: frontend build and 32 frontend tests; 47 backend tests; 3 hardware tests on the real webcam; and a browser run in Chrome that started the camera, saw decoded frames, showed the hand status, and confirmed the camera was released (earlier run).
 
 **Not implemented (by design in this phase)**
 
@@ -367,11 +369,16 @@ The browser never accesses the webcam directly; only the backend does. Browser p
 
 See [`docs/DEVELOPMENT_PLAN.md`](docs/DEVELOPMENT_PLAN.md) for the full plan. In short:
 
-1. **Phase 1, hand detection (done):** MediaPipe landmarks on the camera pipeline, with overlay and coordinate panel.
-2. **Phase 2, ISL recognition (next):** dataset collection from landmark sequences, a TensorFlow classifier, and a validated prediction endpoint.
-3. **Phase 3, translation and speech:** text buffer and browser text-to-speech.
-4. **Phase 4, learning:** lesson browser and practice scoring.
-5. **Phase 5, users and progress:** MongoDB, authentication, and a progress dashboard.
-6. **Phase 6+:** continuous sign recognition, hardening, and deployment.
+Phase numbers follow `PLAN.md`, which is the master plan.
 
-MediaPipe is now part of `backend/requirements.txt`. TensorFlow will go in a separate `backend/requirements-ai.txt` when Phase 2 starts, so the base install stays small.
+1. **Phases 0 and 1, foundation and webcam (done):** React and FastAPI scaffold, OpenCV capture, and MJPEG streaming. Tests pass.
+2. **Phase 2, MediaPipe hand detection (implemented, not yet closed):** automated and hardware tests pass. Still open: live handedness and two-hand checks, a start/stop soak test, and the stale-landmark fixes listed under known limitations.
+3. **Phase 3, ISL scope and dataset design (next):** choose and document a small verified vocabulary, build the collection tool, and split data by signer.
+4. **Phase 4, static sign classification:** feature normalization, a baseline classifier, and held-out evaluation.
+5. **Phase 5, text output and stabilization:** smoothing, clear and undo, and confidence handling.
+6. **Phase 6, text-to-speech:** browser SpeechSynthesis for committed text only.
+7. **Phases 7 to 10:** dynamic signs, NLP, learning and persistence, and final testing and deployment.
+
+The `docs/DEVELOPMENT_PLAN.md` file uses an older numbering. `PLAN.md` takes precedence.
+
+TensorFlow will go in a separate `backend/requirements-ai.txt` when the recognition phase starts, so the base install stays small.

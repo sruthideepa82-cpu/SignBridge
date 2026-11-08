@@ -166,6 +166,9 @@ class CameraService:
 
     def shutdown(self) -> None:
         self.stop()
+        if any(thread.is_alive() for thread in self._threads):
+            logger.error("Camera threads are still running; leaving the hand detector open to avoid a crash.")
+            return
         if self._detector is not None:
             self._detector.close()
             self._detector = None
@@ -272,20 +275,25 @@ class CameraService:
                 last_sequence = self._raw_sequence
                 frame = self._raw_frame
 
+            hands: tuple[DetectedHand, ...] | None = None
+            annotated = frame
             try:
-                hands: tuple[DetectedHand, ...] | None = None
-                annotated = frame
                 if detector is not None:
                     result = detector.detect(frame)
                     hands = result.hands
                     annotated = detector.annotate(frame, result)
+            except Exception:
+                logger.exception("Frame processing failed")
+                self._set_detection_error("Hand detection failed on a frame. See backend logs.")
+                hands = None
+                annotated = frame
 
+            try:
                 encoded, buffer = cv2.imencode(".jpg", annotated, encode_params)
                 if encoded:
                     self._publish_processed_frame(buffer.tobytes(), hands)
             except Exception:
-                logger.exception("Frame processing failed")
-                self._set_detection_error("Hand detection failed on a frame. See backend logs.")
+                logger.exception("Frame encoding failed")
 
     def _publish_raw_frame(self, frame: np.ndarray) -> None:
         with self._frame_condition:

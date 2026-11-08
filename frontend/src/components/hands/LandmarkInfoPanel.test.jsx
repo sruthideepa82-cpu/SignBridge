@@ -51,6 +51,38 @@ describe('LandmarkInfoPanel', () => {
     expect(screen.getByText('Confidence 93%')).toBeInTheDocument();
   });
 
+  it('hides coordinates and says so when the landmark request failed', () => {
+    render(<LandmarkInfoPanel landmarks={null} cameraLive error="Cannot reach the SignBridge backend." />);
+
+    expect(screen.getByText('Landmark data unavailable')).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    expect(screen.queryByText('No hand detected')).not.toBeInTheDocument();
+  });
+
+  it('does not show coordinates or "No hand detected" when processing fails', () => {
+    const landmarks = {
+      status: 'processing_error',
+      hand_count: 0,
+      hands: [],
+      detection_error: 'Hand detection failed on a frame. See backend logs.',
+    };
+
+    render(<LandmarkInfoPanel landmarks={landmarks} cameraLive />);
+
+    expect(screen.getByText('Hand detection failed')).toBeInTheDocument();
+    expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    expect(screen.queryByText('No hand detected')).not.toBeInTheDocument();
+  });
+
+  it('explains that no coordinates exist when the hand model is unavailable', () => {
+    const landmarks = { status: 'detection_unavailable', hand_count: 0, hands: [], detection_error: 'Model missing.' };
+
+    render(<LandmarkInfoPanel landmarks={landmarks} cameraLive />);
+
+    expect(screen.getByText('Hand detection unavailable')).toBeInTheDocument();
+    expect(screen.queryByText('No hand detected')).not.toBeInTheDocument();
+  });
+
   it('renders one table per detected hand for two hands (up to 42 landmarks)', () => {
     const landmarks = {
       status: 'hand_detected',
@@ -92,6 +124,19 @@ describe('HandDetectionStatus', () => {
 
     expect(screen.getByText('Detection unavailable')).toBeInTheDocument();
     expect(screen.getByText('Model missing.')).toBeInTheDocument();
+  });
+
+  it('shows "Processing error" with the reason when a frame could not be processed', () => {
+    render(
+      <HandDetectionStatus
+        landmarks={{ status: 'processing_error', hand_count: 0, detection_error: 'Hand detection failed on a frame.' }}
+        error=""
+      />,
+    );
+
+    expect(screen.getByText('Processing error')).toBeInTheDocument();
+    expect(screen.getByText('Hand detection failed on a frame.')).toBeInTheDocument();
+    expect(screen.queryByText('No hand detected')).not.toBeInTheDocument();
   });
 
   it('reports a status request failure without claiming a hand state', () => {

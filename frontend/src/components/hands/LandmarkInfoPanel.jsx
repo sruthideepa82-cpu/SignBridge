@@ -38,8 +38,18 @@ function HandTable({ hand, handNumber }) {
   );
 }
 
-export default function LandmarkInfoPanel({ landmarks, cameraLive }) {
+function UnavailableNotice({ title, description }) {
+  return (
+    <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
+      <p className="text-sm font-semibold text-slate-800">{title}</p>
+      <p className="mt-1 text-xs leading-relaxed text-slate-500">{description}</p>
+    </div>
+  );
+}
+
+export default function LandmarkInfoPanel({ landmarks, cameraLive, error = '' }) {
   const hands = landmarks?.hands ?? [];
+  const status = landmarks?.status;
 
   return (
     <section
@@ -56,16 +66,39 @@ export default function LandmarkInfoPanel({ landmarks, cameraLive }) {
         </p>
       )}
 
-      {cameraLive && hands.length === 0 && (
-        <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
-          <p className="text-sm font-semibold text-slate-800">No hand detected</p>
-          <p className="mt-1 text-xs leading-relaxed text-slate-500">
-            Show one or both hands to the camera. Coordinates appear here when a hand is detected.
-          </p>
-        </div>
+      {cameraLive && error && (
+        <UnavailableNotice
+          title="Landmark data unavailable"
+          description="The backend did not return landmarks. Coordinates are hidden so old values are not shown as current."
+        />
       )}
 
-      {cameraLive && hands.length > 0 && (
+      {cameraLive && !error && !landmarks && (
+        <p className="mt-4 text-sm leading-relaxed text-slate-500">Waiting for the first landmark result.</p>
+      )}
+
+      {cameraLive && !error && status === 'detection_unavailable' && (
+        <UnavailableNotice
+          title="Hand detection unavailable"
+          description="The hand model could not be loaded, so no coordinates can be produced. See the status above."
+        />
+      )}
+
+      {cameraLive && !error && status === 'processing_error' && (
+        <UnavailableNotice
+          title="Hand detection failed"
+          description="The latest frame could not be processed. Coordinates are hidden until detection recovers."
+        />
+      )}
+
+      {cameraLive && !error && status === 'no_hand' && hands.length === 0 && (
+        <UnavailableNotice
+          title="No hand detected"
+          description="Show one or both hands to the camera. Coordinates appear here when a hand is detected."
+        />
+      )}
+
+      {cameraLive && !error && status === 'hand_detected' && hands.length > 0 && (
         <div className="mt-4 space-y-4">
           {hands.map((hand, index) => (
             <HandTable key={`${hand.handedness}-${index}`} hand={hand} handNumber={index + 1} />

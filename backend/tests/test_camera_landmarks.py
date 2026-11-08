@@ -1,5 +1,6 @@
 import time
 from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 
 import pytest
 from fastapi.testclient import TestClient
@@ -8,8 +9,48 @@ from app.core.config import Settings
 from app.core.exceptions import HandDetectionUnavailableError
 from app.main import create_app
 from app.services.camera_service import CameraService
-from app.services.hand_detection_service import HandDetector
+from app.services.hand_detection_service import (
+    DetectedHand,
+    HandDetectionResult,
+    HandDetector,
+    LandmarkPoint,
+)
 from tests.conftest import ToggleCapture, blank_frame, load_fixture_image
+
+
+def fake_hand() -> DetectedHand:
+    points = tuple(LandmarkPoint(index=i, name=f"POINT_{i}", x=0.5, y=0.5, z=0.0) for i in range(21))
+    return DetectedHand(handedness="Right", score=0.9, landmarks=points)
+
+
+class ScriptedDetector:
+    """Returns one hand on the first frame, then raises on every later frame."""
+
+    def __init__(self) -> None:
+        self.calls = 0
+        self.closed = False
+
+    def detect(self, _frame) -> HandDetectionResult:
+        self.calls += 1
+        if self.calls == 1:
+            return HandDetectionResult(hands=(fake_hand(),))
+        raise RuntimeError("simulated inference failure")
+
+    def annotate(self, frame, _result):
+        return frame
+
+    def close(self) -> None:
+        self.closed = True
+
+
+class RecoveringDetector(ScriptedDetector):
+    """Fails on the first frame, then reports an empty scene."""
+
+    def detect(self, _frame) -> HandDetectionResult:
+        self.calls += 1
+        if self.calls == 1:
+            raise RuntimeError("simulated inference failure")
+        return HandDetectionResult(hands=())
 
 
 def wait_for_landmarks(client: TestClient, predicate: Callable[[dict], bool], timeout: float = 20.0) -> dict:
@@ -113,6 +154,53 @@ def test_two_hands_report_up_to_42_landmarks(settings: Settings, hand_detector_f
 
     total_landmarks = sum(len(hand["landmarks"]) for hand in body["hands"])
     assert total_landmarks == 42
+
+
+@contextmanager
+def scripted_client(settings: Settings, detector: ScriptedDetector, capture: ToggleCapture) -> Iterator[TestClient]:
+    service = CameraService(
+        settings,
+        capture_factory=lambda _index: capture,
+        detector_factory=lambda: detector,
+    )
+    app = create_app(settings=settings, camera_service=service)
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        service.shutdown()
+
+
+def test_processing_error_clears_stale_hands(settings: Settings) -> None:
+    detector = ScriptedDetector()
+    capture = ToggleCapture(blank_frame(), blank_frame())
+    with scripted_client(settings, detector, capture) as client:
+        client.post("/api/camera/start")
+
+        body = wait_for_landmarks(client, lambda data: data["status"] == "processing_error")
+        still_running = body["running"]
+        client.post("/api/camera/stop")
+
+    assert body["hand_count"] == 0
+    assert body["hands"] == []
+    assert "failed" in body["detection_error"]
+    assert still_running is True
+
+
+def test_processing_error_clears_after_next_good_frame(settings: Settings) -> None:
+    detector = RecoveringDetector()
+    capture = ToggleCapture(blank_frame(), blank_frame())
+    with scripted_client(settings, detector, capture) as client:
+        client.post("/api/camera/start")
+
+        recovered = wait_for_landmarks(
+            client,
+            lambda data: data["status"] == "no_hand" and data["detection_error"] is None,
+        )
+        client.post("/api/camera/stop")
+
+    assert recovered["hands"] == []
+    assert detector.calls >= 2
 
 
 def test_detection_restarts_after_stop(detection_client) -> None:

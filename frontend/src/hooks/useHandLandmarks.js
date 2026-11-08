@@ -27,7 +27,10 @@ export default function useHandLandmarks(enabled) {
           setError('');
         }
       } catch (requestError) {
-        if (!cancelled) setError(requestError.message);
+        if (!cancelled) {
+          setLandmarks(null);
+          setError(requestError.message);
+        }
       } finally {
         inFlight = false;
       }

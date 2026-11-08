@@ -1,3 +1,4 @@
+import threading
 import time
 from collections.abc import Callable
 
@@ -112,6 +113,51 @@ def test_read_failures_mark_camera_as_stopped_with_error(
     assert status.last_error is not None
     assert "stopped delivering frames" in status.last_error
     service.stop()
+
+
+class HungCapture(FakeCapture):
+    """Blocks inside read() after the first frame, like a driver that stops responding."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.release_event = threading.Event()
+
+    def read(self):
+        if self._reads >= 1:
+            self.release_event.wait(10)
+        return super().read()
+
+
+class ClosableDetector:
+    def __init__(self) -> None:
+        self.closed = False
+
+    def close(self) -> None:
+        self.closed = True
+
+
+def test_shutdown_keeps_detector_open_while_capture_thread_is_stuck(
+    settings: Settings, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr("app.services.camera_service.STOP_JOIN_TIMEOUT_SECONDS", 0.1)
+    capture = HungCapture()
+    detector = ClosableDetector()
+    service = CameraService(
+        settings,
+        capture_factory=lambda _index: capture,
+        detector_factory=lambda: detector,
+    )
+    service.start()
+
+    service.shutdown()
+
+    assert detector.closed is False
+
+    capture.release_event.set()
+    assert wait_until(lambda: not any(t.is_alive() for t in service._threads))
+    service.shutdown()
+
+    assert detector.closed is True
 
 
 def test_mjpeg_part_contains_correct_content_length() -> None:

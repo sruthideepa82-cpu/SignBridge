@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
@@ -26,19 +27,19 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
     ]
 
-    camera_index: int = 0
-    camera_width: int = 640
-    camera_height: int = 480
-    camera_fps: int = 30
-    camera_jpeg_quality: int = 80
-    camera_max_read_failures: int = 30
+    camera_index: int = Field(default=0, ge=0)
+    camera_width: int = Field(default=640, ge=1, le=7680)
+    camera_height: int = Field(default=480, ge=1, le=4320)
+    camera_fps: int = Field(default=30, ge=1, le=120)
+    camera_jpeg_quality: int = Field(default=80, ge=1, le=100)
+    camera_max_read_failures: int = Field(default=30, ge=1)
 
     hand_detection_enabled: bool = True
     hand_model_path: Path = BACKEND_DIR / "models" / "hand_landmarker.task"
-    hand_max_hands: int = 2
-    hand_min_detection_confidence: float = 0.5
-    hand_min_presence_confidence: float = 0.5
-    hand_min_tracking_confidence: float = 0.5
+    hand_max_hands: int = Field(default=2, ge=1, le=2)
+    hand_min_detection_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    hand_min_presence_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    hand_min_tracking_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
 
 
 @lru_cache

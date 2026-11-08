@@ -1,7 +1,9 @@
-fastapi
-uvicorn[standard]
-pydantic
-pydantic-settings
-opencv-contrib-python
-numpy
-mediapipe
+# Runtime dependencies. Pinned to the versions the test suite was run against
+# (Python 3.13.5, Windows 11, 2026-11-08). Upgrade deliberately and re-run the tests.
+fastapi==0.162.2
+uvicorn[standard]==0.54.0
+pydantic==2.14.3
+pydantic-settings==2.16.2
+opencv-contrib-python==5.0.0.93
+numpy==2.5.4
+mediapipe==1.2.2
