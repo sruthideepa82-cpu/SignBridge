@@ -726,7 +726,10 @@ Done:
     `ai-engine/collection/collect_static.py`.
 -   Dataset report, reproducible participant-level split, and coverage/leakage
     checks: `ai-engine/collection/dataset_stats.py`.
--   Tests: `ai-engine/tests/` (30 passing). Most use synthetic data. Three run
+-   Single-signer pilot mode (`--pilot-single-signer`): trains on one person's
+    earlier sessions and tests on the latest session. It is labelled as
+    session-level, not participant-level, and it is not a generalization
+    result. Tests: `ai-engine/tests/` (33 passing). Most use synthetic data. Three run
     the real MediaPipe detector on fixture photos through the recording tool's
     frame path (one hand accepted, two hands and blank frames rejected for a
     one-hand class).

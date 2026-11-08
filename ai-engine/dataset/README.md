@@ -101,6 +101,34 @@ python ..\ai-engine\collection\dataset_stats.py --raw ..\ai-engine\dataset\raw -
 python ..\ai-engine\training\train_static_classifier.py --raw ..\ai-engine\dataset\raw --split-table ..\ai-engine\dataset\metadata\split_table.csv
 ```
 
+## 6c. Pilot: train on your own hand (single signer)
+
+Use this to see the whole pipeline work on one person. It does not show how well the model works for other people.
+
+1. **Consent.** If you are the only signer, record your own consent on paper or in a note outside the repository, and use a reference such as `SELF-2026-001`. Keep it out of git.
+2. **Record three sessions per letter.** Each run of the tool is one session. Between sessions, change the lighting, distance, or background.
+3. **Train with the pilot mode.** The most recent session of each letter becomes the test set, and the earlier sessions train the model.
+4. **Restart the backend.** It loads the model file once at startup.
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m pip install -r requirements-ai.txt
+
+# Repeat for each letter: C, L, O, S, U, V. Run this three times per letter, on different days if possible.
+python ..\ai-engine\collection\collect_static.py --label C --participant P001 --consent-ref SELF-2026-001 --samples 40
+
+python ..\ai-engine\training\train_static_classifier.py --raw ..\ai-engine\dataset\raw --pilot-single-signer
+
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+The training script refuses to run unless each letter has at least 20 training samples and 10 test samples, from separate sessions. The report says "single_signer_session_split" and carries a warning, so it cannot be mistaken for a participant-level result.
+
+Expect these before a model is useful:
+- A letter appears on the translator only when its confidence reaches the threshold (`SIGNBRIDGE_RECOGNITION_THRESHOLD`, default 0.7). Otherwise the panel shows "Not recognized" with the confidence, so you can see how close it is.
+- U and V may be confused. Check the confusion matrix in `ai-engine/models/static_classifier_report.json`.
+- Your own signing style is the only style the model learns.
+
 ## 7. Known limitations of this dataset (to be updated)
 
 - Nothing is recorded yet, so there are no counts.

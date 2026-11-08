@@ -5,7 +5,8 @@ expects. Features come from backend/app/services/landmark_features.py, the same 
 """
 
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -29,9 +30,27 @@ class PreparedDataset:
     skipped: Counter
 
 
+def participant_splitter(split_table: dict[str, str]) -> Callable[[dict], str | None]:
+    """Multi-participant mode: every sample takes its participant's split from the split table."""
+    return lambda sample: split_table.get(sample["participant"])
+
+
+def pilot_splitter(samples: list[dict]) -> Callable[[dict], str | None]:
+    """Single-signer pilot: for each letter, the most recent session is the test set and the rest train.
+
+    Session IDs are timestamps, so the largest one is the latest. This checks generalization across
+    sessions, not across people.
+    """
+    sessions_by_label: dict[str, set[str]] = defaultdict(set)
+    for sample in samples:
+        sessions_by_label[sample["label"]].add(sample["session"])
+    test_session = {label: max(sessions) for label, sessions in sessions_by_label.items()}
+    return lambda sample: "test" if sample["session"] == test_session[sample["label"]] else "train"
+
+
 def prepare(
     samples,
-    split_table: dict[str, str],
+    split_of: Callable[[dict], str | None],
     vocabulary: dict,
 ) -> PreparedDataset:
     classes = verified_classes(vocabulary)
@@ -43,7 +62,8 @@ def prepare(
         if label not in classes:
             skipped["unverified_class"] += 1
             continue
-        if participant not in split_table:
+        split = split_of(sample)
+        if split is None:
             skipped["no_split_assignment"] += 1
             continue
         expected = int(classes[label]["hands"])
@@ -59,7 +79,7 @@ def prepare(
         features.append(vector)
         labels.append(label)
         participants.append(participant)
-        splits.append(split_table[participant])
+        splits.append(split)
 
     if not features:
         return PreparedDataset(
@@ -72,6 +92,20 @@ def prepare(
         splits=np.array(splits, dtype=object),
         skipped=skipped,
     )
+
+
+def require_pilot_coverage(dataset: PreparedDataset, min_train: int, min_test: int) -> list[str]:
+    """Single-signer pilot: every letter needs samples in both the training and test sessions."""
+    problems = []
+    for label in sorted(set(dataset.labels.tolist())):
+        for split, minimum in (("train", min_train), ("test", min_test)):
+            count = int(((dataset.labels == label) & (dataset.splits == split)).sum())
+            if count < minimum:
+                problems.append(
+                    f"letter {label} has {count} sample(s) in the {split} sessions; need {minimum}. "
+                    "Record at least two separate sessions per letter."
+                )
+    return problems
 
 
 def require_all_splits(dataset: PreparedDataset, min_participants: int) -> list[str]:

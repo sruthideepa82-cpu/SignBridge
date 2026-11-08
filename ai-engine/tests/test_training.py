@@ -11,7 +11,7 @@ sys.path.insert(0, str(AI_ENGINE_DIR / "training"))
 sys.path.insert(0, str(AI_ENGINE_DIR / "collection"))
 
 import train_static_classifier  # noqa: E402
-from prepare_dataset import prepare, require_all_splits  # noqa: E402
+from prepare_dataset import participant_splitter, prepare, require_all_splits  # noqa: E402
 
 VOCABULARY = {
     "classes": [
@@ -71,7 +71,7 @@ def test_prepare_keeps_only_verified_one_hand_samples_and_counts_skips() -> None
         make_sample("C", "P001", 903, hands=2),
     ]
 
-    dataset = prepare(samples, split_table_for(SPLITS), VOCABULARY)
+    dataset = prepare(samples, participant_splitter(split_table_for(SPLITS)), VOCABULARY)
 
     assert dataset.features.shape == (2 * 4 * 7, 63)
     assert set(dataset.labels.tolist()) == {"C", "L"}
@@ -81,7 +81,7 @@ def test_prepare_keeps_only_verified_one_hand_samples_and_counts_skips() -> None
 
 
 def test_require_all_splits_flags_thin_coverage() -> None:
-    dataset = prepare(full_samples()[:6], split_table_for(SPLITS), VOCABULARY)
+    dataset = prepare(full_samples()[:6], participant_splitter(split_table_for(SPLITS)), VOCABULARY)
 
     problems = require_all_splits(dataset, min_participants=2)
 
@@ -144,3 +144,71 @@ def test_training_refuses_when_a_split_is_empty(tmp_path: Path) -> None:
 
     assert code == 2
     assert not (tmp_path / "models" / "static_classifier.joblib").exists()
+
+
+def pilot_samples(sessions_per_letter: int, per_session: int) -> list[dict]:
+    """One participant, several sessions per letter. Each session is a separate recording run."""
+    samples = []
+    seed = 5000
+    for label in ["C", "L"]:
+        for index in range(sessions_per_letter):
+            session = f"2026110{index + 1}-100000"
+            for _ in range(per_session):
+                seed += 1
+                sample = make_sample(label, "P001", seed)
+                sample["session"] = session
+                samples.append(sample)
+    return samples
+
+
+def write_raw(directory: Path, samples: list[dict]) -> None:
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / "pilot.jsonl").write_text("\n".join(json.dumps(s) for s in samples) + "\n", encoding="utf-8")
+
+
+def write_vocabulary(path: Path) -> None:
+    path.write_text(json.dumps(VOCABULARY), encoding="utf-8")
+
+
+def test_pilot_trains_on_earlier_sessions_and_tests_on_the_latest(tmp_path: Path) -> None:
+    write_raw(tmp_path / "raw", pilot_samples(sessions_per_letter=3, per_session=25))
+    write_vocabulary(tmp_path / "vocabulary.json")
+
+    code = train_static_classifier.run(
+        tmp_path / "raw",
+        tmp_path / "vocabulary.json",
+        tmp_path / "models",
+        pilot_single_signer=True,
+    )
+
+    report = json.loads((tmp_path / "models" / "static_classifier_report.json").read_text(encoding="utf-8"))
+    assert code == 0
+    assert report["evaluation"] == "single_signer_session_split"
+    assert "SINGLE-SIGNER" in report["warning"]
+    assert report["train_samples"] == 2 * 2 * 25
+    assert report["test"]["samples"] == 2 * 25
+    assert "validation" not in report
+
+
+def test_pilot_refuses_when_a_letter_has_only_one_session(tmp_path: Path) -> None:
+    write_raw(tmp_path / "raw", pilot_samples(sessions_per_letter=1, per_session=40))
+    write_vocabulary(tmp_path / "vocabulary.json")
+
+    code = train_static_classifier.run(
+        tmp_path / "raw",
+        tmp_path / "vocabulary.json",
+        tmp_path / "models",
+        pilot_single_signer=True,
+    )
+
+    assert code == 2
+    assert not (tmp_path / "models" / "static_classifier.joblib").exists()
+
+
+def test_multi_participant_mode_needs_a_split_table(tmp_path: Path) -> None:
+    write_raw(tmp_path / "raw", pilot_samples(sessions_per_letter=2, per_session=5))
+    write_vocabulary(tmp_path / "vocabulary.json")
+
+    code = train_static_classifier.run(tmp_path / "raw", tmp_path / "vocabulary.json", tmp_path / "models")
+
+    assert code == 2
