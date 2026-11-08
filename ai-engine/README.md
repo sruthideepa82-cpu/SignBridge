@@ -10,7 +10,7 @@ The current application captures webcam frames and detects hand landmarks (see `
 - `collection/dataset_stats.py` prints class counts and checks the participant-level split.
 - `dataset/templates/` holds the reviewer worksheet, consent draft, and participant register template.
 - `training/prepare_dataset.py` and `training/train_static_classifier.py` build and evaluate the static classifier. They refuse to train without enough participants per split.
-- `tests/` runs the unit tests (27 passing, synthetic data only): `cd backend; .\.venv\Scripts\python.exe -m pytest ..\ai-engine\tests`.
+- `tests/` runs the unit tests (30 passing; most use synthetic data, and three run real MediaPipe on fixture photos): `cd backend; .\.venv\Scripts\python.exe -m pytest ..\ai-engine\tests`.
 
 ## Layout
 

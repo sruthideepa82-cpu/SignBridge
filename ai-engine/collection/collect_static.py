@@ -58,6 +58,19 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def detect_hands(detector: HandDetector, frame) -> list[dict]:
+    """Run the backend's MediaPipe detector on one BGR frame and convert the result to plain dicts."""
+    result = detector.detect(frame)
+    return [
+        {
+            "handedness": hand.handedness,
+            "score": hand.score,
+            "landmarks": [(p.x, p.y, p.z) for p in hand.landmarks],
+        }
+        for hand in result.hands
+    ]
+
+
 def capture_session(args: argparse.Namespace, entry: dict, settings: Settings) -> int:
     expected_hands = int(entry["hands"])
     session_id = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -111,15 +124,7 @@ def capture_session(args: argparse.Namespace, entry: dict, settings: Settings) -
 
             if time.monotonic() - last_capture < MIN_FRAME_GAP_SECONDS:
                 continue
-            result = detector.detect(frame)
-            hands = [
-                {
-                    "handedness": hand.handedness,
-                    "score": hand.score,
-                    "landmarks": [(p.x, p.y, p.z) for p in hand.landmarks],
-                }
-                for hand in result.hands
-            ]
+            hands = detect_hands(detector, frame)
             if not accept_hands(hands, expected_hands, args.min_score):
                 continue
 

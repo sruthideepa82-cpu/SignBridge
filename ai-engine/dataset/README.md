@@ -106,4 +106,5 @@ python ..\ai-engine\training\train_static_classifier.py --raw ..\ai-engine\datas
 - Nothing is recorded yet, so there are no counts.
 - Handedness is what the detector reports. Its left/right correctness is not yet validated on the live camera (see `PLAN.md`, Section 6).
 - Recordings come from the webcam and detector in use, which may not represent other devices or lighting.
+- The detector tracks hands between frames (VIDEO mode). A hand that enters the frame can take a few frames to be detected, so the first moment of a posture may be dropped. Two-hand classes need the second hand to be steady before the sample is taken. The tool skips frames that do not match, so this lowers the number of accepted samples rather than corrupting them.
 - ISL vocabulary must be checked by a qualified reviewer. Automated checks cannot confirm sign meaning.
