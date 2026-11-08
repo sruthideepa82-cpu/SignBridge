@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     hand_min_presence_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
     hand_min_tracking_confidence: float = Field(default=0.5, ge=0.0, le=1.0)
 
+    recognition_model_path: Path = BACKEND_DIR.parent / "ai-engine" / "models" / "static_classifier.joblib"
+    recognition_threshold: float = Field(default=0.7, ge=0.0, le=1.0)
+
 
 @lru_cache
 def get_settings() -> Settings:

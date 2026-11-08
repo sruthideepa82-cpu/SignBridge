@@ -87,6 +87,20 @@ python ..\ai-engine\collection\dataset_stats.py --raw ..\ai-engine\dataset\raw `
 - `templates/consent_form_template.md`: draft wording. Needs ethics approval before use.
 - `templates/participant_register_template.csv`: header only. The real register is kept offline or in `metadata/` (not committed).
 
+## 6b. Current state and what a trained model needs
+
+- Verified classes (poster-checked, signer confirmation pending): C, L, O, S, U, V. See `metadata/vocabulary.json`.
+- Training needs at least 2 participants in each of train, val, and test for every class. That means at least 6 participants in total. Fewer participants cannot give a participant-level test score, so the training script refuses to run.
+- Pilot order: record consent, assign pseudonyms, record sessions for every class, build `split_table.csv`, run `dataset_stats.py`, then train.
+
+Commands (from `backend/`):
+
+```powershell
+python ..\ai-engine\collection\collect_static.py --label C --participant P001 --consent-ref C-2026-001 --samples 50
+python ..\ai-engine\collection\dataset_stats.py --raw ..\ai-engine\dataset\raw --split-table ..\ai-engine\dataset\metadata\split_table.csv
+python ..\ai-engine\training\train_static_classifier.py --raw ..\ai-engine\dataset\raw --split-table ..\ai-engine\dataset\metadata\split_table.csv
+```
+
 ## 7. Known limitations of this dataset (to be updated)
 
 - Nothing is recorded yet, so there are no counts.

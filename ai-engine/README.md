@@ -9,7 +9,8 @@ The current application captures webcam frames and detects hand landmarks (see `
 - `collection/sample_record.py` holds the pure validation and record logic.
 - `collection/dataset_stats.py` prints class counts and checks the participant-level split.
 - `dataset/templates/` holds the reviewer worksheet, consent draft, and participant register template.
-- `tests/` runs the unit tests (23 passing, synthetic data only): `cd backend; .\.venv\Scripts\python.exe -m pytest ..\ai-engine\tests`.
+- `training/prepare_dataset.py` and `training/train_static_classifier.py` build and evaluate the static classifier. They refuse to train without enough participants per split.
+- `tests/` runs the unit tests (27 passing, synthetic data only): `cd backend; .\.venv\Scripts\python.exe -m pytest ..\ai-engine\tests`.
 
 ## Layout
 

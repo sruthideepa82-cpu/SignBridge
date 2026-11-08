@@ -1,53 +1,62 @@
 {
-  "schema_version": 1,
-  "status": "pending_verification",
-  "note": "No class is active yet. A class becomes usable only when a named human reviewer has checked its label and handshape against an official reference below and set verified to true with the reference filled in. Do not add classes from memory or from unofficial sites.",
+  "schema_version": 2,
+  "status": "pilot_poster_verified",
+  "note": "Classes below were checked against the official ISLRTC chart 'English Alphabets in Indian Sign Language'. The chart was read by an AI assistant, not by a qualified ISL signer or interpreter. Each class has signer_confirmed set to false until a Deaf ISL signer or qualified ISL interpreter confirms the handshape. Do not use these classes for an evaluation claim until that confirmation is recorded. Only classes with verified true can be recorded by collect_static.py.",
   "class_schema": {
-    "label": "Short English gloss or letter used as the class name (for example A or the gloss in the reference)",
+    "label": "The letter used as the class name",
     "type": "static",
-    "hands": "1 or 2, matching the handshape in the reference",
+    "hands": "1 or 2, matching the handshape on the reference chart",
     "meaning": "What the sign means in the reference",
-    "reference": "Source id from sources plus the page, video, or entry used",
-    "verified": "true only after a human has checked the sign against the reference",
-    "reviewed_by": "Reviewer role or initials",
-    "reviewed_on": "YYYY-MM-DD"
+    "reference": "Source id from sources plus the page or cell used",
+    "verified": "true only after a check against the reference",
+    "reviewed_by": "Who checked it",
+    "reviewed_on": "YYYY-MM-DD",
+    "signer_confirmed": "true only after a Deaf ISL signer or qualified ISL interpreter confirms the handshape"
   },
   "sources": [
     {
+      "id": "ISLRTC-ALPHABET",
+      "name": "English Alphabets in Indian Sign Language, ISLRTC chart (developed by ISLRTC, DEPwD, MoSJE)",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3f7e2b2b75b04175610e5a00c1e221ebb/uploads/2025/06/202506021220778202.pdf",
+      "page_listing": "https://islrtc.nic.in/document-category/awareness-material/ (entry 'Alphabet in ISL')",
+      "checked": "PDF downloaded and read on 2026-11-08 (page 1 of 1). Letter shapes read from the chart image.",
+      "notes": "Official ISLRTC chart. It shows each letter as a still drawing. Hand counts were judged from the drawings, so they need signer confirmation."
+    },
+    {
       "id": "ISLRTC-DICT",
-      "name": "ISL Dictionary, Indian Sign Language Research and Training Centre (ISLRTC), DEPwD, MoSJE",
+      "name": "ISL Dictionary, ISLRTC",
       "url": "https://islrtc.nic.in",
-      "checked": "search excerpt only (PIB release 17 Feb 2021: 10,000 terms, videos by Deaf signers, validated in national workshops)",
-      "notes": "Primary official reference for sign form and meaning. Confirm each entry against the video, not the description."
+      "checked": "Not read directly. Dictionary entries are videos.",
+      "notes": "Use for word-level signs in a later phase."
     },
     {
       "id": "NCERT-ISL-200",
       "name": "ISL Dictionary based on Universal Design of Learning (200 words), NCERT and ISLRTC",
       "url": "https://ncert.nic.in/pdf/accessibility/ISL_200word_v15.pdf",
-      "checked": "listed in search results; full document NOT fetched (the fetch failed)",
-      "notes": "Candidate source for a small everyday vocabulary. Needs a manual check before use."
-    },
-    {
-      "id": "ISLRTC-ALPHABET",
-      "name": "Manual alphabet poster, ISLRTC library",
-      "url": "http://islrtc.nic.in/poster-manual-alphabet-isl",
-      "checked": "NOT fetched (the page returned HTTP 404 when accessed)",
-      "notes": "Needed before any finger-spelling class is added. Check whether each letter is one- or two-handed in the official poster."
+      "checked": "Not fetched. The URL failed to download.",
+      "notes": "Candidate source for word-level classes in a later phase."
     },
     {
       "id": "NIOS-ISL",
       "name": "Indian Sign Language, National Institute of Open Schooling",
       "url": "https://www.nios.ac.in/media/documents/230-ISL/Indian-Sign-Language-230.pdf",
-      "checked": "search excerpt only",
-      "notes": "States that ISL fingerspelling is two-handed in the common form, and that ISL is not a manual form of English. Do not treat ASL or BSL letter shapes as ISL without checking."
+      "checked": "Search excerpt only",
+      "notes": "States that ISL fingerspelling is two-handed in the common form, and that ISL is not a manual form of English."
     },
     {
       "id": "RCI-DTISL",
       "name": "Diploma in Teaching Indian Sign Language (DTISL) curriculum, Rehabilitation Council of India",
       "url": "https://cdnbbsr.s3waas.gov.in/s34f4eeef3a8c90dfceaddd5c6d64e4ebb/uploads/2025/07/202507092142739637.pdf",
-      "checked": "search excerpt only",
+      "checked": "Search excerpt only",
       "notes": "Lists the English manual alphabet as two-handed for basic communication and one-handed for deaf-blind learners."
     }
   ],
-  "classes": []
+  "classes": [
+    {"label": "C", "type": "static", "hands": 1, "meaning": "English letter C in ISL fingerspelling", "reference": "ISLRTC-ALPHABET, chart cell C", "verified": true, "reviewed_by": "AI assistant (Claude), reading the official chart", "reviewed_on": "2026-11-08", "signer_confirmed": false},
+    {"label": "L", "type": "static", "hands": 1, "meaning": "English letter L in ISL fingerspelling", "reference": "ISLRTC-ALPHABET, chart cell L", "verified": true, "reviewed_by": "AI assistant (Claude), reading the official chart", "reviewed_on": "2026-11-08", "signer_confirmed": false},
+    {"label": "O", "type": "static", "hands": 1, "meaning": "English letter O in ISL fingerspelling", "reference": "ISLRTC-ALPHABET, chart cell O", "verified": true, "reviewed_by": "AI assistant (Claude), reading the official chart", "reviewed_on": "2026-11-08", "signer_confirmed": false},
+    {"label": "S", "type": "static", "hands": 1, "meaning": "English letter S in ISL fingerspelling", "reference": "ISLRTC-ALPHABET, chart cell S", "verified": true, "reviewed_by": "AI assistant (Claude), reading the official chart", "reviewed_on": "2026-11-08", "signer_confirmed": false},
+    {"label": "U", "type": "static", "hands": 1, "meaning": "English letter U in ISL fingerspelling", "reference": "ISLRTC-ALPHABET, chart cell U", "verified": true, "reviewed_by": "AI assistant (Claude), reading the official chart", "reviewed_on": "2026-11-08", "signer_confirmed": false},
+    {"label": "V", "type": "static", "hands": 1, "meaning": "English letter V in ISL fingerspelling", "reference": "ISLRTC-ALPHABET, chart cell V", "verified": true, "reviewed_by": "AI assistant (Claude), reading the official chart", "reviewed_on": "2026-11-08", "signer_confirmed": false}
+  ]
 }

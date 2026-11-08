@@ -4,17 +4,20 @@ import StatusBadge from '../components/common/StatusBadge.jsx';
 import BackendStatusIndicator from '../components/common/BackendStatusIndicator.jsx';
 import CameraPanel from '../components/camera/CameraPanel.jsx';
 import LandmarkInfoPanel from '../components/hands/LandmarkInfoPanel.jsx';
+import RecognitionPanel from '../components/recognition/RecognitionPanel.jsx';
 import RoadmapPanel from '../components/translator/RoadmapPanel.jsx';
 import TranslationOutputPanel from '../components/translator/TranslationOutputPanel.jsx';
 import useBackendHealth from '../hooks/useBackendHealth.js';
 import useCamera, { CAMERA_STATUS } from '../hooks/useCamera.js';
 import useHandLandmarks from '../hooks/useHandLandmarks.js';
+import useRecognition from '../hooks/useRecognition.js';
 
 export default function TranslatorPage() {
   const backend = useBackendHealth();
   const camera = useCamera();
   const cameraLive = camera.status === CAMERA_STATUS.LIVE;
   const { landmarks, error: landmarkError } = useHandLandmarks(cameraLive);
+  const { result: recognition, error: recognitionError } = useRecognition(cameraLive);
 
   return (
     <PageContainer>
@@ -28,6 +31,9 @@ export default function TranslatorPage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           <CameraPanel camera={camera} landmarks={landmarks} landmarkError={landmarkError} />
+          {cameraLive && (
+            <RecognitionPanel result={recognition} error={recognitionError} />
+          )}
         </div>
 
         <aside className="space-y-6">

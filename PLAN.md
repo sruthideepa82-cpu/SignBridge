@@ -703,8 +703,17 @@ in which Phase 2 is ISL recognition. Those documents are being aligned.
 
 ### Phase 3 --- ISL scope and dataset design
 
-**Status (2026-11-08): in progress, started.** Phase 3 is open. Its acceptance
-criteria are not met.
+**Status (2026-11-08): in progress.** Phase 3 is open. Its acceptance criteria
+are not met, because no samples have been recorded and no signer has confirmed
+the handshapes.
+
+Update 2026-11-08: the official ISLRTC chart "English Alphabets in Indian Sign
+Language" was downloaded and read (source id `ISLRTC-ALPHABET`). Six one-handed
+static letters are marked verified in `vocabulary.json`: C, L, O, S, U, V. Each
+has `signer_confirmed: false` until a Deaf ISL signer or qualified ISL
+interpreter confirms it. Letters with two-hand or moving shapes are excluded
+until their hand counts are confirmed. "A" is not in the pilot set, because the
+hand count on the chart could not be confirmed.
 
 Done:
 -   Protocol: `ai-engine/dataset/README.md` (consent, pseudonyms, recording,
@@ -717,7 +726,7 @@ Done:
     `ai-engine/collection/collect_static.py`.
 -   Dataset report, reproducible participant-level split, and coverage/leakage
     checks: `ai-engine/collection/dataset_stats.py`.
--   Tests: `ai-engine/tests/` (23 passing). They use synthetic data only.
+-   Tests: `ai-engine/tests/` (27 passing). They use synthetic data only.
 
 Blocked on people and access (this environment cannot do these):
 -   Official ISLRTC references could not be read. The poster page returns 404,
@@ -739,6 +748,29 @@ limitations. - Training, validation, and test data are separated without
 participant leakage.
 
 ### Phase 4 --- Static sign classification
+
+**Status (2026-11-08): pipeline built and tested; no model trained yet.**
+Built:
+-   Feature normalization shared by training and live use:
+    `backend/app/services/landmark_features.py` (63 values, wrist-relative,
+    scaled by hand size). Tests in `backend/tests/test_landmark_features.py`.
+-   Dataset preparation: `ai-engine/training/prepare_dataset.py`.
+-   Training and evaluation with a participant-level split:
+    `ai-engine/training/train_static_classifier.py` (RandomForest, 300 trees).
+    It refuses to run when a split is empty or a class has too few
+    participants. It writes the model and a metrics report to
+    `ai-engine/models/`.
+-   Live recognition: `backend/app/services/recognition_service.py`, served at
+    `GET /api/recognition/latest`. It returns a letter only when the
+    probability reaches `SIGNBRIDGE_RECOGNITION_THRESHOLD` (default 0.7). It
+    returns "no model" when no model file exists.
+-   Frontend panel "Letter recognition (pilot)" on `/translator`.
+-   Tests: backend 57 passing (including 5 recognition tests on a synthetic
+    model), AI engine 27 passing, frontend 38 passing.
+
+Not done (needs data): training on real recordings, held-out evaluation, and
+the confusion matrix and per-class report. The live panel shows "no model
+loaded" until a model is trained.
 
 Tasks: - Build feature extraction and normalization. - Train a baseline
 model. - Evaluate per-class performance. - Add confidence threshold and

@@ -51,11 +51,13 @@ def test_only_verified_classes_with_reference_are_usable() -> None:
     assert set(verified_classes(vocabulary)) == {"GOOD"}
 
 
-def test_shipped_vocabulary_has_no_usable_class_yet() -> None:
+def test_shipped_vocabulary_has_the_six_poster_checked_one_handed_letters() -> None:
     vocabulary = json.loads((AI_ENGINE_DIR / "dataset" / "metadata" / "vocabulary.json").read_text("utf-8"))
 
-    assert vocabulary["status"] == "pending_verification"
-    assert verified_classes(vocabulary) == {}
+    usable = verified_classes(vocabulary)
+    assert set(usable) == {"C", "L", "O", "S", "U", "V"}
+    assert all(entry["hands"] == 1 for entry in usable.values())
+    assert all(entry["signer_confirmed"] is False for entry in usable.values())
 
 
 def test_accepts_exact_hand_count_with_full_landmarks_and_confidence() -> None:

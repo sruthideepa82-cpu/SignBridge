@@ -210,6 +210,7 @@ Base URL: `http://127.0.0.1:8000/api`. Errors use one JSON shape:
 | POST | `/camera/stop` | Stop capturing and release the webcam | `200` status object | — |
 | GET | `/camera/landmarks` | Latest hand landmarks, matched to the most recent annotated frame | `200` `{status, running, detection_available, detection_error, frame_sequence, hand_count, hands, timestamp}` | — |
 | GET | `/camera/stream` | MJPEG stream of annotated frames (`multipart/x-mixed-replace; boundary=frame`) | `200` stream of JPEG frames | `409 camera_not_running` |
+| GET | `/recognition/latest` | Letter recognition for the newest frame with one visible hand. Returns a label only above the confidence threshold | `200` `{status, label, confidence, threshold, frame_sequence, detail}` where `status` is `camera_off`, `no_model`, `no_hand`, `two_hands`, `uncertain`, or `recognized` | — |
 
 `status` is one of `camera_off`, `detection_unavailable` (the hand model did not load), `processing_error` (the latest frame could not be processed; `hands` is empty), `no_hand`, or `hand_detected`. Each hand has `handedness` (`Left`/`Right`), `score`, and 21 `landmarks` with `index`, `name`, and normalized `x`, `y` (0–1 across the frame, origin top-left) and `z` (depth relative to the wrist).
 
@@ -320,9 +321,9 @@ npm test
 
 | Suite | Count | What it covers |
 | --- | --- | --- |
-| Backend unit/API (`tests/test_*.py`, excluding hardware) | 47 | Health, CORS, error shapes, camera lifecycle, MJPEG framing, 503/409 handling, release on stop, single-instance start; MediaPipe detection on real images (no hand, one hand = 21 landmarks, two hands = 42, connections drawn, source frame unchanged); landmarks API with a hand appearing and then removed; detector load failure reported without breaking the camera |
+| Backend unit/API (`tests/test_*.py`, excluding hardware) | 57 | Health, CORS, error shapes, camera lifecycle, MJPEG framing, 503/409 handling, release on stop, single-instance start; MediaPipe detection on real images (no hand, one hand = 21 landmarks, two hands = 42, connections drawn, source frame unchanged); landmarks API with a hand appearing and then removed; detector load failure reported without breaking the camera |
 | Backend hardware (`tests/test_camera_hardware.py`) | 3 | Real webcam: start, receive JPEG frames over HTTP, stop, reopen, and read the landmarks endpoint |
-| Frontend (`src/**/*.test.*`) | 33 | Routes and page content, API error mapping, camera hook states, landmark polling, landmark panel (no coordinates without a hand, 21 rows per hand, two tables for two hands), status badges |
+| Frontend (`src/**/*.test.*`) | 38 | Routes and page content, API error mapping, camera hook states, landmark polling, landmark panel (no coordinates without a hand, 21 rows per hand, two tables for two hands), status badges |
 
 The hand detection tests use real MediaPipe inference on fixture photos in `backend/tests/fixtures/` (see the README there for sources and licenses). The "hand removed" test uses a test camera that switches between a hand image and a blank frame, so the real detector runs on both states. Test results are reported from actual runs; tests that need the model or fixtures are skipped with a message if they are missing.
 
@@ -374,7 +375,7 @@ Phase numbers follow `PLAN.md`, which is the master plan.
 1. **Phases 0 and 1, foundation and webcam (done):** React and FastAPI scaffold, OpenCV capture, and MJPEG streaming. Tests pass.
 2. **Phase 2, MediaPipe hand detection (done):** automated and hardware tests pass, and manual checks confirmed left/right labels, moving hands, and repeated start/stop. Open for later testing: a live two-hand session, a long soak test, and frame-rate measurements.
 3. **Phase 3, ISL scope and dataset design (started, not complete):** protocol, gated vocabulary, recording tool, and split tooling exist. A reviewer must verify the vocabulary, consent must be collected, and samples must be recorded. See `ai-engine/dataset/README.md`.
-4. **Phase 4, static sign classification:** feature normalization, a baseline classifier, and held-out evaluation.
+4. **Phase 4, static sign classification (pipeline built, no model trained):** the feature code, training script, live endpoint, and panel are in place. A model needs recorded samples from several participants (see `ai-engine/dataset/README.md`). Install ML dependencies with `pip install -r requirements-ai.txt`.
 5. **Phase 5, text output and stabilization:** smoothing, clear and undo, and confidence handling.
 6. **Phase 6, text-to-speech:** browser SpeechSynthesis for committed text only.
 7. **Phases 7 to 10:** dynamic signs, NLP, learning and persistence, and final testing and deployment.

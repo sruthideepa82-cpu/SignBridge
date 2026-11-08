@@ -14,6 +14,7 @@ from app.core.config import Settings, get_settings
 from app.core.exceptions import SignBridgeError
 from app.services.camera_service import CameraService
 from app.services.hand_detection_service import create_hand_detector_factory
+from app.services.recognition_service import StaticRecognizer
 
 logger = logging.getLogger("signbridge")
 
@@ -81,6 +82,7 @@ def create_app(
     )
     app.state.settings = settings
     app.state.camera_service = camera
+    app.state.recognizer = StaticRecognizer(settings.recognition_model_path, settings.recognition_threshold)
 
     app.add_middleware(
         CORSMiddleware,
