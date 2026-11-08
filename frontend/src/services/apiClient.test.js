@@ -38,13 +38,22 @@ describe('apiRequest', () => {
   });
 
   it('falls back to a generic message when the error body is not JSON', async () => {
-    fetch.mockResolvedValue(new Response('Bad gateway', { status: 502 }));
+    fetch.mockResolvedValue(new Response('Server error', { status: 500 }));
 
     const error = await apiRequest('/health').catch((caught) => caught);
 
-    expect(error.status).toBe(502);
-    expect(error.code).toBe('http_502');
-    expect(error.message).toBe('Request failed with status 502.');
+    expect(error.status).toBe(500);
+    expect(error.code).toBe('http_500');
+    expect(error.message).toBe('Request failed with status 500.');
+  });
+
+  it('reports the backend as unreachable when the dev proxy returns 502 without a body', async () => {
+    fetch.mockResolvedValue(new Response('Bad gateway', { status: 502 }));
+
+    const error = await apiRequest('/camera/landmarks').catch((caught) => caught);
+
+    expect(error.code).toBe('network_error');
+    expect(error.message).toMatch(/cannot reach the signbridge backend/i);
   });
 
   it('reports a clear message when the backend cannot be reached', async () => {

@@ -322,7 +322,7 @@ npm test
 | --- | --- | --- |
 | Backend unit/API (`tests/test_*.py`, excluding hardware) | 47 | Health, CORS, error shapes, camera lifecycle, MJPEG framing, 503/409 handling, release on stop, single-instance start; MediaPipe detection on real images (no hand, one hand = 21 landmarks, two hands = 42, connections drawn, source frame unchanged); landmarks API with a hand appearing and then removed; detector load failure reported without breaking the camera |
 | Backend hardware (`tests/test_camera_hardware.py`) | 3 | Real webcam: start, receive JPEG frames over HTTP, stop, reopen, and read the landmarks endpoint |
-| Frontend (`src/**/*.test.*`) | 32 | Routes and page content, API error mapping, camera hook states, landmark polling, landmark panel (no coordinates without a hand, 21 rows per hand, two tables for two hands), status badges |
+| Frontend (`src/**/*.test.*`) | 33 | Routes and page content, API error mapping, camera hook states, landmark polling, landmark panel (no coordinates without a hand, 21 rows per hand, two tables for two hands), status badges |
 
 The hand detection tests use real MediaPipe inference on fixture photos in `backend/tests/fixtures/` (see the README there for sources and licenses). The "hand removed" test uses a test camera that switches between a hand image and a blank frame, so the real detector runs on both states. Test results are reported from actual runs; tests that need the model or fixtures are skipped with a message if they are missing.
 
@@ -350,7 +350,7 @@ The browser never accesses the webcam directly; only the backend does. Browser p
 - Backend: `GET /api/health`, environment-based settings, CORS for the Vite dev server, structured errors, and a camera service with MJPEG streaming.
 - Frontend camera panel: Start and Stop, status badges, connecting and error states, live preview, and automatic status checks while live.
 - MediaPipe hand landmark detection on live OpenCV frames: up to two hands, 21 landmarks each, drawn on the stream, with a hand count, status badge, and coordinate panel.
-- Verified on 2026-11-08: frontend build and 32 frontend tests; 47 backend tests; 3 hardware tests on the real webcam; and a browser run in Chrome that started the camera, saw decoded frames, showed the hand status, and confirmed the camera was released (earlier run).
+- Verified on 2026-11-08: frontend build and 33 frontend tests; 47 backend tests; 3 hardware tests on the real webcam; and a browser run in Chrome that started the camera, saw decoded frames, showed the hand status, and confirmed the camera was released (earlier run).
 
 **Not implemented (by design in this phase)**
 
@@ -372,7 +372,7 @@ See [`docs/DEVELOPMENT_PLAN.md`](docs/DEVELOPMENT_PLAN.md) for the full plan. In
 Phase numbers follow `PLAN.md`, which is the master plan.
 
 1. **Phases 0 and 1, foundation and webcam (done):** React and FastAPI scaffold, OpenCV capture, and MJPEG streaming. Tests pass.
-2. **Phase 2, MediaPipe hand detection (implemented, not yet closed):** automated and hardware tests pass. Still open: live handedness and two-hand checks, a start/stop soak test, and the stale-landmark fixes listed under known limitations.
+2. **Phase 2, MediaPipe hand detection (done):** automated and hardware tests pass, and manual checks confirmed left/right labels, moving hands, and repeated start/stop. Open for later testing: a live two-hand session, a long soak test, and frame-rate measurements.
 3. **Phase 3, ISL scope and dataset design (started, not complete):** protocol, gated vocabulary, recording tool, and split tooling exist. A reviewer must verify the vocabulary, consent must be collected, and samples must be recorded. See `ai-engine/dataset/README.md`.
 4. **Phase 4, static sign classification:** feature normalization, a baseline classifier, and held-out evaluation.
 5. **Phase 5, text output and stabilization:** smoothing, clear and undo, and confidence handling.

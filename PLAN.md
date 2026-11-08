@@ -674,24 +674,28 @@ automated or hardware test, `[~]` = partly proven, `[ ]` = not yet proven):
 -   [x] One hand returns 21 landmarks (still-image test).
 -   [~] Two hands return up to 42 landmarks: proven on a composite still
     image only. A live two-hand check is still needed.
--   [~] Each hand has a handedness label: the label is always present, but
-    its left/right correctness is not yet validated.
+-   [x] Each hand has a handedness label, and the left/right labels were
+    correct in live manual testing (user report, 2026-11-08). Method: the user
+    showed each hand to the camera and compared the panel label.
 -   [x] Landmark points and connections are drawn (annotation test checks a
     drawn connection pixel).
--   [ ] Moving the hand updates landmarks (manual check required).
+-   [x] Moving the hand updates landmarks (manual check, user report 2026-11-08).
 -   [x] Removing the hand clears the current result (toggle-camera test and
     `no_hand` status test). The frontend still shows stale hands after a
     poll error (defect 2 above).
--   [~] Repeated start/stop does not leak or lock the camera: two cycles are
-    automated and the camera is released. A longer soak test is still
-    needed.
+-   [x] Repeated start/stop does not leak or lock the camera: five manual
+    cycles worked (user report, 2026-11-08), and automated tests cover two
+    cycles plus camera release. A long soak test is not run.
 -   [x] Inference is not initialized for every frame (the detector is built
     once in `CameraService.start()` and reused). No test asserts this yet.
 -   [x] Existing frontend and backend behavior remains functional (after the
     fix pass: backend 47 passed, frontend 32 passed, build succeeds).
 
-**Phase 2 is not closed.** The `[~]` and `[ ]` items and defects 1 and 2
-must be resolved first.
+**Phase 2 is closed (2026-11-08).** Automated tests, hardware tests, and the
+manual checks in the user report pass. Defects 1 to 5 are fixed. Still open,
+and not blocking Phase 2: a live two-hand check with a real camera (the
+composite still-image test passes, but a live session has not been
+reported), a long soak test, and frame-rate measurements. These are recorded for Phase 10 (testing).
 
 Numbering note: the phase numbers in this section are authoritative.
 `docs/DEVELOPMENT_PLAN.md` and the README roadmap use an older numbering

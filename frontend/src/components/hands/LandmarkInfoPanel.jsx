@@ -9,7 +9,7 @@ function HandTable({ hand, handNumber }) {
         </p>
         <p className="text-xs text-slate-500">Confidence {Math.round(hand.score * 100)}%</p>
       </div>
-      <div className="max-h-72 overflow-auto">
+      <div>
         <table className="w-full text-left text-xs">
           <caption className="sr-only">Landmarks for hand {handNumber}</caption>
           <thead className="sticky top-0 bg-white text-slate-500">
