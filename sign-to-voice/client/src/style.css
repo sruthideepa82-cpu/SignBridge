@@ -189,6 +189,71 @@ body {
   }
 }
 
+.face-tag {
+  position: absolute;
+  padding: 2px 8px;
+  border: 1px solid;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  transform: translate(-100%, -100%);
+  pointer-events: none;
+}
+
+.face-tag[hidden] {
+  display: none;
+}
+
+.emotion-legend {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 8px 10px;
+  list-style: none;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.emotion-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+.emotion-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--emotion-color, #888);
+  opacity: 0.45;
+  transition: opacity 0.25s ease, box-shadow 0.25s ease;
+}
+
+.emotion-legend li.is-active {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.emotion-legend li.is-active .emotion-dot {
+  opacity: 1;
+  box-shadow: 0 0 8px var(--emotion-color, #888);
+}
+
 .camera-message {
   position: absolute;
   inset: 0;

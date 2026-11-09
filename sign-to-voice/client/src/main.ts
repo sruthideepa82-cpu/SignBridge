@@ -4,11 +4,14 @@ import { appendGloss, type Gloss } from './app/gloss';
 import { CONFIDENCE_THRESHOLD, FINISH_WORD, HOLD_MS } from './app/signs';
 import { renderPipeline } from './ui/pipeline';
 import { renderGlossStrip, renderSignPill } from './ui/overlays';
+import { drawFaceBox, drawFaceMesh, faceBox, positionEmotionTag, renderEmotionLegend } from './ui/faceOverlay';
 import { drawHandSkeleton } from './vision/drawing';
 import { CameraError, startCamera } from './vision/camera';
 import { createHandTracker, type HandTracker } from './vision/handTracker';
+import { createFaceTracker, type FaceTracker } from './vision/faceTracker';
 import { ruleBasedClassifier, type SignPrediction } from './recognition/classifier';
 import { initialHoldState, updateHold, type HoldState } from './recognition/holdTracker';
+import { classifyEmotion, EmotionSmoother, EmotionTally, type Emotion } from './recognition/emotion';
 
 const video = document.querySelector<HTMLVideoElement>('#video')!;
 const canvas = document.querySelector<HTMLCanvasElement>('#overlay')!;
@@ -18,10 +21,14 @@ const pipeline = document.querySelector<HTMLElement>('.pipeline')!;
 const glossStrip = document.querySelector<HTMLElement>('#gloss-strip')!;
 const signPill = document.querySelector<HTMLElement>('#sign-pill')!;
 const clearButton = document.querySelector<HTMLButtonElement>('#clear-btn')!;
+const faceTag = document.querySelector<HTMLElement>('#face-tag')!;
+const legend = document.querySelector<HTMLElement>('.emotion-legend')!;
 const ctx = canvas.getContext('2d')!;
 
 let state: PipelineState = 'idle';
 let tracker: HandTracker | null = null;
+let faceTracker: FaceTracker | null = null;
+let emotionUnavailable = false;
 let lastVideoTime = -1;
 let frameCount = 0;
 let fpsWindowStart = performance.now();
@@ -32,6 +39,10 @@ let hold: HoldState = initialHoldState();
 let current: SignPrediction | null = null;
 let finishNoticeUntil = 0;
 
+const smoother = new EmotionSmoother(15);
+const tally = new EmotionTally();
+let activeEmotion: Emotion | null = null;
+
 function setState(next: PipelineState): void {
   state = next;
   renderPipeline(pipeline, activeSteps(state));
@@ -39,7 +50,8 @@ function setState(next: PipelineState): void {
 }
 
 function updateStateLabel(): void {
-  stateLabel.textContent = `State: ${STATE_LABELS[state]} · ${fps} fps`;
+  const emotionNote = emotionUnavailable ? ' · emotion unavailable' : '';
+  stateLabel.textContent = `State: ${STATE_LABELS[state]} · ${fps} fps${emotionNote}`;
 }
 
 function showMessage(text: string | null): void {
@@ -68,15 +80,38 @@ function clearSequence(): void {
   glosses = [];
   hold = initialHoldState();
   current = null;
+  tally.reset();
   renderGlossStrip(glossStrip, glosses);
 }
 
 function renderPill(now: number): void {
-  const finishing = now < finishNoticeUntil;
   renderSignPill(signPill, { prediction: current });
-  if (finishing) {
+  if (now < finishNoticeUntil) {
     signPill.querySelector<HTMLElement>('.pill-hint')!.textContent = 'FINISH — interpretation arrives in a later stage';
   }
+}
+
+function updateFace(video: HTMLVideoElement, now: number, width: number, height: number): void {
+  if (!faceTracker) return;
+
+  const face = faceTracker.detect(video, now);
+  if (!face) {
+    smoother.reset();
+    activeEmotion = null;
+    faceTag.hidden = true;
+    renderEmotionLegend(legend, null);
+    return;
+  }
+
+  const scores = classifyEmotion(face.blendshapes).scores;
+  activeEmotion = smoother.push(scores);
+  tally.add(activeEmotion);
+
+  const box = faceBox(face.landmarks);
+  drawFaceMesh(ctx, face.landmarks, width, height);
+  drawFaceBox(ctx, box, width, height);
+  positionEmotionTag(faceTag, box, activeEmotion);
+  renderEmotionLegend(legend, activeEmotion);
 }
 
 function frame(now: number): void {
@@ -90,6 +125,7 @@ function frame(now: number): void {
     const { hands } = tracker.detect(video, now);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateFace(video, now, canvas.width, canvas.height);
     for (const hand of hands) {
       drawHandSkeleton(ctx, hand.landmarks, canvas.width, canvas.height);
     }
@@ -125,13 +161,20 @@ async function boot(): Promise<void> {
   }
 
   setState(transition(state, { type: 'CAMERA_STARTED' }));
-  showMessage('Loading hand model…');
+  showMessage('Loading hand and face models…');
 
   try {
     tracker = await createHandTracker();
   } catch {
     showMessage('The hand tracking model could not be loaded. Check that the models folder is present.');
     return;
+  }
+
+  try {
+    faceTracker = await createFaceTracker();
+  } catch {
+    emotionUnavailable = true;
+    updateStateLabel();
   }
 
   showMessage(null);
