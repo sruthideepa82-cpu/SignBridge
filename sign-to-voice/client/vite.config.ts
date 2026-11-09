@@ -6,7 +6,8 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
-      '/api': 'http://localhost:8000',
+      // The interpretation server. Port 8000 belongs to the existing SignBridge backend.
+      '/api': 'http://localhost:8100',
     },
   },
 });

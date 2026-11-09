@@ -1,10 +1,13 @@
 import './style.css';
 import { activeSteps, STATE_LABELS, transition, type PipelineState } from './app/stateMachine';
-import { appendGloss, type Gloss } from './app/gloss';
+import { appendGloss, glossWords, type Gloss } from './app/gloss';
 import { CONFIDENCE_THRESHOLD, FINISH_WORD, HOLD_MS } from './app/signs';
+import { interpretGlosses } from './app/interpretClient';
+import { noopSpeaker, silenceEnded, type Speaker } from './app/utterance';
 import { renderPipeline } from './ui/pipeline';
 import { renderGlossStrip, renderSignPill } from './ui/overlays';
 import { drawFaceBox, drawFaceMesh, faceBox, positionEmotionTag, renderEmotionLegend } from './ui/faceOverlay';
+import { renderCaption } from './ui/caption';
 import { drawHandSkeleton } from './vision/drawing';
 import { CameraError, startCamera } from './vision/camera';
 import { createHandTracker, type HandTracker } from './vision/handTracker';
@@ -14,6 +17,7 @@ import { initialHoldState, updateHold, type HoldState } from './recognition/hold
 import { classifyEmotion, EmotionSmoother, EmotionTally, type Emotion } from './recognition/emotion';
 
 const video = document.querySelector<HTMLVideoElement>('#video')!;
+const frameElement = document.querySelector<HTMLElement>('#frame')!;
 const canvas = document.querySelector<HTMLCanvasElement>('#overlay')!;
 const message = document.querySelector<HTMLElement>('#camera-message')!;
 const stateLabel = document.querySelector<HTMLElement>('#state-label')!;
@@ -23,7 +27,10 @@ const signPill = document.querySelector<HTMLElement>('#sign-pill')!;
 const clearButton = document.querySelector<HTMLButtonElement>('#clear-btn')!;
 const faceTag = document.querySelector<HTMLElement>('#face-tag')!;
 const legend = document.querySelector<HTMLElement>('.emotion-legend')!;
+const caption = document.querySelector<HTMLElement>('#caption')!;
 const ctx = canvas.getContext('2d')!;
+
+const speaker: Speaker = noopSpeaker;
 
 let state: PipelineState = 'idle';
 let tracker: HandTracker | null = null;
@@ -38,6 +45,8 @@ let glosses: Gloss[] = [];
 let hold: HoldState = initialHoldState();
 let current: SignPrediction | null = null;
 let finishNoticeUntil = 0;
+let lastHandSeenAt = 0;
+let interpreting = false;
 
 const smoother = new EmotionSmoother(15);
 const tally = new EmotionTally();
@@ -66,32 +75,61 @@ function syncCanvasSize(): void {
   }
 }
 
-function handleConfirmed(sign: SignPrediction, now: number): void {
-  if (sign.word === FINISH_WORD) {
-    // The interpretation stage is not built yet. FINISH is never added to the gloss sequence.
-    finishNoticeUntil = now + 3000;
-    return;
-  }
-  glosses = appendGloss(glosses, { word: sign.word, confidence: sign.confidence });
+// The hold state is kept on purpose: a sign still held after FINISH must not confirm again.
+function resetUtterance(): void {
+  glosses = [];
+  tally.reset();
   renderGlossStrip(glossStrip, glosses);
 }
 
 function clearSequence(): void {
-  glosses = [];
-  hold = initialHoldState();
+  resetUtterance();
   current = null;
-  tally.reset();
+}
+
+async function runUtterance(): Promise<void> {
+  if (interpreting || glosses.length === 0) return;
+  interpreting = true;
+
+  const words = glossWords(glosses);
+  const emotion = tally.dominant();
+  setState(transition(state, { type: 'INTERPRET' }));
+  resetUtterance();
+
+  const result = await interpretGlosses(words, emotion);
+  renderCaption(caption, frameElement, result);
+
+  setState(transition(state, { type: 'INTERPRETED' }));
+  await speaker.speak(result.sentence);
+  setState(transition(state, { type: 'SPEECH_DONE' }));
+
+  interpreting = false;
+}
+
+function handleConfirmed(sign: SignPrediction, now: number): void {
+  if (state !== 'tracking') return;
+
+  if (sign.word === FINISH_WORD) {
+    if (glosses.length === 0) {
+      finishNoticeUntil = now + 3000;
+      return;
+    }
+    void runUtterance();
+    return;
+  }
+
+  glosses = appendGloss(glosses, { word: sign.word, confidence: sign.confidence });
   renderGlossStrip(glossStrip, glosses);
 }
 
 function renderPill(now: number): void {
   renderSignPill(signPill, { prediction: current });
   if (now < finishNoticeUntil) {
-    signPill.querySelector<HTMLElement>('.pill-hint')!.textContent = 'FINISH — interpretation arrives in a later stage';
+    signPill.querySelector<HTMLElement>('.pill-hint')!.textContent = 'Sign a word before FINISH';
   }
 }
 
-function updateFace(video: HTMLVideoElement, now: number, width: number, height: number): void {
+function updateFace(now: number, width: number, height: number): void {
   if (!faceTracker) return;
 
   const face = faceTracker.detect(video, now);
@@ -105,7 +143,7 @@ function updateFace(video: HTMLVideoElement, now: number, width: number, height:
 
   const scores = classifyEmotion(face.blendshapes).scores;
   activeEmotion = smoother.push(scores);
-  tally.add(activeEmotion);
+  if (state === 'tracking') tally.add(activeEmotion);
 
   const box = faceBox(face.landmarks);
   drawFaceMesh(ctx, face.landmarks, width, height);
@@ -123,9 +161,10 @@ function frame(now: number): void {
   if (video.currentTime !== lastVideoTime) {
     lastVideoTime = video.currentTime;
     const { hands } = tracker.detect(video, now);
+    if (hands.length > 0) lastHandSeenAt = now;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    updateFace(video, now, canvas.width, canvas.height);
+    updateFace(now, canvas.width, canvas.height);
     for (const hand of hands) {
       drawHandSkeleton(ctx, hand.landmarks, canvas.width, canvas.height);
     }
@@ -134,6 +173,10 @@ function frame(now: number): void {
     const update = updateHold(hold, current, now, { threshold: CONFIDENCE_THRESHOLD, holdMs: HOLD_MS });
     hold = update.state;
     if (update.confirmed) handleConfirmed(update.confirmed, now);
+
+    if (state === 'tracking' && silenceEnded(lastHandSeenAt, now, glosses.length)) {
+      void runUtterance();
+    }
 
     renderPill(now);
   }
@@ -161,6 +204,7 @@ async function boot(): Promise<void> {
   }
 
   setState(transition(state, { type: 'CAMERA_STARTED' }));
+  lastHandSeenAt = performance.now();
   showMessage('Loading hand and face models…');
 
   try {
