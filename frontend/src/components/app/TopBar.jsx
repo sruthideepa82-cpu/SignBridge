@@ -1,8 +1,9 @@
-import { Bell, ChevronRight, Menu, Type, User } from 'lucide-react';
+import { Bell, ChevronRight, Menu, Type } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import BackendStatusIndicator from '../common/BackendStatusIndicator.jsx';
 import useBackendHealth from '../../hooks/useBackendHealth.js';
 import { findAppItem, APP_FOOTER_ITEMS } from '../../config/appNavigation.js';
+import { USER_PROFILE } from '../../config/userProfile.js';
 import { TEXT_SCALES, useTextScale } from '../../hooks/useAppPreferences.js';
 import CommandSearch from './CommandSearch.jsx';
 import Popover from './Popover.jsx';
@@ -84,10 +85,10 @@ function ProfilePanel({ close }) {
     <div className="p-2">
       <div className="flex items-center gap-3 px-2 pb-3">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-app-bg text-sm font-semibold text-app-text" aria-hidden="true">
-          G
+          {USER_PROFILE.initials}
         </span>
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-app-text">Guest</p>
+          <p className="text-sm font-semibold text-app-text">{USER_PROFILE.fullName}</p>
           <p className="text-xs text-app-muted">Accounts are not available yet</p>
         </div>
       </div>
@@ -120,7 +121,7 @@ export default function TopBar({ onOpenMenu }) {
   const { scaleId, setScaleId } = useTextScale();
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-app-border bg-app-bg/95 px-3 backdrop-blur-sm sm:px-5">
+    <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-app-border bg-app-bg/95 px-3 backdrop-blur-sm sm:px-6">
       <button
         type="button"
         onClick={onOpenMenu}
@@ -134,21 +135,28 @@ export default function TopBar({ onOpenMenu }) {
         <Breadcrumbs pathname={pathname} />
       </div>
 
-      <div className="flex min-w-0 flex-1 justify-end md:flex-none md:justify-center md:px-4 lg:flex-1">
+      <div className="flex min-w-0 flex-1 justify-end md:w-80 md:flex-none lg:w-[26rem]">
         <CommandSearch />
       </div>
 
       <div className="flex shrink-0 items-center gap-1 sm:gap-2">
-        <div className="hidden sm:block">
+        <div className="hidden lg:block">
           <BackendStatusIndicator status={backend.status} onRefresh={backend.refresh} dark />
         </div>
-        <Popover label="Notifications" trigger={<Bell size={17} aria-hidden="true" />}>
+        <Popover label="Notifications" trigger={<Bell size={18} aria-hidden="true" />}>
           <NotificationsPanel />
         </Popover>
         <Popover label="Accessibility options" trigger={<Type size={17} aria-hidden="true" />}>
           <AccessibilityPanel scaleId={scaleId} onChange={setScaleId} />
         </Popover>
-        <Popover label="Account menu" trigger={<User size={17} aria-hidden="true" />}>
+        <Popover
+          label="Account menu"
+          trigger={
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-app-surface text-xs font-semibold text-app-text ring-1 ring-white/10">
+              {USER_PROFILE.initials}
+            </span>
+          }
+        >
           {(close) => <ProfilePanel close={close} />}
         </Popover>
       </div>

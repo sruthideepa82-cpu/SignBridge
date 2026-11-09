@@ -6,7 +6,7 @@ import { renderApp } from './test/renderWithRouter.jsx';
 const ROUTES = [
   ['/', null],
   ['/learn', null],
-  ['/dashboard', 'Welcome to SignBridge'],
+  ['/dashboard', 'Welcome back, Sruthi'],
   ['/translator', 'Sign to Voice'],
   ['/voice-to-text', 'Voice to Text'],
   ['/quick-connect', 'Quick Connect'],

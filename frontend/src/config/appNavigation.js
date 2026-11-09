@@ -5,11 +5,14 @@ import {
   FlaskConical,
   GraduationCap,
   Hand,
+  HandHeart,
+  Blocks,
   LayoutDashboard,
   LifeBuoy,
   Mic,
   MessageCircle,
   MessagesSquare,
+  Radio,
   Settings,
   Zap,
 } from 'lucide-react';
@@ -18,6 +21,7 @@ import {
 export const APP_SECTIONS = [
   {
     label: 'Communicate',
+    icon: Radio,
     items: [
       { label: 'Overview', to: '/dashboard', icon: LayoutDashboard },
       { label: 'Sign to Voice', to: '/translator', icon: Hand },
@@ -28,6 +32,7 @@ export const APP_SECTIONS = [
   },
   {
     label: 'Learn',
+    icon: Blocks,
     items: [
       { label: 'ISL Dictionary', to: '/learn/dictionary', icon: BookOpen },
       { label: 'Guided Learning', to: '/learn/lessons', icon: GraduationCap },
@@ -36,6 +41,7 @@ export const APP_SECTIONS = [
   },
   {
     label: 'Contribute',
+    icon: HandHeart,
     items: [
       { label: 'Dataset Contribution', to: '/contribute', icon: Database },
       { label: 'Community & Feedback', to: '/community', icon: MessageCircle },
@@ -44,8 +50,8 @@ export const APP_SECTIONS = [
 ];
 
 export const APP_FOOTER_ITEMS = [
-  { label: 'Help & Support', to: '/help', icon: LifeBuoy },
   { label: 'Accessibility', to: '/accessibility', icon: Accessibility },
+  { label: 'Help & Support', to: '/help', icon: LifeBuoy },
   { label: 'Settings', to: '/settings', icon: Settings },
 ];
 

@@ -48,8 +48,7 @@ describe('Dashboard', () => {
   it('shows honest empty states instead of invented activity', () => {
     renderApp('/dashboard');
 
-    expect(screen.getByText('No conversations yet')).toBeInTheDocument();
-    expect(screen.getByText('No translations in this session')).toBeInTheDocument();
+    expect(screen.getByText('No activity yet')).toBeInTheDocument();
     expect(screen.getAllByText('Checked on Sign to Voice', { selector: 'span' })).toHaveLength(2);
   });
 

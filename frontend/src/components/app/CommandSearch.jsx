@@ -58,7 +58,7 @@ export default function CommandSearch() {
 
   return (
     <div className="relative w-full max-w-md">
-      <label className="flex items-center gap-2 rounded-lg border border-app-border bg-app-bg px-3 py-2 text-sm text-app-muted focus-within:border-lime-signal/60">
+      <label className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-app-muted transition-colors focus-within:border-lime-signal/60">
         <Search size={15} aria-hidden="true" />
         <span className="sr-only">Search pages</span>
         <input
@@ -70,7 +70,7 @@ export default function CommandSearch() {
             setActive(0);
           }}
           onKeyDown={onKeyDown}
-          placeholder="Search pages"
+          placeholder="Search pages, signs, or lessons…"
           aria-label="Search pages"
           role="combobox"
           aria-expanded={open && results.length > 0}
