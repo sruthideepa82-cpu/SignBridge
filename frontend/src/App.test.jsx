@@ -61,9 +61,10 @@ describe('SignBridge routes', () => {
     expect(within(modes).getByRole('radio', { name: /Hand Tracking/ })).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('hides the global navigation on the translator route', () => {
+  it('shows the application shell instead of the public navigation on app routes', () => {
     renderApp('/translator');
 
+    expect(screen.getByRole('navigation', { name: 'Main application navigation' })).toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Main' })).not.toBeInTheDocument();
   });
 

@@ -7,7 +7,6 @@ import RoadmapPanel from '../components/translator/RoadmapPanel.jsx';
 import TranslationOutputPanel from '../components/translator/TranslationOutputPanel.jsx';
 import TranslatorStage from '../components/translator/TranslatorStage.jsx';
 import TranslatorStatusPanel from '../components/translator/TranslatorStatusPanel.jsx';
-import TranslatorTopBar from '../components/translator/TranslatorTopBar.jsx';
 import useBackendHealth from '../hooks/useBackendHealth.js';
 import useCamera, { CAMERA_STATUS } from '../hooks/useCamera.js';
 import useHandLandmarks from '../hooks/useHandLandmarks.js';
@@ -28,10 +27,7 @@ export default function TranslatorPage() {
   const modeLabel = PROCESSING_MODES.find((mode) => mode.id === activeMode)?.label ?? '';
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#050505] text-white">
-      <TranslatorTopBar backendStatus={backend.status} onRefreshBackend={backend.refresh} />
-
-      <main className="relative flex flex-1 flex-col items-center px-4 pb-16 pt-10 sm:px-6 sm:pt-14">
+    <div className="relative flex flex-col items-center px-4 pb-16 pt-10 text-app-text sm:px-6 sm:pt-14">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-[radial-gradient(ellipse_at_top,rgba(182,255,0,0.06),transparent_65%)]"
@@ -89,7 +85,6 @@ export default function TranslatorPage() {
             </div>
           </div>
         </details>
-      </main>
     </div>
   );
 }
