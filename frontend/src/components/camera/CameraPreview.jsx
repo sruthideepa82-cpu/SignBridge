@@ -49,8 +49,8 @@ export default function CameraPreview({ status, streamUrl, errorMessage, onStrea
 
   return (
     <div
-      className={`relative aspect-video w-full overflow-hidden rounded-2xl bg-black ring-1 transition-all duration-700 ${
-        isLive ? 'ring-lime-signal/40 shadow-[0_0_60px_-20px_rgba(182,255,0,0.45)]' : 'ring-white/10'
+      className={`relative aspect-video w-full overflow-hidden rounded-md border bg-black transition-all duration-700 ${
+        isLive ? 'border-lime-signal/40 shadow-[0_0_60px_-24px_rgba(182,255,0,0.5)]' : 'border-white/10'
       }`}
       aria-label="Camera preview"
     >

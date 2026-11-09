@@ -42,7 +42,7 @@ describe('TranslationOutputPanel', () => {
   it('shows an empty state and disables editing and speech when there is no text', () => {
     render(<TranslationOutputPanel buffer={buffer()} />);
 
-    expect(screen.getByText('No text yet')).toBeInTheDocument();
+    expect(screen.getByText(/No text yet/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Undo last' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Speak text' })).toBeDisabled();
   });
@@ -78,7 +78,7 @@ describe('TranslationOutputPanel', () => {
     );
 
     expect(screen.getByText('Letter C')).toBeInTheDocument();
-    expect(screen.getByText('Confidence 91%')).toBeInTheDocument();
+    expect(screen.getByText('91%')).toBeInTheDocument();
   });
 
   it('calls undo, add space, and clear from the buttons', () => {

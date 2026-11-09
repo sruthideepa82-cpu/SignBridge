@@ -12,25 +12,22 @@ export const PROCESSING_MODES = [
   {
     id: MODE_IDS.HAND_TRACKING,
     label: 'Hand Tracking',
-    description: 'MediaPipe landmarks from the live camera, 21 points per hand.',
+    description: 'MediaPipe landmarks from the live camera, 21 points per hand. Letter recognition runs only when a trained model is loaded.',
     icon: Hand,
-    accent: 'lime',
     enabled: true,
   },
   {
     id: MODE_IDS.EMOTION,
     label: 'Emotion Detection',
-    description: 'Not built yet. No facial or emotion analysis runs.',
+    description: 'Coming soon. No facial or emotion analysis runs yet.',
     icon: Smile,
-    accent: 'rose',
     enabled: false,
   },
   {
     id: MODE_IDS.LLM,
     label: 'LLM Interpretation',
-    description: 'Not built yet. Sentences are not generated, only committed letters are shown.',
+    description: 'Coming soon. Sentences are not generated; only committed letters are shown.',
     icon: BrainCircuit,
-    accent: 'violet',
     enabled: false,
   },
   {
@@ -38,93 +35,64 @@ export const PROCESSING_MODES = [
     label: 'Voice Output',
     description: 'Speaks the committed text on request, using your browser speech voices.',
     icon: Volume2,
-    accent: 'sky',
     enabled: true,
   },
 ];
 
-const ACCENT_CLASSES = {
-  lime: {
-    active: 'border-lime-signal/50 bg-lime-signal/[0.06] shadow-[0_0_30px_-12px_rgba(182,255,0,0.6)]',
-    icon: 'bg-lime-signal/15 text-lime-signal',
-  },
-  sky: {
-    active: 'border-sky-400/50 bg-sky-400/[0.06] shadow-[0_0_30px_-12px_rgba(56,189,248,0.6)]',
-    icon: 'bg-sky-400/15 text-sky-300',
-  },
-  violet: {
-    active: 'border-violet-400/50 bg-violet-400/[0.06]',
-    icon: 'bg-violet-400/15 text-violet-300',
-  },
-  rose: {
-    active: 'border-rose-400/50 bg-rose-400/[0.06]',
-    icon: 'bg-rose-400/15 text-rose-300',
-  },
-};
-
-function modeStatus(mode) {
-  if (!mode.enabled) return { label: 'Coming soon', tone: 'neutral' };
-  if (mode.id === MODE_IDS.VOICE && !isSpeechSupported()) return { label: 'Unavailable', tone: 'warning' };
-  return { label: 'Ready', tone: 'success' };
+export function describeMode(mode) {
+  if (mode.id === MODE_IDS.VOICE && mode.enabled && !isSpeechSupported()) {
+    return `${mode.description} Speech is not available in this browser.`;
+  }
+  return mode.description;
 }
 
-const STATUS_CLASSES = {
-  neutral: 'text-zinc-500',
-  success: 'text-lime-signal/80',
-  warning: 'text-amber-300/80',
-};
-
 export default function ProcessingModeSelector({ activeMode, onSelect }) {
+  const active = PROCESSING_MODES.find((mode) => mode.id === activeMode) ?? PROCESSING_MODES[0];
+
   return (
-    <section aria-labelledby="processing-modes-title">
-      <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 id="processing-modes-title" className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">
-          Processing mode
-        </h2>
-      </div>
-
-      <div role="radiogroup" aria-labelledby="processing-modes-title" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="w-full">
+      <div role="radiogroup" aria-label="Processing mode" className="grid grid-cols-2 overflow-hidden rounded-md sm:flex">
         {PROCESSING_MODES.map((mode) => {
-          const active = mode.id === activeMode;
-          const status = modeStatus(mode);
-          const accent = ACCENT_CLASSES[mode.accent];
+          const isActive = mode.id === active.id;
           const Icon = mode.icon;
-
           return (
             <button
               key={mode.id}
               type="button"
               role="radio"
-              aria-checked={active}
-              aria-disabled={!mode.enabled}
+              aria-checked={isActive}
               disabled={!mode.enabled}
-              onClick={() => mode.enabled && onSelect(mode.id)}
-              className={`group flex min-w-0 flex-col gap-3 rounded-2xl border p-4 text-left transition-all duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-signal ${
-                active
-                  ? accent.active
-                  : 'border-white/[0.07] bg-white/[0.02] enabled:hover:-translate-y-0.5 enabled:hover:border-white/15 enabled:hover:bg-white/[0.04]'
-              } ${mode.enabled ? 'cursor-pointer enabled:active:scale-[0.99]' : 'cursor-not-allowed opacity-50'}`}
+              onClick={() => onSelect(mode.id)}
+              className={`group relative -ml-px -mt-px flex min-w-0 items-center justify-center gap-2 border border-white/15 px-4 py-3 text-sm font-medium transition-colors duration-300 focus-visible:z-10 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lime-signal sm:flex-1 ${
+                isActive
+                  ? 'bg-lime-signal/[0.08] text-lime-signal'
+                  : mode.enabled
+                    ? 'text-zinc-300 hover:bg-white/[0.04] hover:text-white'
+                    : 'cursor-not-allowed text-zinc-600'
+              }`}
             >
-              <div className="flex items-center justify-between gap-2">
-                <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-xl transition-colors duration-300 ${
-                    mode.enabled ? accent.icon : 'bg-white/5 text-zinc-500'
-                  }`}
-                >
-                  <Icon size={18} aria-hidden="true" />
+              <Icon size={15} aria-hidden="true" className="shrink-0" />
+              <span className="truncate">{mode.label}</span>
+              {!mode.enabled && (
+                <span className="rounded-sm border border-white/10 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-zinc-600">
+                  Soon
                 </span>
-                <span className={`text-[11px] font-semibold uppercase tracking-wide ${active ? 'text-lime-signal' : STATUS_CLASSES[status.tone]}`}>
-                  {active ? 'Active' : status.label}
-                </span>
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-zinc-100">{mode.label}</p>
-                <p className="mt-1 text-xs leading-relaxed text-zinc-500">{mode.description}</p>
-              </div>
+              )}
+              <span
+                aria-hidden="true"
+                className={`absolute inset-x-0 bottom-0 h-px bg-lime-signal shadow-[0_0_10px_rgba(182,255,0,0.9)] transition-transform duration-300 ease-out ${
+                  isActive ? 'scale-x-100' : 'scale-x-0'
+                }`}
+              />
             </button>
           );
         })}
       </div>
-    </section>
+
+      <p key={active.id} className="mt-3 animate-fade-up text-center text-xs leading-relaxed text-zinc-500" aria-live="polite">
+        <span className="font-semibold text-zinc-300">{active.label}: </span>
+        {describeMode(active)}
+      </p>
+    </div>
   );
 }

@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderApp } from './test/renderWithRouter.jsx';
 
@@ -34,18 +34,37 @@ describe('SignBridge routes', () => {
     expect(within(features).getByText('Interactive Learning')).toBeInTheDocument();
   });
 
-  it('shows the translator as under development with an idle camera placeholder', () => {
+  it('shows the translator headline with an idle camera and the processing modes', () => {
     renderApp('/translator');
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Sign-to-text translator' })).toBeInTheDocument();
-    expect(screen.getAllByText('Under development').length).toBeGreaterThan(0);
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'What if AI could translate sign language into voice?' }),
+    ).toBeInTheDocument();
     expect(screen.getByText('Camera is off')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Start Camera' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Stop Camera' })).toBeDisabled();
-    expect(screen.getByRole('heading', { name: 'Sign prediction' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Collection & training status' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Recognition history' })).toBeInTheDocument();
-    expect(screen.getByText('No predictions yet')).toBeInTheDocument();
+
+    const modes = screen.getByRole('radiogroup', { name: 'Processing mode' });
+    expect(within(modes).getByRole('radio', { name: /Hand Tracking/ })).toHaveAttribute('aria-checked', 'true');
+    expect(within(modes).getByRole('radio', { name: /Emotion Detection/ })).toBeDisabled();
+    expect(within(modes).getByRole('radio', { name: /LLM Interpretation/ })).toBeDisabled();
+    expect(within(modes).getByRole('radio', { name: /Voice Output/ })).toBeEnabled();
+  });
+
+  it('switches the processing mode when an enabled mode is chosen', () => {
+    renderApp('/translator');
+
+    const modes = screen.getByRole('radiogroup', { name: 'Processing mode' });
+    fireEvent.click(within(modes).getByRole('radio', { name: /Voice Output/ }));
+
+    expect(within(modes).getByRole('radio', { name: /Voice Output/ })).toHaveAttribute('aria-checked', 'true');
+    expect(within(modes).getByRole('radio', { name: /Hand Tracking/ })).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('hides the global navigation on the translator route', () => {
+    renderApp('/translator');
+
+    expect(screen.queryByRole('navigation', { name: 'Main' })).not.toBeInTheDocument();
   });
 
   it('shows the learning module as under development', () => {
