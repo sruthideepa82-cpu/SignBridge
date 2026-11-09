@@ -13,7 +13,8 @@ import { drawHandSkeleton } from './vision/drawing';
 import { CameraError, startCamera } from './vision/camera';
 import { createHandTracker, type HandTracker } from './vision/handTracker';
 import { createFaceTracker, type FaceTracker } from './vision/faceTracker';
-import { ruleBasedClassifier, type SignPrediction } from './recognition/classifier';
+import { classifyFinish, type SignPrediction } from './recognition/classifier';
+import { ModelSignSource, type SourceView } from './recognition/modelSource';
 import { initialHoldState, updateHold, type HoldState } from './recognition/holdTracker';
 import { classifyEmotion, EmotionSmoother, EmotionTally, type Emotion } from './recognition/emotion';
 
@@ -32,6 +33,7 @@ const caption = document.querySelector<HTMLElement>('#caption')!;
 const ctx = canvas.getContext('2d')!;
 
 const speaker: Speaker = new BrowserSpeaker();
+const signSource = new ModelSignSource();
 
 let state: PipelineState = 'idle';
 let tracker: HandTracker | null = null;
@@ -44,6 +46,8 @@ let fps = 0;
 
 let glosses: Gloss[] = [];
 let hold: HoldState = initialHoldState();
+let finishHold: HoldState = initialHoldState();
+let sourceView: SourceView = { status: 'waiting', prediction: null, detail: null };
 let current: SignPrediction | null = null;
 let finishNoticeUntil = 0;
 let lastHandSeenAt = 0;
@@ -61,7 +65,8 @@ function setState(next: PipelineState): void {
 
 function updateStateLabel(): void {
   const emotionNote = emotionUnavailable ? ' · emotion unavailable' : '';
-  stateLabel.textContent = `State: ${STATE_LABELS[state]} · ${fps} fps${emotionNote}`;
+  const modelNote = sourceView.status === 'no_model' ? ' · no model trained' : '';
+  stateLabel.textContent = `State: ${STATE_LABELS[state]} · ${fps} fps${emotionNote}${modelNote}`;
 }
 
 function showMessage(text: string | null): void {
@@ -131,26 +136,31 @@ async function runUtterance(): Promise<void> {
   }
 }
 
-function handleConfirmed(sign: SignPrediction, now: number): void {
-  if (state !== 'tracking') return;
-
-  if (sign.word === FINISH_WORD) {
-    if (glosses.length === 0) {
-      finishNoticeUntil = now + 3000;
-      return;
-    }
-    void runUtterance();
-    return;
-  }
-
+function handleConfirmed(sign: SignPrediction): void {
+  if (state !== 'tracking' || sign.word === FINISH_WORD) return;
   glosses = appendGloss(glosses, { word: sign.word, confidence: sign.confidence });
   renderGlossStrip(glossStrip, glosses);
 }
 
+function handleFinish(now: number): void {
+  if (state !== 'tracking') return;
+  if (glosses.length === 0) {
+    finishNoticeUntil = now + 3000;
+    return;
+  }
+  void runUtterance();
+}
+
 function renderPill(now: number): void {
   renderSignPill(signPill, { prediction: current });
-  if (now < finishNoticeUntil) {
-    signPill.querySelector<HTMLElement>('.pill-hint')!.textContent = 'Sign a word before FINISH';
+  const hint = signPill.querySelector<HTMLElement>('.pill-hint')!;
+  if (sourceView.status === 'no_model') {
+    signPill.querySelector<HTMLElement>('.pill-word')!.textContent = '—';
+    hint.textContent = 'No model trained';
+  } else if (sourceView.status === 'unavailable') {
+    hint.textContent = 'Recognizer unavailable';
+  } else if (now < finishNoticeUntil) {
+    hint.textContent = 'Sign a word before FINISH';
   }
 }
 
@@ -194,16 +204,26 @@ function frame(now: number): void {
       drawHandSkeleton(ctx, hand.landmarks, canvas.width, canvas.height);
     }
 
-    current = ruleBasedClassifier.classify(hands.map((hand) => hand.landmarks));
+    signSource.push(hands, now);
+    sourceView = signSource.view(now);
+    current = sourceView.prediction;
     const update = updateHold(hold, current, now, { threshold: CONFIDENCE_THRESHOLD, holdMs: HOLD_MS });
     hold = update.state;
-    if (update.confirmed) handleConfirmed(update.confirmed, now);
+    if (update.confirmed) handleConfirmed(update.confirmed);
+
+    const finishUpdate = updateHold(finishHold, classifyFinish(hands.map((h) => h.landmarks)), now, {
+      threshold: CONFIDENCE_THRESHOLD,
+      holdMs: HOLD_MS,
+    });
+    finishHold = finishUpdate.state;
+    if (finishUpdate.confirmed) handleFinish(now);
 
     if (state === 'tracking' && silenceEnded(lastHandSeenAt, now, glosses.length)) {
       void runUtterance();
     }
 
     renderPill(now);
+    updateStateLabel();
   }
 
   frameCount += 1;

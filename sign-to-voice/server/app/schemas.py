@@ -1,3 +1,4 @@
+import math
 import re
 from typing import Literal
 
@@ -26,3 +27,45 @@ class InterpretRequest(BaseModel):
 
 class InterpretResponse(BaseModel):
     sentence: str
+
+
+PREDICT_FRAMES = 32
+PREDICT_HANDS = 2
+PREDICT_LANDMARKS = 21
+PREDICT_COORDS = 3
+
+
+class PredictRequest(BaseModel):
+    """A window of 32 frames, each with 2 hand slots (Left, Right), 21 landmarks, and x, y, z."""
+
+    landmarks: list[list[list[list[float]]]]
+
+    @field_validator("landmarks")
+    @classmethod
+    def check_shape(cls, landmarks: list) -> list:
+        if len(landmarks) != PREDICT_FRAMES:
+            raise ValueError(f"expected {PREDICT_FRAMES} frames, got {len(landmarks)}")
+        for frame in landmarks:
+            if len(frame) != PREDICT_HANDS:
+                raise ValueError(f"expected {PREDICT_HANDS} hand slots per frame, got {len(frame)}")
+            for hand in frame:
+                if len(hand) != PREDICT_LANDMARKS:
+                    raise ValueError(f"expected {PREDICT_LANDMARKS} landmarks per hand, got {len(hand)}")
+                for point in hand:
+                    if len(point) != PREDICT_COORDS or not all(math.isfinite(v) for v in point):
+                        raise ValueError("every landmark needs three finite coordinates")
+        return landmarks
+
+
+class TopItemModel(BaseModel):
+    word: str
+    confidence: float
+
+
+class PredictResponse(BaseModel):
+    status: Literal["recognized", "uncertain", "no_model"]
+    word: str | None
+    confidence: float
+    top3: list[TopItemModel]
+    threshold: float
+    detail: str | None = None
