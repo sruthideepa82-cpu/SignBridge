@@ -1,0 +1,227 @@
+:root {
+  --bg: #050505;
+  --text: #ffffff;
+  --muted: #7c7c84;
+  --dim: #3d3d44;
+  --lime: #b6ff00;
+  --coral: #ff5c7a;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2.5rem 1rem 3rem;
+}
+
+.title {
+  margin: 0;
+  max-width: 48rem;
+  text-align: center;
+  font-size: clamp(1.6rem, 3.6vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.stage {
+  width: 100%;
+  max-width: 960px;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #0b0b0c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.video-frame video,
+.video-frame canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.camera-message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+  background: rgba(5, 5, 5, 0.85);
+}
+
+.camera-message[hidden] {
+  display: none;
+}
+
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 960px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  color: var(--dim);
+  font-size: 0.88rem;
+  transition: color 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.step span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step.is-active {
+  color: var(--text);
+  border-color: rgba(182, 255, 0, 0.45);
+  background: rgba(182, 255, 0, 0.04);
+}
+
+.indicator {
+  flex: 0 0 auto;
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  background: var(--dim);
+  transition: background-color 0.3s ease;
+}
+
+.step[data-step='tracking'] .indicator {
+  border-radius: 50%;
+}
+
+.step[data-step='emotion'] .indicator {
+  border-radius: 2px;
+}
+
+.step[data-step='llm'] .indicator {
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.step[data-step='voice'] .indicator {
+  width: 16px;
+  height: 14px;
+  border-radius: 0;
+  background: none;
+  background-image: linear-gradient(var(--dim), var(--dim));
+  background-size: 2px 100%;
+  background-repeat: repeat-x;
+}
+
+.step.is-active .indicator {
+  background-color: var(--lime);
+  box-shadow: 0 0 10px rgba(182, 255, 0, 0.7);
+}
+
+.step.is-active[data-step='tracking'] .indicator,
+.step.is-active[data-step='emotion'] .indicator {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.step.is-active[data-step='llm'] .indicator {
+  animation: sweep 1.1s linear infinite;
+}
+
+.step.is-active[data-step='voice'] .indicator {
+  background-color: transparent;
+  background-image: linear-gradient(var(--lime), var(--lime));
+  animation: wave 0.9s ease-in-out infinite alternate;
+}
+
+.state-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(-6px);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(6px);
+    opacity: 0.3;
+  }
+}
+
+@keyframes wave {
+  from {
+    height: 4px;
+  }
+  to {
+    height: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pipeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

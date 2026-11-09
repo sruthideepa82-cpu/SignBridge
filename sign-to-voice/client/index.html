@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignBridge · Sign to Voice</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <main class="app">
+      <h1 class="title">What if AI could translate sign language into voice?</h1>
+
+      <section class="stage" aria-label="Live sign recognition">
+        <div class="video-frame" id="frame">
+          <video id="video" playsinline muted></video>
+          <canvas id="overlay"></canvas>
+          <div id="camera-message" class="camera-message" role="status">Starting camera…</div>
+        </div>
+      </section>
+
+      <nav class="pipeline" aria-label="Pipeline">
+        <div class="step" data-step="tracking"><span class="indicator"></span><span>Hand Tracking</span></div>
+        <div class="step" data-step="emotion"><span class="indicator"></span><span>Emotion Detection</span></div>
+        <div class="step" data-step="llm"><span class="indicator"></span><span>LLM Interpretation</span></div>
+        <div class="step" data-step="voice"><span class="indicator"></span><span>Voice Output</span></div>
+      </nav>
+
+      <p id="state-label" class="state-label">State: idle</p>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
