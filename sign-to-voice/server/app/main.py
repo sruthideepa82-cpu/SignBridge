@@ -58,7 +58,8 @@ def health() -> dict[str, str]:
 
 @app.get("/api/model")
 def model_status(service: ModelService = Depends(get_model_service)) -> dict:
-    return {"available": service.available, "detail": service.error, "threshold": service.threshold}
+    return {"available": service.available, "detail": service.error, "threshold": service.threshold,
+            "caveat": service.caveat}
 
 
 @app.post("/api/interpret", response_model=InterpretResponse)
@@ -83,4 +84,5 @@ def predict(request: PredictRequest, service: ModelService = Depends(get_model_s
         top3=[TopItemModel(word=item.word, confidence=item.confidence) for item in result.top3],
         threshold=service.threshold,
         detail=result.detail,
+        caveat=result.caveat,
     )

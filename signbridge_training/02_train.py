@@ -15,6 +15,21 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from features import features  # shared with the serving code; do not copy it here
 
 
+NO_SIGNER_CAVEAT = ("Not tested on unseen signers: the data has no signer IDs, so the same people can appear "
+                    "in training and test. Accuracy is optimistic.")
+
+
+def split_summary(groups, n_clips):
+    """Records whether the test set holds out unseen signers. One id per clip means no signer ids."""
+    n_signers = len(set(groups))
+    if n_signers >= 3 and n_signers < n_clips:
+        return {"signer_independent": True, "split": "grouped by signer id", "caveat": None,
+                "n_signers": n_signers}
+    return {"signer_independent": False,
+            "split": "per clip (no signer ids in the data)" if n_signers == n_clips else "too few signers",
+            "caveat": NO_SIGNER_CAVEAT, "n_signers": n_signers}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("data"); ap.add_argument("--out", default="model")
@@ -25,8 +40,9 @@ def main():
     classes = sorted(set(y)); yi = np.array([classes.index(c) for c in y])
     F = features(X)
     n_sign = len(set(g))
-    if n_sign < 3:
-        print(f"WARNING: only {n_sign} signer ids found -> split is not signer-independent.")
+    summary = split_summary(g, len(X))
+    if not summary["signer_independent"]:
+        print(f"WARNING: {summary['caveat']}")
     tr, te = next(GroupShuffleSplit(1, test_size=a.test_size, random_state=0).split(F, yi, g))
     print(f"{len(F)} clips | {len(classes)} classes | {n_sign} signers | train {len(tr)} / test {len(te)}")
     models = {
@@ -57,8 +73,10 @@ def main():
     for c, t, p_ in pairs:
         if c: print(f"  {c}x  {t} -> {p_}")
     joblib.dump(models[best], out / "model.joblib")
-    json.dump({"classes": classes, "test_top1": best_acc, "model": best,
-               "n_signers": n_sign, "frames": int(X.shape[1])}, open(out / "model_card.json", "w"), indent=2)
+    card = {"classes": classes, "test_top1": best_acc, "model": best,
+            "n_clips": len(X), "frames": int(X.shape[1]), **summary}
+    with open(out / "model_card.json", "w", encoding="utf-8") as f:
+        json.dump(card, f, indent=2)
     print(f"\nSaved to {out}/")
 
 if __name__ == "__main__":

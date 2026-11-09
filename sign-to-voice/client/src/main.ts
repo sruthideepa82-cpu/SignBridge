@@ -23,6 +23,7 @@ const frameElement = document.querySelector<HTMLElement>('#frame')!;
 const canvas = document.querySelector<HTMLCanvasElement>('#overlay')!;
 const message = document.querySelector<HTMLElement>('#camera-message')!;
 const stateLabel = document.querySelector<HTMLElement>('#state-label')!;
+const caveatNote = document.querySelector<HTMLElement>('#model-caveat')!;
 const pipeline = document.querySelector<HTMLElement>('.pipeline')!;
 const glossStrip = document.querySelector<HTMLElement>('#gloss-strip')!;
 const signPill = document.querySelector<HTMLElement>('#sign-pill')!;
@@ -47,7 +48,7 @@ let fps = 0;
 let glosses: Gloss[] = [];
 let hold: HoldState = initialHoldState();
 let finishHold: HoldState = initialHoldState();
-let sourceView: SourceView = { status: 'waiting', prediction: null, detail: null };
+let sourceView: SourceView = { status: 'waiting', prediction: null, detail: null, caveat: null };
 let current: SignPrediction | null = null;
 let finishNoticeUntil = 0;
 let lastHandSeenAt = 0;
@@ -67,6 +68,12 @@ function updateStateLabel(): void {
   const emotionNote = emotionUnavailable ? ' · emotion unavailable' : '';
   const modelNote = sourceView.status === 'no_model' ? ' · no model trained' : '';
   stateLabel.textContent = `State: ${STATE_LABELS[state]} · ${fps} fps${emotionNote}${modelNote}`;
+}
+
+function renderCaveat(): void {
+  const caveat = sourceView.status === 'ready' ? sourceView.caveat : null;
+  caveatNote.textContent = caveat ? `Model not validated on unseen signers: ${caveat}` : '';
+  caveatNote.hidden = !caveat;
 }
 
 function showMessage(text: string | null): void {
@@ -223,6 +230,7 @@ function frame(now: number): void {
     }
 
     renderPill(now);
+    renderCaveat();
     updateStateLabel();
   }
 

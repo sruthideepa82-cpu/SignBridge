@@ -35,6 +35,8 @@ def synthetic_model_dir(tmp_path_factory) -> Path:
     card = json.loads(card_path.read_text(encoding="utf-8"))
     card["synthetic"] = True
     card["data_source"] = "make_synthetic.py (SMOKE TEST ONLY, fake landmarks)"
+    card["signer_independent"] = False
+    card["caveat"] = "SYNTHETIC TEST MODEL built from fake landmarks. Not a real result."
     card_path.write_text(json.dumps(card, indent=2), encoding="utf-8")
     return model_out
 

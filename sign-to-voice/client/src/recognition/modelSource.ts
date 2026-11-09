@@ -10,6 +10,8 @@ export interface SourceView {
   // The top word with its probability. Null when there is no fresh answer from the model.
   prediction: SignPrediction | null;
   detail: string | null;
+  // Set when the model's evaluation does not hold out unseen signers. Shown in the UI.
+  caveat: string | null;
 }
 
 export interface ModelSignSourceOptions {
@@ -30,6 +32,7 @@ export class ModelSignSource {
   private lastAnswer: { response: PredictResponse; at: number } | null = null;
   private status: SourceStatus = 'waiting';
   private detail: string | null = null;
+  private caveat: string | null = null;
 
   constructor(options: ModelSignSourceOptions = {}) {
     this.fetchImpl = options.fetch;
@@ -48,7 +51,7 @@ export class ModelSignSource {
     const fresh = this.lastAnswer && now - this.lastAnswer.at <= this.staleAfterMs ? this.lastAnswer.response : null;
     const prediction =
       fresh && fresh.top3.length > 0 ? { word: fresh.top3[0].word, confidence: fresh.top3[0].confidence } : null;
-    return { status: this.status, prediction, detail: this.detail };
+    return { status: this.status, prediction, detail: this.detail, caveat: this.caveat };
   }
 
   private request(now: number): void {
@@ -58,6 +61,7 @@ export class ModelSignSource {
       .then((response) => {
         // Stamped with the request time, so staleness follows the frames the answer was made from.
         this.lastAnswer = { response, at: now };
+        this.caveat = response.status === 'no_model' ? null : response.caveat;
         if (response.status === 'no_model') {
           this.status = 'no_model';
           this.detail = response.detail;
@@ -68,6 +72,7 @@ export class ModelSignSource {
       })
       .catch((error: unknown) => {
         this.lastAnswer = null;
+        this.caveat = null;
         this.status = 'unavailable';
         this.detail = error instanceof Error ? error.message : 'The recognizer could not be reached.';
       })

@@ -24,6 +24,7 @@ const NO_MODEL: PredictResponse = {
   top3: [],
   threshold: 0.6,
   detail: 'No trained model found.',
+  caveat: null,
 };
 
 const RECOGNIZED: PredictResponse = {
@@ -37,6 +38,7 @@ const RECOGNIZED: PredictResponse = {
   ],
   threshold: 0.6,
   detail: null,
+  caveat: 'Not tested on unseen signers.',
 };
 
 // Pushes a full window at the given times and lets the pending request settle.
@@ -81,6 +83,15 @@ describe('ModelSignSource', () => {
     expect(url).toBe('/api/predict');
     const body = JSON.parse(String(init?.body)) as { landmarks: number[][][][] };
     expect(body.landmarks).toHaveLength(WINDOW_FRAMES);
+  });
+
+  it('carries the split caveat from the model card into the view', async () => {
+    const fetch = vi.fn<FetchLike>(async () => jsonResponse(RECOGNIZED));
+    const source = new ModelSignSource({ fetch });
+
+    await fillWindow(source, 0);
+
+    expect(source.view(WINDOW_FRAMES * 33).caveat).toBe('Not tested on unseen signers.');
   });
 
   it('reports the recognizer as unavailable when the request fails', async () => {

@@ -12,6 +12,7 @@ export interface PredictResponse {
   top3: TopItem[];
   threshold: number;
   detail: string | null;
+  caveat: string | null;
 }
 
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;

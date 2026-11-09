@@ -418,6 +418,18 @@ body {
   animation-delay: 0.45s;
 }
 
+.model-caveat {
+  margin: 0;
+  max-width: 48rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #ffb24a;
+}
+
+.model-caveat[hidden] {
+  display: none;
+}
+
 .state-label {
   margin: 0;
   color: var(--muted);

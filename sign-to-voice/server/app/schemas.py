@@ -69,3 +69,4 @@ class PredictResponse(BaseModel):
     top3: list[TopItemModel]
     threshold: float
     detail: str | None = None
+    caveat: str | None = None

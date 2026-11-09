@@ -89,6 +89,36 @@ def test_predict_returns_word_confidence_and_top3(http, window):
         assert body["word"] is None
 
 
+def test_caveat_from_the_model_card_reaches_the_response(http, window):
+    body = http.post("/api/predict", json=payload(window)).json()
+
+    assert body["caveat"].startswith("SYNTHETIC TEST MODEL")
+
+
+def test_model_status_reports_the_split_caveat(http):
+    body = http.get("/api/model").json()
+
+    assert body["caveat"].startswith("SYNTHETIC TEST MODEL")
+
+
+def test_card_without_split_record_is_not_treated_as_validated(tmp_path, synthetic_model_dir):
+    import json, shutil
+
+    copy = tmp_path / "model"
+    shutil.copytree(synthetic_model_dir, copy)
+    card_path = copy / "model_card.json"
+    card = json.loads(card_path.read_text(encoding="utf-8"))
+    card.pop("signer_independent")
+    card.pop("caveat")
+    card_path.write_text(json.dumps(card), encoding="utf-8")
+
+    loaded, error = load_model(copy, allow_synthetic=True)
+
+    assert error is None
+    assert loaded.signer_independent is False
+    assert "no split record" in loaded.caveat
+
+
 def test_top3_matches_the_model_probabilities(synthetic_service, window):
     loaded = synthetic_service._loaded
     probabilities = loaded.model.predict_proba(shared_features.features(window[None]))[0]

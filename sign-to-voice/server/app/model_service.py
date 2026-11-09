@@ -28,11 +28,16 @@ WINDOW_SHAPE = (WINDOW_FRAMES, 2, 21, 3)
 SYNTHETIC_FLAG = "synthetic"
 
 
+UNKNOWN_SPLIT_CAVEAT = "model_card.json has no split record, so the model is not known to be tested on unseen signers."
+
+
 @dataclass(frozen=True)
 class LoadedModel:
     model: object
     classes: list[str]
     frames: int
+    signer_independent: bool
+    caveat: str | None
 
 
 @dataclass(frozen=True)
@@ -48,6 +53,7 @@ class PredictionResult:
     confidence: float
     top3: list[TopItem] = field(default_factory=list)
     detail: str | None = None
+    caveat: str | None = None
 
 
 def load_model(directory: Path, allow_synthetic: bool = False) -> tuple[LoadedModel | None, str | None]:
@@ -85,7 +91,16 @@ def load_model(directory: Path, allow_synthetic: bool = False) -> tuple[LoadedMo
     if indices.size == 0 or indices.min() < 0 or indices.max() >= len(classes):
         return None, "The model's class indices do not match model_card.json."
 
-    return LoadedModel(model=model, classes=classes, frames=WINDOW_FRAMES), None
+    if "signer_independent" in card:
+        signer_independent = bool(card["signer_independent"])
+        caveat = card.get("caveat")
+    else:
+        signer_independent, caveat = False, UNKNOWN_SPLIT_CAVEAT
+    if not signer_independent and not caveat:
+        caveat = "Not tested on unseen signers."
+
+    return LoadedModel(model=model, classes=classes, frames=WINDOW_FRAMES,
+                       signer_independent=signer_independent, caveat=caveat), None
 
 
 class ModelService:
@@ -117,6 +132,10 @@ class ModelService:
     def threshold(self) -> float:
         return self._threshold
 
+    @property
+    def caveat(self) -> str | None:
+        return self._loaded.caveat if self._loaded else None
+
     def predict(self, window: np.ndarray) -> PredictionResult:
         if self._loaded is None:
             return PredictionResult(status="no_model", word=None, confidence=0.0, detail=self._error)
@@ -139,4 +158,5 @@ class ModelService:
             word=best.word if status == "recognized" else None,
             confidence=best.confidence,
             top3=top3,
+            caveat=self._loaded.caveat,
         )
