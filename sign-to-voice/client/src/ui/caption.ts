@@ -1,14 +1,15 @@
-import type { InterpretResult } from '../app/interpretClient';
-
-export function renderCaption(caption: HTMLElement, frame: HTMLElement, result: InterpretResult): void {
+export function renderCaption(caption: HTMLElement, frame: HTMLElement, sentence: string, notes: string[]): void {
   const text = caption.querySelector<HTMLElement>('.caption-text')!;
-  const note = caption.querySelector<HTMLElement>('.caption-note')!;
+  const noteList = caption.querySelector<HTMLElement>('.caption-note')!;
 
-  text.textContent = result.sentence;
-  note.textContent = result.usedFallback
-    ? `Language model unavailable (${result.reason ?? 'unknown reason'}). Showing the raw sign order.`
-    : '';
-  note.hidden = !result.usedFallback;
+  text.textContent = sentence;
+  noteList.replaceChildren(...notes.map((note) => {
+    const line = document.createElement('span');
+    line.className = 'caption-note-line';
+    line.textContent = note;
+    return line;
+  }));
+  noteList.hidden = notes.length === 0;
 
   caption.hidden = false;
   frame.classList.add('has-caption');

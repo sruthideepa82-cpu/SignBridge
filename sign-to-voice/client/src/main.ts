@@ -2,8 +2,9 @@ import './style.css';
 import { activeSteps, STATE_LABELS, transition, type PipelineState } from './app/stateMachine';
 import { appendGloss, glossWords, type Gloss } from './app/gloss';
 import { CONFIDENCE_THRESHOLD, FINISH_WORD, HOLD_MS } from './app/signs';
-import { interpretGlosses } from './app/interpretClient';
-import { noopSpeaker, silenceEnded, type Speaker } from './app/utterance';
+import { interpretGlosses, type InterpretResult } from './app/interpretClient';
+import { silenceEnded } from './app/utterance';
+import { BrowserSpeaker, SpeechError, type Speaker } from './voice/speaker';
 import { renderPipeline } from './ui/pipeline';
 import { renderGlossStrip, renderSignPill } from './ui/overlays';
 import { drawFaceBox, drawFaceMesh, faceBox, positionEmotionTag, renderEmotionLegend } from './ui/faceOverlay';
@@ -30,7 +31,7 @@ const legend = document.querySelector<HTMLElement>('.emotion-legend')!;
 const caption = document.querySelector<HTMLElement>('#caption')!;
 const ctx = canvas.getContext('2d')!;
 
-const speaker: Speaker = noopSpeaker;
+const speaker: Speaker = new BrowserSpeaker();
 
 let state: PipelineState = 'idle';
 let tracker: HandTracker | null = null;
@@ -87,6 +88,21 @@ function clearSequence(): void {
   current = null;
 }
 
+function fallbackNotes(result: InterpretResult): string[] {
+  if (!result.usedFallback) return [];
+  return [`Language model unavailable (${result.reason ?? 'unknown reason'}). Showing the raw sign order.`];
+}
+
+function speechNote(error: unknown): string {
+  if (error instanceof SpeechError && error.kind === 'no-voice') {
+    return 'No speech voice is available in this browser. The sentence is shown above.';
+  }
+  if (error instanceof SpeechError && error.kind === 'unsupported') {
+    return 'Text-to-speech is not supported in this browser. The sentence is shown above.';
+  }
+  return error instanceof Error ? `Speech output failed: ${error.message}` : 'Speech output failed.';
+}
+
 async function runUtterance(): Promise<void> {
   if (interpreting || glosses.length === 0) return;
   interpreting = true;
@@ -96,14 +112,23 @@ async function runUtterance(): Promise<void> {
   setState(transition(state, { type: 'INTERPRET' }));
   resetUtterance();
 
-  const result = await interpretGlosses(words, emotion);
-  renderCaption(caption, frameElement, result);
+  try {
+    const result = await interpretGlosses(words, emotion);
+    const notes = fallbackNotes(result);
+    renderCaption(caption, frameElement, result.sentence, notes);
 
-  setState(transition(state, { type: 'INTERPRETED' }));
-  await speaker.speak(result.sentence);
-  setState(transition(state, { type: 'SPEECH_DONE' }));
-
-  interpreting = false;
+    setState(transition(state, { type: 'INTERPRETED' }));
+    try {
+      await speaker.speak(result.sentence);
+    } catch (error) {
+      renderCaption(caption, frameElement, result.sentence, [...notes, speechNote(error)]);
+    }
+  } finally {
+    // Always return to tracking, even if something failed part way through.
+    if (state === 'interpreting') setState(transition(state, { type: 'INTERPRETED' }));
+    setState(transition(state, { type: 'SPEECH_DONE' }));
+    interpreting = false;
+  }
 }
 
 function handleConfirmed(sign: SignPrediction, now: number): void {
