@@ -17,14 +17,14 @@ export default function CameraPanel({ camera, landmarks, landmarkError }) {
 
   return (
     <section
-      className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-900/5 sm:p-6"
+      className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-4 shadow-2xl shadow-black/40 backdrop-blur-xl sm:p-5"
       aria-labelledby="camera-panel-title"
     >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 id="camera-panel-title" className="text-lg font-semibold text-slate-900">
+        <h2 id="camera-panel-title" className="text-lg font-semibold tracking-tight text-zinc-100">
           Camera preview
         </h2>
-        <StatusBadge label={badge.label} tone={badge.tone} pulse={badge.pulse} />
+        <StatusBadge label={badge.label} tone={badge.tone} pulse={badge.pulse} dark />
       </div>
 
       <CameraPreview
@@ -35,19 +35,18 @@ export default function CameraPanel({ camera, landmarks, landmarkError }) {
       />
 
       {status === CAMERA_STATUS.LIVE && (
-        <div className="mt-4">
+        <div className="mt-4 animate-fade-up">
           <HandDetectionStatus landmarks={landmarks} error={landmarkError} />
         </div>
       )}
 
-      <div className="mt-5">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
         <CameraControls status={status} onStart={startCamera} onStop={stopCamera} />
+        <p className="max-w-md text-xs leading-relaxed text-zinc-500">
+          Frames are captured by the backend with OpenCV. MediaPipe landmarks are drawn on the preview when a hand is
+          detected.
+        </p>
       </div>
-
-      <p className="mt-4 text-xs leading-relaxed text-slate-500">
-        Frames are captured by the backend with OpenCV. The preview shows MediaPipe hand landmarks when a hand is
-        detected. Sign classification is not active yet, so no translations are produced.
-      </p>
     </section>
   );
 }

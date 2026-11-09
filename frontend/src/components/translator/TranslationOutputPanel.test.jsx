@@ -90,11 +90,31 @@ describe('TranslationOutputPanel', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Undo last' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add space' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear text' }));
 
     expect(state.undo).toHaveBeenCalled();
     expect(state.addSpace).toHaveBeenCalled();
     expect(state.clear).toHaveBeenCalled();
+  });
+
+  it('copies the accumulated text to the clipboard', async () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    vi.stubGlobal('navigator', { clipboard: { writeText } });
+    render(<TranslationOutputPanel buffer={buffer({ text: 'HI', items: [{ type: 'letter', label: 'H', confidence: 0.9 }] })} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Copy text' }));
+
+    expect(writeText).toHaveBeenCalledWith('HI');
+    expect(await screen.findByRole('button', { name: 'Copied' })).toBeInTheDocument();
+  });
+
+  it('shows an error when the clipboard is not available', async () => {
+    vi.stubGlobal('navigator', {});
+    render(<TranslationOutputPanel buffer={buffer({ text: 'HI', items: [{ type: 'letter', label: 'H', confidence: 0.9 }] })} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Copy text' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Copying is not available');
   });
 
   it('shows the hold progress for a letter that is not yet committed', () => {

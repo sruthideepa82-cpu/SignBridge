@@ -12,8 +12,8 @@ export default function HandDetectionStatus({ landmarks, error }) {
   if (error) {
     return (
       <div className="flex flex-wrap items-center gap-2">
-        <StatusBadge label="Status unavailable" tone="danger" />
-        <span className="text-xs text-slate-500">{error}</span>
+        <StatusBadge label="Status unavailable" tone="danger" dark />
+        <span className="text-xs text-zinc-500">{error}</span>
       </div>
     );
   }
@@ -23,15 +23,15 @@ export default function HandDetectionStatus({ landmarks, error }) {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <StatusBadge label={badge.label} tone={badge.tone} pulse={badge.pulse} />
+      <StatusBadge label={badge.label} tone={badge.tone} pulse={badge.pulse} dark />
       <span
-        className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-200"
+        className="inline-flex items-center rounded-full bg-white/[0.04] px-2.5 py-1 text-xs font-semibold text-zinc-300 ring-1 ring-inset ring-white/10"
         aria-live="polite"
       >
         Hands detected: {handCount}
       </span>
       {(landmarks?.status === 'detection_unavailable' || landmarks?.status === 'processing_error') && landmarks.detection_error && (
-        <span className="text-xs text-slate-500">{landmarks.detection_error}</span>
+        <span className="text-xs text-zinc-500">{landmarks.detection_error}</span>
       )}
     </div>
   );

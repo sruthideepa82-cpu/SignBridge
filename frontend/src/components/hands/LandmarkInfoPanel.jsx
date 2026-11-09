@@ -2,17 +2,17 @@ const formatCoordinate = (value) => value.toFixed(3);
 
 function HandTable({ hand, handNumber }) {
   return (
-    <div className="rounded-2xl ring-1 ring-slate-200">
-      <div className="flex items-center justify-between gap-3 border-b border-slate-200 bg-slate-50 px-4 py-2.5">
-        <p className="text-sm font-semibold text-slate-800">
+    <div className="overflow-hidden rounded-2xl ring-1 ring-white/10">
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-white/[0.03] px-4 py-2.5">
+        <p className="text-sm font-semibold text-zinc-100">
           Hand {handNumber} · {hand.handedness}
         </p>
-        <p className="text-xs text-slate-500">Confidence {Math.round(hand.score * 100)}%</p>
+        <p className="text-xs text-zinc-500">Confidence {Math.round(hand.score * 100)}%</p>
       </div>
-      <div>
+      <div className="max-h-72 overflow-y-auto">
         <table className="w-full text-left text-xs">
           <caption className="sr-only">Landmarks for hand {handNumber}</caption>
-          <thead className="sticky top-0 bg-white text-slate-500">
+          <thead className="sticky top-0 bg-zinc-950 text-zinc-500">
             <tr>
               <th scope="col" className="px-3 py-2 font-medium">#</th>
               <th scope="col" className="px-3 py-2 font-medium">Landmark</th>
@@ -21,7 +21,7 @@ function HandTable({ hand, handNumber }) {
               <th scope="col" className="px-3 py-2 text-right font-medium">Z</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 font-mono text-slate-700">
+          <tbody className="divide-y divide-white/5 font-mono text-zinc-300">
             {hand.landmarks.map((point) => (
               <tr key={point.index}>
                 <td className="px-3 py-1.5">{point.index}</td>
@@ -40,9 +40,9 @@ function HandTable({ hand, handNumber }) {
 
 function UnavailableNotice({ title, description }) {
   return (
-    <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center">
-      <p className="text-sm font-semibold text-slate-800">{title}</p>
-      <p className="mt-1 text-xs leading-relaxed text-slate-500">{description}</p>
+    <div className="mt-4 rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-8 text-center">
+      <p className="text-sm font-semibold text-zinc-200">{title}</p>
+      <p className="mt-1 text-xs leading-relaxed text-zinc-500">{description}</p>
     </div>
   );
 }
@@ -53,15 +53,15 @@ export default function LandmarkInfoPanel({ landmarks, cameraLive, error = '' })
 
   return (
     <section
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5"
+      className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 backdrop-blur-xl sm:p-6"
       aria-labelledby="landmark-info-title"
     >
-      <h2 id="landmark-info-title" className="text-lg font-semibold text-slate-900">
+      <h2 id="landmark-info-title" className="text-lg font-semibold tracking-tight text-zinc-100">
         Landmark data
       </h2>
 
       {!cameraLive && (
-        <p className="mt-4 text-sm leading-relaxed text-slate-500">
+        <p className="mt-4 text-sm leading-relaxed text-zinc-500">
           Start the camera to see hand landmark coordinates.
         </p>
       )}
@@ -74,7 +74,7 @@ export default function LandmarkInfoPanel({ landmarks, cameraLive, error = '' })
       )}
 
       {cameraLive && !error && !landmarks && (
-        <p className="mt-4 text-sm leading-relaxed text-slate-500">Waiting for the first landmark result.</p>
+        <p className="mt-4 text-sm leading-relaxed text-zinc-500">Waiting for the first landmark result.</p>
       )}
 
       {cameraLive && !error && status === 'detection_unavailable' && (
@@ -103,7 +103,7 @@ export default function LandmarkInfoPanel({ landmarks, cameraLive, error = '' })
           {hands.map((hand, index) => (
             <HandTable key={`${hand.handedness}-${index}`} hand={hand} handNumber={index + 1} />
           ))}
-          <p className="text-xs leading-relaxed text-slate-500">
+          <p className="text-xs leading-relaxed text-zinc-500">
             X and Y are normalized to the frame (0 to 1, origin at the top-left). Z is relative depth from the wrist.
           </p>
         </div>

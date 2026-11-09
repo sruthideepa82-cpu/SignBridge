@@ -1,4 +1,3 @@
-import BackendStatusIndicator from '../common/BackendStatusIndicator.jsx';
 import StatusBadge from '../common/StatusBadge.jsx';
 
 const NOT_AVAILABLE = { label: 'Not available', tone: 'neutral' };
@@ -16,39 +15,31 @@ function modelAvailability(result, error, cameraLive) {
   return { badge: { label: 'Model ready', tone: 'success' }, text: 'A trained model is loaded.' };
 }
 
-function StatusRow({ title, description, badge, children }) {
+function StatusRow({ title, description, badge }) {
   return (
     <li className="flex flex-wrap items-start justify-between gap-2 py-3">
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-slate-800">{title}</p>
-        {description && <p className="mt-0.5 text-xs leading-relaxed text-slate-500">{description}</p>}
+        <p className="text-sm font-medium text-zinc-200">{title}</p>
+        {description && <p className="mt-0.5 text-xs leading-relaxed text-zinc-500">{description}</p>}
       </div>
-      {badge ? <StatusBadge label={badge.label} tone={badge.tone} /> : children}
+      {badge && <StatusBadge label={badge.label} tone={badge.tone} dark />}
     </li>
   );
 }
 
-export default function TranslatorStatusPanel({ backend, selectedSign, recognition, error, cameraLive }) {
+export default function TranslatorStatusPanel({ recognition, error, cameraLive }) {
   const model = modelAvailability(recognition, error, cameraLive);
 
   return (
     <section
-      className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-900/5"
+      className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 backdrop-blur-xl sm:p-6"
       aria-labelledby="translator-status-title"
     >
-      <h2 id="translator-status-title" className="text-lg font-semibold text-slate-900">
+      <h2 id="translator-status-title" className="text-lg font-semibold tracking-tight text-zinc-100">
         Collection &amp; training status
       </h2>
 
-      <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 ring-1 ring-slate-200">
-        <p className="mb-2 text-xs font-medium text-slate-500">Backend connection</p>
-        <BackendStatusIndicator status={backend.status} onRefresh={backend.refresh} />
-      </div>
-
-      <ul className="mt-2 divide-y divide-slate-200">
-        <StatusRow title="Selected vocabulary label">
-          <StatusBadge label={selectedSign} tone="accent" showDot={false} />
-        </StatusRow>
+      <ul className="mt-2 divide-y divide-white/[0.06]">
         <StatusRow
           title="Dataset collection"
           description="The app does not report collection progress yet. Samples are recorded with the offline collection tool."

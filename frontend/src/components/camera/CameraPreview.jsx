@@ -5,7 +5,7 @@ function PreviewPlaceholder({ status, errorMessage }) {
   if (status === CAMERA_STATUS.STARTING) {
     return (
       <PlaceholderContent
-        icon={<LoaderCircle size={36} className="animate-spin text-blue-400" aria-hidden="true" />}
+        icon={<LoaderCircle size={36} className="animate-spin text-lime-signal" aria-hidden="true" />}
         title="Connecting to webcam…"
         description="The backend is opening the camera with OpenCV."
       />
@@ -15,7 +15,7 @@ function PreviewPlaceholder({ status, errorMessage }) {
   if (status === CAMERA_STATUS.ERROR) {
     return (
       <PlaceholderContent
-        icon={<TriangleAlert size={36} className="text-amber-400" aria-hidden="true" />}
+        icon={<TriangleAlert size={36} className="text-amber-300" aria-hidden="true" />}
         title="Camera unavailable"
         description={errorMessage}
         role="alert"
@@ -25,7 +25,7 @@ function PreviewPlaceholder({ status, errorMessage }) {
 
   return (
     <PlaceholderContent
-      icon={<CameraOff size={36} className="text-slate-400" aria-hidden="true" />}
+      icon={<CameraOff size={36} className="text-zinc-500" aria-hidden="true" />}
       title="Camera is off"
       description='Press "Start Camera" to preview your webcam. The preview is for setup only.'
     />
@@ -34,12 +34,12 @@ function PreviewPlaceholder({ status, errorMessage }) {
 
 function PlaceholderContent({ icon, title, description, role }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center px-6 text-center" role={role}>
-      <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 ring-1 ring-white/10">
+    <div className="flex h-full animate-fade-up flex-col items-center justify-center px-6 text-center" role={role}>
+      <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/[0.04] ring-1 ring-white/10">
         {icon}
       </span>
-      <p className="mt-4 text-base font-semibold text-white">{title}</p>
-      <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-400">{description}</p>
+      <p className="mt-4 text-base font-semibold text-zinc-100">{title}</p>
+      <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-500">{description}</p>
     </div>
   );
 }
@@ -49,7 +49,9 @@ export default function CameraPreview({ status, streamUrl, errorMessage, onStrea
 
   return (
     <div
-      className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-900 ring-1 ring-slate-900/10"
+      className={`relative aspect-video w-full overflow-hidden rounded-2xl bg-black ring-1 transition-all duration-700 ${
+        isLive ? 'ring-lime-signal/40 shadow-[0_0_60px_-20px_rgba(182,255,0,0.45)]' : 'ring-white/10'
+      }`}
       aria-label="Camera preview"
     >
       {isLive ? (
@@ -57,10 +59,14 @@ export default function CameraPreview({ status, streamUrl, errorMessage, onStrea
           <img
             src={streamUrl}
             alt="Live webcam feed"
-            className="h-full w-full object-cover -scale-x-100"
+            className="h-full w-full animate-fade-up object-cover -scale-x-100"
             onError={onStreamError}
           />
-          <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-1/4 animate-scan-line bg-gradient-to-b from-transparent via-lime-signal/10 to-transparent"
+          />
+          <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold tracking-wide text-white ring-1 ring-white/10 backdrop-blur">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
@@ -69,7 +75,7 @@ export default function CameraPreview({ status, streamUrl, errorMessage, onStrea
           </span>
         </>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-900">
+        <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-black to-zinc-950">
           <PreviewPlaceholder status={status} errorMessage={errorMessage} />
         </div>
       )}

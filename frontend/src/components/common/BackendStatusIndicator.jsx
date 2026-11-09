@@ -8,17 +8,21 @@ const BACKEND_BADGES = {
   [BACKEND_STATUS.OFFLINE]: { label: 'Backend unreachable', tone: 'danger' },
 };
 
-export default function BackendStatusIndicator({ status, onRefresh }) {
+export default function BackendStatusIndicator({ status, onRefresh, dark = false }) {
   const badge = BACKEND_BADGES[status];
 
   return (
     <div className="flex items-center gap-2">
-      <StatusBadge label={badge.label} tone={badge.tone} pulse={badge.pulse} />
+      <StatusBadge label={badge.label} tone={badge.tone} pulse={badge.pulse} dark={dark} />
       {status === BACKEND_STATUS.OFFLINE && (
         <button
           type="button"
           onClick={onRefresh}
-          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50"
+          className={
+            dark
+              ? 'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-lime-signal hover:bg-lime-signal/10'
+              : 'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50'
+          }
         >
           <RefreshCw size={12} aria-hidden="true" />
           Retry

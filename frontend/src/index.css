@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+@theme {
+  --color-lime-signal: #b6ff00;
+  --animate-scan-line: scan-line 4s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.5s ease-out both;
+
+  @keyframes scan-line {
+    0%,
+    100% {
+      transform: translateY(-100%);
+    }
+    50% {
+      transform: translateY(300%);
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
