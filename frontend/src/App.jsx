@@ -1,13 +1,17 @@
-import { Accessibility, BookOpen, Database, FlaskConical, GraduationCap, LifeBuoy, MessageCircle, Settings, User } from 'lucide-react';
+import { Accessibility, LifeBuoy, MessageCircle, Settings, User } from 'lucide-react';
 import { Route, Routes } from 'react-router-dom';
 import AppShell from './components/app/AppShell.jsx';
 import ComingSoonPage from './components/app/ComingSoonPage.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
+import ContributePage from './pages/ContributePage.jsx';
 import ConversationPage from './pages/ConversationPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
+import DictionaryPage from './pages/DictionaryPage.jsx';
+import GuidedLearningPage from './pages/GuidedLearningPage.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import LearnPage from './pages/LearnPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import PracticeLabPage from './pages/PracticeLabPage.jsx';
 import QuickConnectPage from './pages/QuickConnectPage.jsx';
 import TranslatorPage from './pages/TranslatorPage.jsx';
 import VoiceToTextPage from './pages/VoiceToTextPage.jsx';
@@ -27,50 +31,10 @@ export default function App() {
         <Route path="voice-to-text" element={<VoiceToTextPage />} />
         <Route path="quick-connect" element={<QuickConnectPage />} />
         <Route path="conversation" element={<ConversationPage />} />
-        <Route
-          path="learn/dictionary"
-          element={
-            <ComingSoonPage
-              section="Learn"
-              title="ISL Dictionary"
-              description="Search Indian Sign Language vocabulary by word and category."
-              icon={BookOpen}
-            />
-          }
-        />
-        <Route
-          path="learn/lessons"
-          element={
-            <ComingSoonPage
-              section="Learn"
-              title="Guided Learning"
-              description="Structured lessons, from beginner to intermediate, with progress saved to your account."
-              icon={GraduationCap}
-            />
-          }
-        />
-        <Route
-          path="learn/practice"
-          element={
-            <ComingSoonPage
-              section="Learn"
-              title="Practice Lab"
-              description="Practise selected vocabulary with your camera. Feedback appears only when the recogniser supports it."
-              icon={FlaskConical}
-            />
-          }
-        />
-        <Route
-          path="contribute"
-          element={
-            <ComingSoonPage
-              section="Contribute"
-              title="Dataset Contribution"
-              description="Research participation: consent, instructions and recording status."
-              icon={Database}
-            />
-          }
-        />
+        <Route path="learn/dictionary" element={<DictionaryPage />} />
+        <Route path="learn/lessons" element={<GuidedLearningPage />} />
+        <Route path="learn/practice" element={<PracticeLabPage />} />
+        <Route path="contribute" element={<ContributePage />} />
         <Route
           path="community"
           element={
