@@ -6,11 +6,13 @@ const RECOGNITION_POLL_INTERVAL_MS = 500;
 export default function useRecognition(enabled) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [receivedAt, setReceivedAt] = useState(null);
 
   useEffect(() => {
     if (!enabled) {
       setResult(null);
       setError('');
+      setReceivedAt(null);
       return undefined;
     }
 
@@ -25,11 +27,13 @@ export default function useRecognition(enabled) {
         if (!cancelled) {
           setResult(data);
           setError('');
+          setReceivedAt(Date.now());
         }
       } catch (requestError) {
         if (!cancelled) {
           setResult(null);
           setError(requestError.message);
+          setReceivedAt(null);
         }
       } finally {
         inFlight = false;
@@ -45,5 +49,5 @@ export default function useRecognition(enabled) {
     };
   }, [enabled]);
 
-  return { result, error };
+  return { result, error, receivedAt };
 }

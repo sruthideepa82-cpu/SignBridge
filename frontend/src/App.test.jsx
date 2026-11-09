@@ -42,6 +42,10 @@ describe('SignBridge routes', () => {
     expect(screen.getByText('Camera is off')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Start Camera' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Stop Camera' })).toBeDisabled();
+    expect(screen.getByRole('heading', { name: 'Sign prediction' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Collection & training status' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Recognition history' })).toBeInTheDocument();
+    expect(screen.getByText('No predictions yet')).toBeInTheDocument();
   });
 
   it('shows the learning module as under development', () => {
