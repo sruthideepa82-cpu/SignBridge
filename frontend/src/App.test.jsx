@@ -37,9 +37,7 @@ describe('SignBridge routes', () => {
   it('shows the translator headline with an idle camera and the processing modes', () => {
     renderApp('/translator');
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'What if AI could translate sign language into voice?' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Sign to Voice' })).toBeInTheDocument();
     expect(screen.getByText('Camera is off')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Start Camera' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Stop Camera' })).toBeDisabled();

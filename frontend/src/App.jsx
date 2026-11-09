@@ -1,12 +1,16 @@
-import { Accessibility, BookOpen, Database, FlaskConical, GraduationCap, LayoutDashboard, LifeBuoy, Mic, MessageCircle, MessagesSquare, Settings, User, Zap } from 'lucide-react';
+import { Accessibility, BookOpen, Database, FlaskConical, GraduationCap, LifeBuoy, MessageCircle, Settings, User } from 'lucide-react';
 import { Route, Routes } from 'react-router-dom';
 import AppShell from './components/app/AppShell.jsx';
 import ComingSoonPage from './components/app/ComingSoonPage.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
+import ConversationPage from './pages/ConversationPage.jsx';
+import DashboardPage from './pages/DashboardPage.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import LearnPage from './pages/LearnPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
+import QuickConnectPage from './pages/QuickConnectPage.jsx';
 import TranslatorPage from './pages/TranslatorPage.jsx';
+import VoiceToTextPage from './pages/VoiceToTextPage.jsx';
 
 export default function App() {
   return (
@@ -18,51 +22,11 @@ export default function App() {
       </Route>
 
       <Route element={<AppShell />}>
-        <Route
-          path="dashboard"
-          element={
-            <ComingSoonPage
-              section="Communicate"
-              title="Overview"
-              description="Your workspace: recent conversations, translation activity and system status."
-              icon={LayoutDashboard}
-            />
-          }
-        />
+        <Route path="dashboard" element={<DashboardPage />} />
         <Route path="translator" element={<TranslatorPage />} />
-        <Route
-          path="voice-to-text"
-          element={
-            <ComingSoonPage
-              section="Communicate"
-              title="Voice to Text"
-              description="Turn speech into text in real time, with an editable transcript."
-              icon={Mic}
-            />
-          }
-        />
-        <Route
-          path="quick-connect"
-          element={
-            <ComingSoonPage
-              section="Communicate"
-              title="Quick Connect"
-              description="Phrase boards for everyday situations, shown large enough to read at a glance."
-              icon={Zap}
-            />
-          }
-        />
-        <Route
-          path="conversation"
-          element={
-            <ComingSoonPage
-              section="Communicate"
-              title="Conversation Space"
-              description="A two-way conversation between a Deaf or hard-of-hearing person and a hearing person."
-              icon={MessagesSquare}
-            />
-          }
-        />
+        <Route path="voice-to-text" element={<VoiceToTextPage />} />
+        <Route path="quick-connect" element={<QuickConnectPage />} />
+        <Route path="conversation" element={<ConversationPage />} />
         <Route
           path="learn/dictionary"
           element={

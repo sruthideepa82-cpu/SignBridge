@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AppPageHeader } from '../components/app/ui.jsx';
 import BackendStatusIndicator from '../components/common/BackendStatusIndicator.jsx';
 import LandmarkInfoPanel from '../components/hands/LandmarkInfoPanel.jsx';
 import RecognitionHistoryPanel from '../components/recognition/RecognitionHistoryPanel.jsx';
@@ -27,23 +28,15 @@ export default function TranslatorPage() {
   const modeLabel = PROCESSING_MODES.find((mode) => mode.id === activeMode)?.label ?? '';
 
   return (
-    <div className="relative flex flex-col items-center px-4 pb-16 pt-10 text-app-text sm:px-6 sm:pt-14">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-[radial-gradient(ellipse_at_top,rgba(182,255,0,0.06),transparent_65%)]"
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 text-app-text sm:px-6">
+        <AppPageHeader
+          eyebrow="Communicate"
+          title="Sign to Voice"
+          description="Show signs to the camera. Hand tracking runs live. Sign recognition needs a trained model, so until one is loaded no sign is recognised."
+          actions={<BackendStatusIndicator status={backend.status} onRefresh={backend.refresh} dark />}
         />
 
-        <div className="relative w-full max-w-4xl animate-fade-up text-center">
-          <h1 className="mx-auto max-w-3xl text-balance text-3xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
-            What if AI could translate sign language into voice?
-          </h1>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-zinc-500">
-            Hand tracking is live. Sign classification is under development, so no sign is predicted until a trained
-            model is loaded.
-          </p>
-        </div>
-
-        <div className="relative mt-10 w-full max-w-4xl">
+        <div className="relative w-full">
           <TranslatorStage
             camera={camera}
             landmarks={landmarks}
