@@ -3,3 +3,10 @@
 -r requirements-dev.txt
 scikit-learn==1.9.1
 joblib==1.6.0
+
+# Pretrained ISL letter classifier check (scripts/check_isl_letters.py).
+# Install torch from the CPU index: pip install torch==2.15.0 --index-url https://download.pytorch.org/whl/cpu
+torch==2.15.0
+transformers==5.22.2
+huggingface-hub==2.4.0
+pillow==11.3.0
