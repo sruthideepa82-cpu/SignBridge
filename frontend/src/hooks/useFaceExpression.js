@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { STALE_BACKEND_MESSAGE } from '../lib/faceStatus.js';
 import { getFaceExpression } from '../services/cameraService.js';
 
 const FACE_POLL_INTERVAL_MS = 250;
@@ -31,7 +32,10 @@ export default function useFaceExpression(enabled) {
       } catch (requestError) {
         if (!cancelled) {
           setFace(null);
-          setError(requestError.message);
+          // A 404 means the backend answering is older than the face endpoint. Say so, instead of a raw HTTP error.
+          const stale = requestError.status === 404;
+          if (stale) console.error('SignBridge: /api/face/latest returned 404. The backend needs a restart.');
+          setError(stale ? STALE_BACKEND_MESSAGE : requestError.message);
         }
       } finally {
         inFlight = false;

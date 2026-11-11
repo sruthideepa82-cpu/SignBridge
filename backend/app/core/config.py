@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     camera_fps: int = Field(default=30, ge=1, le=120)
     camera_jpeg_quality: int = Field(default=80, ge=1, le=100)
     camera_max_read_failures: int = Field(default=30, ge=1)
+    # Development and testing only: read this video file (looping) instead of a webcam.
+    camera_video_file: Path | None = None
 
     hand_detection_enabled: bool = True
     hand_model_path: Path = BACKEND_DIR / "models" / "hand_landmarker.task"

@@ -79,3 +79,26 @@ def test_smoother_reset_clears_history() -> None:
 
     assert result.frames == 1
     assert result.label == "Neutral"
+
+
+def test_smoother_reports_uncertain_when_recent_frames_disagree() -> None:
+    smoother = ExpressionSmoother(frames=9)
+    happy = classify_expression({"mouthSmileLeft": 0.8, "mouthSmileRight": 0.8})
+    sad = classify_expression({"mouthFrownLeft": 0.8, "mouthFrownRight": 0.8})
+
+    for index in range(9):
+        result = smoother.push(happy if index % 2 == 0 else sad)
+
+    assert result.label == "Uncertain"
+    assert result.agreement < 0.6
+
+
+def test_smoother_keeps_a_steady_label_with_full_agreement() -> None:
+    smoother = ExpressionSmoother(frames=9)
+    happy = classify_expression({"mouthSmileLeft": 0.8, "mouthSmileRight": 0.8})
+
+    for _ in range(9):
+        result = smoother.push(happy)
+
+    assert result.label == "Happy"
+    assert result.agreement == 1.0

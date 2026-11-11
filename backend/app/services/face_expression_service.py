@@ -18,6 +18,7 @@ from dataclasses import dataclass
 EXPRESSIONS = ("Happy", "Sad", "Angry", "Surprised", "Neutral")
 EXPRESSION_THRESHOLD = 0.30
 SMOOTHING_FRAMES = 9
+UNCERTAIN_AGREEMENT = 0.6
 
 Blendshapes = Mapping[str, float]
 
@@ -35,6 +36,7 @@ class SmoothedExpression:
     strength: float
     scores: dict[str, float]
     frames: int
+    agreement: float
 
 
 def _clamp(value: float) -> float:
@@ -81,7 +83,11 @@ def classify_expression(shapes: Blendshapes) -> ExpressionEstimate:
 
 
 class ExpressionSmoother:
-    """Majority label over the last few frames. Strength is the mean of the frames that agree."""
+    """Majority label over the last few frames. Strength is the mean of the frames that agree.
+
+    If fewer than UNCERTAIN_AGREEMENT of the recent frames agree on one label, the result is "Uncertain":
+    the face is moving too much, or the estimates keep changing, to report one expression reliably.
+    """
 
     def __init__(self, frames: int = SMOOTHING_FRAMES) -> None:
         self._window: deque[ExpressionEstimate] = deque(maxlen=frames)
@@ -89,13 +95,16 @@ class ExpressionSmoother:
     def push(self, estimate: ExpressionEstimate) -> SmoothedExpression:
         self._window.append(estimate)
         counts = Counter(item.label for item in self._window)
-        label = max(counts, key=lambda name: counts[name])
-        strengths = [item.strength for item in self._window if item.label == label]
+        majority, votes = max(counts.items(), key=lambda pair: pair[1])
+        strengths = [item.strength for item in self._window if item.label == majority]
+        agreement = votes / len(self._window)
+        label = majority if agreement >= UNCERTAIN_AGREEMENT else "Uncertain"
         return SmoothedExpression(
             label=label,
             strength=round(sum(strengths) / len(strengths), 3),
             scores=dict(estimate.scores),
             frames=len(self._window),
+            agreement=round(agreement, 3),
         )
 
     def reset(self) -> None:

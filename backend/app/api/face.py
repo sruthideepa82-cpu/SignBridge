@@ -60,4 +60,5 @@ def latest_face(camera: CameraServiceDep) -> FaceExpressionResponse:
         strength=expression.strength if expression else None,
         scores=FaceExpressionScores(**expression.scores) if expression else None,
         frames_smoothed=expression.frames if expression else 0,
+        agreement=expression.agreement if expression else None,
     )

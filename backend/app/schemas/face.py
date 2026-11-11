@@ -1,4 +1,4 @@
-﻿from typing import Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -30,8 +30,9 @@ class FaceExpressionResponse(BaseModel):
     face_count: int
     landmark_count: int
     faces: list[FaceResponse] = []
-    expression: Literal["Happy", "Sad", "Angry", "Surprised", "Neutral"] | None = None
+    expression: Literal["Happy", "Sad", "Angry", "Surprised", "Neutral", "Uncertain"] | None = None
     strength: float | None = Field(default=None, description="Heuristic 0-1 strength of the expression. Not a probability.")
     scores: FaceExpressionScores | None = None
     frames_smoothed: int = 0
+    agreement: float | None = Field(default=None, description="Share of recent frames that agree on the label, 0 to 1.")
     estimate_note: str = "Estimated from facial movements. Not a verified reading of the person's feelings."

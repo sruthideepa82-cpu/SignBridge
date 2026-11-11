@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fixture from '../test/fixtures/face-grace-hopper.json';
 import { CAMERA_STATUS } from '../hooks/useCamera.js';
-import { describeFace, NO_FACE_MESSAGE, PARTIAL_FACE_MESSAGE, strengthText } from './faceStatus.js';
+import { describeFace, NO_FACE_MESSAGE, PARTIAL_FACE_MESSAGE, STALE_BACKEND_MESSAGE, strengthText, UNCERTAIN_NOTE } from './faceStatus.js';
 
 const live = { cameraLive: true, paused: false, error: '', cameraStatus: CAMERA_STATUS.LIVE, cameraError: '' };
 
@@ -104,5 +104,23 @@ describe('strengthText', () => {
   it('is blank when the backend gives no strength', () => {
     expect(strengthText(null)).toBeNull();
     expect(strengthText(0.8)).toBe('Strength 80%');
+  });
+});
+
+describe('stale backend and uncertain expressions', () => {
+  it('tells the user to restart the backend when the face endpoint is missing', () => {
+    const view = describeFace({ ...live, face: null, error: STALE_BACKEND_MESSAGE });
+
+    expect(view.label).toBe('Backend out of date');
+    expect(view.tone).toBe('danger');
+    expect(view.message).toMatch(/Restart the backend/);
+  });
+
+  it('reports an uncertain expression without naming one', () => {
+    const view = describeFace({ ...live, face: detected({ expression: 'Uncertain', strength: 0.4 }) });
+
+    expect(view.label).toBe('Face detected');
+    expect(view.expression).toBe('Uncertain');
+    expect(view.message).toBe(UNCERTAIN_NOTE);
   });
 });

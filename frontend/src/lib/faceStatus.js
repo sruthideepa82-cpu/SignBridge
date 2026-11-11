@@ -5,6 +5,9 @@ import { CAMERA_STATUS } from '../hooks/useCamera.js';
 export const NO_FACE_MESSAGE = 'Move into the camera frame to enable facial tracking.';
 export const PARTIAL_FACE_MESSAGE = 'Move your face fully into the frame for steadier tracking.';
 export const ESTIMATE_NOTE = 'Estimate from facial movements. Not a verified reading of how someone feels.';
+export const UNCERTAIN_NOTE = 'The recent frames disagree, so no single expression is reported.';
+// Set when the running backend has no face endpoint (it was started before facial tracking was added).
+export const STALE_BACKEND_MESSAGE = 'The running SignBridge backend has no facial tracking. Restart the backend and reload the page.';
 
 function view(label, tone, message, extra = {}) {
   return { label, tone, message, expression: null, strength: null, faceCount: 0, landmarkCount: 0, partiallyOutside: false, blendshapes: null, ...extra };
@@ -19,6 +22,9 @@ export function describeFace({ face, error, cameraLive, paused, cameraStatus, ca
   }
   if (!cameraLive) {
     return view('Waiting for camera', 'neutral', 'Start the camera to enable facial tracking.');
+  }
+  if (error === STALE_BACKEND_MESSAGE) {
+    return view('Backend out of date', 'danger', error);
   }
   if (error) {
     return view('Unavailable', 'danger', error);
@@ -40,7 +46,7 @@ export function describeFace({ face, error, cameraLive, paused, cameraStatus, ca
           strength: face.strength,
         });
       }
-      return view('Face detected', 'success', null, {
+      return view('Face detected', 'success', face.expression === 'Uncertain' ? UNCERTAIN_NOTE : null, {
         ...base,
         expression: face.expression,
         strength: face.strength,

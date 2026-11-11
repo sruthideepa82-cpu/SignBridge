@@ -1,6 +1,7 @@
 import { AlertTriangle, Info } from 'lucide-react';
 import { describeRecognition } from '../../lib/recognitionStatus.js';
 import { describeFace, ESTIMATE_NOTE, strengthText } from '../../lib/faceStatus.js';
+import FaceDiagnostics from './FaceDiagnostics.jsx';
 import { summariseBlendshapes } from '../../lib/faceBlendshapes.js';
 import {
   describeCamera,
@@ -117,7 +118,7 @@ export default function RecognitionStatus({
           <Row
             label="Predicted expression"
             value={faceView.expression ?? '—'}
-            tone={faceView.expression ? 'info' : 'neutral'}
+            tone={faceView.expression === 'Uncertain' ? 'warning' : faceView.expression ? 'info' : 'neutral'}
             detail={faceView.expression ? ESTIMATE_NOTE : undefined}
           />
           {faceView.expression && <Row label="Strength" value={strengthText(faceView.strength) ?? '—'} />}
@@ -143,6 +144,7 @@ export default function RecognitionStatus({
             {faceView.message}
           </p>
         )}
+        <FaceDiagnostics face={face} error={faceError} faceView={faceView} />
       </section>
 
       {confidence.lowConfidence && (

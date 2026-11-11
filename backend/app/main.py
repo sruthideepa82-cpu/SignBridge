@@ -14,6 +14,7 @@ from app.core.config import Settings, get_settings
 from app.core.exceptions import SignBridgeError
 from app.services.camera_service import CameraService
 from app.services.face_detection_service import create_face_detector_factory
+from app.services.video_file_capture import LoopingVideoFile
 from app.services.hand_detection_service import create_hand_detector_factory
 from app.services.recognition_service import StaticRecognizer
 
@@ -66,8 +67,14 @@ def create_app(
 ) -> FastAPI:
     settings = settings or get_settings()
     logging.basicConfig(level=settings.log_level.upper())
+    capture_factory = None
+    if settings.camera_video_file is not None:
+        video_path = settings.camera_video_file
+        logger.warning("Camera replaced by video file for development: %s", video_path)
+        capture_factory = lambda _index: LoopingVideoFile(video_path)  # noqa: E731
     camera = camera_service or CameraService(
         settings,
+        **({"capture_factory": capture_factory} if capture_factory else {}),
         detector_factory=create_hand_detector_factory(settings),
         face_detector_factory=create_face_detector_factory(settings),
     )
