@@ -45,7 +45,7 @@ function Track({ track, practised, onMark }) {
 
       {lessons.length > 0 && (
         <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-white/5" role="progressbar" aria-valuemin={0} aria-valuemax={letters.length} aria-valuenow={trackDone} aria-label={`${track.title} progress`}>
-          <div className="h-full rounded-full bg-lime-signal transition-[width] duration-500" style={{ width: `${percent}%` }} />
+          <div className="h-full rounded-full bg-accent transition-[width] duration-500" style={{ width: `${percent}%` }} />
         </div>
       )}
 
@@ -84,9 +84,9 @@ function Track({ track, practised, onMark }) {
                           onClick={() => onMark(letter)}
                           aria-pressed={done}
                           aria-label={`Mark letter ${letter} as practised`}
-                          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-app-muted transition-colors hover:text-app-text focus-visible:outline-2 focus-visible:outline-lime-signal"
+                          className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs text-app-muted transition-colors hover:text-app-text focus-visible:outline-2 focus-visible:outline-accent"
                         >
-                          {done ? <CheckCircle2 size={15} className="text-lime-signal" aria-hidden="true" /> : <Circle size={15} aria-hidden="true" />}
+                          {done ? <CheckCircle2 size={15} className="text-accent" aria-hidden="true" /> : <Circle size={15} aria-hidden="true" />}
                           {done ? 'Marked' : 'Mark'}
                         </button>
                       </li>
@@ -140,7 +140,7 @@ export default function GuidedLearningPage() {
 
       <p className="text-xs text-app-muted">
         Letters are marked by you, not checked by the app. Recognition feedback is available in the{' '}
-        <Link to="/learn/practice" className="text-lime-signal underline-offset-2 hover:underline">
+        <Link to="/learn/practice" className="text-accent underline-offset-2 hover:underline">
           Practice Lab
         </Link>
         , and only when a model is loaded.

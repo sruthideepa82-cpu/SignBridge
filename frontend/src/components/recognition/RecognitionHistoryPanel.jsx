@@ -2,7 +2,7 @@ import StatusBadge from '../common/StatusBadge.jsx';
 import { formatTime } from '../../lib/recognitionHistory.js';
 
 const BUTTON =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-signal disabled:cursor-not-allowed disabled:opacity-40';
+  'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40';
 const SECONDARY = `${BUTTON} bg-white/[0.04] text-zinc-200 ring-1 ring-white/10 enabled:hover:bg-white/[0.08] enabled:active:scale-[0.98]`;
 
 function HistoryItem({ entry }) {
@@ -32,7 +32,7 @@ function HistoryItem({ entry }) {
 export default function RecognitionHistoryPanel({ entries, onClear }) {
   return (
     <section
-      className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 backdrop-blur-xl sm:p-6"
+      className="rounded-xl border border-app-border bg-app-surface p-5 sm:p-6"
       aria-labelledby="recognition-history-title"
     >
       <div className="flex flex-wrap items-center justify-between gap-3">

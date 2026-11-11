@@ -2,7 +2,7 @@ import { CircleCheck, Circle } from 'lucide-react';
 import { TRANSLATOR_ROADMAP } from '../../data/moduleContent.js';
 
 const STATUS_STYLES = {
-  Done: 'bg-lime-signal/10 text-lime-signal ring-lime-signal/25',
+  Done: 'bg-accent/10 text-accent ring-accent/25',
   Next: 'bg-sky-400/10 text-sky-300 ring-sky-400/20',
   Planned: 'bg-white/[0.04] text-zinc-400 ring-white/10',
 };
@@ -10,7 +10,7 @@ const STATUS_STYLES = {
 export default function RoadmapPanel() {
   return (
     <section
-      className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 backdrop-blur-xl sm:p-6"
+      className="rounded-xl border border-app-border bg-app-surface p-5 sm:p-6"
       aria-labelledby="translator-roadmap-title"
     >
       <h2 id="translator-roadmap-title" className="text-lg font-semibold tracking-tight text-zinc-100">
@@ -23,7 +23,7 @@ export default function RoadmapPanel() {
             <li key={item.label} className="flex items-start gap-3">
               <Icon
                 size={18}
-                className={item.status === 'Done' ? 'mt-0.5 shrink-0 text-lime-signal' : 'mt-0.5 shrink-0 text-zinc-600'}
+                className={item.status === 'Done' ? 'mt-0.5 shrink-0 text-accent' : 'mt-0.5 shrink-0 text-zinc-600'}
                 aria-hidden="true"
               />
               <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-2">

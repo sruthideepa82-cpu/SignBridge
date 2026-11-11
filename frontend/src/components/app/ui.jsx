@@ -1,13 +1,14 @@
 // Shared building blocks for the application pages. Keep the visual language here, not per page.
 
+// Every button is 36px tall so buttons line up across the app. Pass extra classes only for width or icon-only sizing.
 export const BUTTON_BASE =
-  'inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-signal disabled:cursor-not-allowed disabled:opacity-40';
+  'inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-lg px-3.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40';
 
 export const BUTTON_VARIANTS = {
-  primary: 'bg-lime-signal text-black hover:brightness-110 active:scale-[0.98]',
-  secondary: 'border border-app-border bg-app-surface text-app-text hover:border-white/20 active:scale-[0.98]',
-  ghost: 'text-app-muted hover:bg-white/5 hover:text-app-text',
-  danger: 'border border-red-500/40 text-red-300 hover:bg-red-500/10',
+  primary: 'bg-accent text-app-bg hover:bg-accent-hover active:scale-[0.98]',
+  secondary: 'border border-app-border bg-app-surface text-app-text hover:bg-app-raised active:scale-[0.98]',
+  ghost: 'text-app-muted hover:bg-white/[0.06] hover:text-app-text',
+  danger: 'border border-danger/40 text-danger hover:bg-danger/10',
 };
 
 export function buttonClass(variant = 'secondary', extra = '') {
@@ -65,7 +66,7 @@ export function EmptyState({ icon: Icon, title, children }) {
 
 export function StatusDot({ tone = 'neutral' }) {
   const colour = {
-    ok: 'bg-lime-signal',
+    ok: 'bg-success',
     warn: 'bg-amber-300',
     error: 'bg-red-400',
     neutral: 'bg-app-muted',

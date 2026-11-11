@@ -1,12 +1,9 @@
 import { Search } from 'lucide-react';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { APP_FOOTER_ITEMS, APP_SECTIONS } from '../../config/appNavigation.js';
+import { allAppPages } from '../../config/appNavigation.js';
 
-const ALL_PAGES = [
-  ...APP_SECTIONS.flatMap((section) => section.items.map((item) => ({ ...item, section: section.label }))),
-  ...APP_FOOTER_ITEMS.map((item) => ({ ...item, section: 'Account' })),
-];
+const ALL_PAGES = allAppPages();
 
 export default function CommandSearch() {
   const [query, setQuery] = useState('');
@@ -58,7 +55,7 @@ export default function CommandSearch() {
 
   return (
     <div className="relative w-full max-w-md">
-      <label className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-app-muted transition-colors focus-within:border-lime-signal/60">
+      <label className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-app-muted transition-colors focus-within:border-accent/60">
         <Search size={15} aria-hidden="true" />
         <span className="sr-only">Search pages</span>
         <input

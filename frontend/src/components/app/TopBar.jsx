@@ -61,9 +61,9 @@ function AccessibilityPanel({ scaleId, onChange }) {
                 role="radio"
                 aria-checked={selected}
                 onClick={() => onChange(scale.id)}
-                className={`rounded-lg border px-2 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-signal ${
+                className={`rounded-lg border px-2 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
                   selected
-                    ? 'border-lime-signal/60 bg-lime-signal/10 text-lime-signal'
+                    ? 'border-accent/60 bg-accent/10 text-accent'
                     : 'border-app-border text-app-muted hover:text-app-text'
                 }`}
               >
@@ -126,7 +126,7 @@ export default function TopBar({ onOpenMenu }) {
         type="button"
         onClick={onOpenMenu}
         aria-label="Open navigation"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text md:hidden focus-visible:outline-2 focus-visible:outline-lime-signal"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text md:hidden focus-visible:outline-2 focus-visible:outline-accent"
       >
         <Menu size={18} aria-hidden="true" />
       </button>

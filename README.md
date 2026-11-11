@@ -32,7 +32,7 @@ SignBridge is an AI-powered accessibility platform for real-time communication b
 | --- | --- |
 | Landing page (hero, features, how it works, about, footer) | Implemented |
 | Responsive navigation with mobile menu | Implemented |
-| Routes `/`, `/translator`, `/learn`, and a 404 page | Implemented |
+| Routes `/`, `/learn`, and a 404 page | Implemented |
 | FastAPI backend with health endpoint, CORS, and structured errors | Implemented |
 | OpenCV webcam capture with MJPEG streaming | Implemented |
 | Start / Stop camera controls with status and error messages | Implemented |
@@ -71,7 +71,7 @@ SignBridge/
 │   │   ├── data/             Static content for landing and module pages
 │   │   ├── hooks/            useCamera, useBackendHealth
 │   │   ├── layouts/          MainLayout (navbar + outlet + footer)
-│   │   ├── pages/            Landing, Translator, Learn, NotFound
+│   │   ├── pages/            Landing, Live Studio, Conversations, Quick Phrases, History, Settings, Learn, NotFound
 │   │   ├── services/         API client and endpoint wrappers
 │   │   ├── test/             Vitest setup and helpers
 │   │   ├── assets/           Images and icons
@@ -209,6 +209,7 @@ Base URL: `http://127.0.0.1:8000/api`. Errors use one JSON shape:
 | POST | `/camera/start` | Open the webcam and start capturing (idempotent) | `200` status object | `503 camera_unavailable` |
 | POST | `/camera/stop` | Stop capturing and release the webcam | `200` status object | — |
 | GET | `/camera/landmarks` | Latest hand landmarks, matched to the most recent annotated frame | `200` `{status, running, detection_available, detection_error, frame_sequence, hand_count, hands, timestamp}` | — |
+| GET | `/face/latest` | Face detection and the facial expression estimate from the same frames as the hands. `expression` is one of Happy, Sad, Angry, Surprised, Neutral, or null. `strength` is a heuristic 0–1 score, not a probability | `200` `{status, running, detection_available, detection_error, frame_sequence, face_count, landmark_count, expression, strength, scores, frames_smoothed, estimate_note}` | — |
 | GET | `/camera/stream` | MJPEG stream of annotated frames (`multipart/x-mixed-replace; boundary=frame`) | `200` stream of JPEG frames | `409 camera_not_running` |
 | GET | `/recognition/latest` | Letter recognition for the newest frame with one visible hand. Returns a label only above the confidence threshold | `200` `{status, label, confidence, threshold, frame_sequence, detail}` where `status` is `camera_off`, `no_model`, `no_hand`, `two_hands`, `uncertain`, or `recognized` | — |
 
@@ -279,7 +280,7 @@ python scripts/download_models.py
 ### How to run hand detection
 
 1. Start the backend and frontend as in [Quick start](#quick-start).
-2. Open http://localhost:5173/translator and click **Start Camera**.
+2. Open http://localhost:5173/live (Live Studio) and click **Start Camera**.
 3. Show one or both hands to the camera, palm or back facing it, with good light and the hand fully in view.
 4. The status badge changes to **Hand detected** and shows the hand count. The landmark panel lists each hand's 21 landmarks with coordinates. The preview shows the drawn skeleton.
 5. Lower your hand out of view. The status changes back to **No hand detected** and the coordinates disappear.
@@ -347,7 +348,7 @@ The browser never accesses the webcam directly; only the backend does. Browser p
 
 - Project scaffold for frontend, backend, AI engine, and documentation.
 - Landing page with hero, features, how it works, about, and footer. Responsive down to 390px wide, verified in a browser.
-- Routes: `/`, `/translator`, `/learn`, and a 404 page.
+- Routes: `/`, `/learn`, and a 404 page. In the app: Overview (`/dashboard`), Live Studio (`/live`), Conversations, Quick Phrases, History, Settings, and Help. Old paths such as `/translator` and `/quick-connect` redirect to their new pages.
 - Backend: `GET /api/health`, environment-based settings, CORS for the Vite dev server, structured errors, and a camera service with MJPEG streaming.
 - Frontend camera panel: Start and Stop, status badges, connecting and error states, live preview, and automatic status checks while live.
 - MediaPipe hand landmark detection on live OpenCV frames: up to two hands, 21 landmarks each, drawn on the stream, with a hand count, status badge, and coordinate panel.

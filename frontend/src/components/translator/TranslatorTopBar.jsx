@@ -3,7 +3,7 @@ import BackendStatusIndicator from '../common/BackendStatusIndicator.jsx';
 import Logo from '../common/Logo.jsx';
 
 const linkClass = ({ isActive }) =>
-  `text-xs font-medium transition-colors duration-200 ${isActive ? 'text-lime-signal' : 'text-zinc-500 hover:text-zinc-200'}`;
+  `text-xs font-medium transition-colors duration-200 ${isActive ? 'text-accent' : 'text-zinc-500 hover:text-zinc-200'}`;
 
 export default function TranslatorTopBar({ backendStatus, onRefreshBackend }) {
   return (

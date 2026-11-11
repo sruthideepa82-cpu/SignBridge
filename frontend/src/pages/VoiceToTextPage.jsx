@@ -137,7 +137,7 @@ export default function VoiceToTextPage() {
           onChange={(event) => setText(event.target.value)}
           rows={8}
           placeholder={speech.supported ? 'Press “Start listening”, or type here.' : 'Type your message here.'}
-          className={`w-full resize-y rounded-lg border border-app-border bg-app-bg p-4 leading-relaxed text-app-text placeholder:text-app-muted focus:border-lime-signal/60 focus:outline-none ${
+          className={`w-full resize-y rounded-lg border border-app-border bg-app-bg p-4 leading-relaxed text-app-text placeholder:text-app-muted focus:border-accent/60 focus:outline-none ${
             largeText ? 'text-2xl' : 'text-base'
           }`}
         />

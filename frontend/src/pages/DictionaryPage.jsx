@@ -39,7 +39,7 @@ export default function DictionaryPage() {
       />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label className="flex w-full items-center gap-2 rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm text-app-muted focus-within:border-lime-signal/60 sm:max-w-sm">
+        <label className="flex w-full items-center gap-2 rounded-lg border border-app-border bg-app-surface px-3 py-2 text-sm text-app-muted focus-within:border-accent/60 sm:max-w-sm">
           <Search size={15} aria-hidden="true" />
           <span className="sr-only">Search vocabulary</span>
           <input
@@ -57,8 +57,8 @@ export default function DictionaryPage() {
               type="button"
               aria-pressed={category === item.id}
               onClick={() => setCategory(item.id)}
-              className={`rounded-lg border px-3 py-1.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-lime-signal ${
-                category === item.id ? 'border-lime-signal/50 bg-lime-signal/10 text-lime-signal' : 'border-app-border text-app-muted hover:text-app-text'
+              className={`rounded-lg border px-3 py-1.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
+                category === item.id ? 'border-accent/50 bg-accent/10 text-accent' : 'border-app-border text-app-muted hover:text-app-text'
               }`}
             >
               {item.label}
@@ -81,8 +81,8 @@ export default function DictionaryPage() {
                       type="button"
                       aria-pressed={isSelected}
                       onClick={() => setSelectedLabel(entry.label)}
-                      className={`flex w-full flex-col rounded-xl border p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-lime-signal ${
-                        isSelected ? 'border-lime-signal/50 bg-lime-signal/5' : 'border-app-border bg-app-surface/60 hover:border-white/20'
+                      className={`flex w-full flex-col rounded-xl border p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
+                        isSelected ? 'border-accent/50 bg-accent/5' : 'border-app-border bg-app-surface/60 hover:border-white/20'
                       }`}
                     >
                       <span className="text-3xl font-semibold text-app-text">{entry.label}</span>

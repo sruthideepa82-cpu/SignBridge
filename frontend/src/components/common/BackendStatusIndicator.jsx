@@ -20,7 +20,7 @@ export default function BackendStatusIndicator({ status, onRefresh, dark = false
           onClick={onRefresh}
           className={
             dark
-              ? 'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-lime-signal hover:bg-lime-signal/10'
+              ? 'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-accent hover:bg-accent/10'
               : 'inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50'
           }
         >

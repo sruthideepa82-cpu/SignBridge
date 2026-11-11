@@ -5,7 +5,7 @@ function PreviewPlaceholder({ status, errorMessage }) {
   if (status === CAMERA_STATUS.STARTING) {
     return (
       <PlaceholderContent
-        icon={<LoaderCircle size={36} className="animate-spin text-lime-signal" aria-hidden="true" />}
+        icon={<LoaderCircle size={36} className="animate-spin text-accent" aria-hidden="true" />}
         title="Connecting to webcam…"
         description="The backend is opening the camera with OpenCV."
       />
@@ -49,22 +49,23 @@ export default function CameraPreview({ status, streamUrl, errorMessage, onStrea
 
   return (
     <div
-      className={`relative aspect-video w-full overflow-hidden rounded-md border bg-black transition-all duration-700 ${
-        isLive ? 'border-lime-signal/40 shadow-[0_0_60px_-24px_rgba(182,255,0,0.5)]' : 'border-white/10'
+      className={`relative w-full overflow-hidden rounded-xl border bg-black transition-all duration-700 ${
+        isLive ? 'border-accent/40' : 'aspect-video border-app-border'
       }`}
       aria-label="Camera preview"
     >
       {isLive ? (
         <>
+          {/* The image sets its own height from the stream's aspect ratio, so it is shown uncropped. */}
           <img
             src={streamUrl}
             alt="Live webcam feed"
-            className="h-full w-full animate-fade-up object-cover -scale-x-100"
+            className="block h-auto w-full animate-fade-up -scale-x-100"
             onError={onStreamError}
           />
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-1/4 animate-scan-line bg-gradient-to-b from-transparent via-lime-signal/10 to-transparent"
+            className="pointer-events-none absolute inset-x-0 top-0 h-1/4 animate-scan-line bg-gradient-to-b from-transparent via-accent/10 to-transparent"
           />
           <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold tracking-wide text-white ring-1 ring-white/10 backdrop-blur">
             <span className="relative flex h-2 w-2">

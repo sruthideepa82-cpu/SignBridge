@@ -13,42 +13,26 @@ describe('application shell', () => {
     renderApp('/dashboard');
 
     const nav = screen.getByRole('navigation', { name: 'Main application navigation' });
-    for (const label of [
-      'Overview',
-      'Sign to Voice',
-      'Voice to Text',
-      'Quick Connect',
-      'Conversation Space',
-      'ISL Dictionary',
-      'Guided Learning',
-      'Practice Lab',
-      'Dataset Contribution',
-      'Community & Feedback',
-      'Help & Support',
-      'Accessibility',
-      'Settings',
-    ]) {
-      expect(within(nav).getAllByText(label).length).toBeGreaterThan(0);
+    for (const label of ['Overview', 'Live Studio', 'Conversations', 'Quick Phrases', 'History', 'Settings']) {
+      expect(within(nav).getByRole('link', { name: label })).toBeInTheDocument();
     }
-    expect(within(nav).getByText('Communicate')).toBeInTheDocument();
-    expect(within(nav).getByText('Learn')).toBeInTheDocument();
-    expect(within(nav).getByText('Contribute')).toBeInTheDocument();
+    expect(within(nav).getByRole('link', { name: 'Profile' })).toBeInTheDocument();
   });
 
   it('marks the current page as active in the sidebar', () => {
-    renderApp('/voice-to-text');
+    renderApp('/live');
 
     const nav = screen.getByRole('navigation', { name: 'Main application navigation' });
-    expect(within(nav).getByRole('link', { name: 'Voice to Text' })).toHaveClass('text-lime-signal');
-    expect(within(nav).getByRole('link', { name: 'Overview' })).not.toHaveClass('text-lime-signal');
+    expect(within(nav).getByRole('link', { name: 'Live Studio' })).toHaveClass('text-app-text');
+    expect(within(nav).getByRole('link', { name: 'Overview' })).not.toHaveClass('text-app-text');
   });
 
   it('shows the current section and page in the breadcrumb', () => {
-    renderApp('/quick-connect');
+    renderApp('/phrases');
 
     const crumbs = screen.getByRole('navigation', { name: 'Breadcrumb' });
-    expect(within(crumbs).getByText('Communicate')).toBeInTheDocument();
-    expect(within(crumbs).getByText('Quick Connect', { selector: '[aria-current="page"]' })).toBeInTheDocument();
+    expect(within(crumbs).getByText('Workspace')).toBeInTheDocument();
+    expect(within(crumbs).getByText('Quick Phrases', { selector: '[aria-current="page"]' })).toBeInTheDocument();
   });
 
   it('filters pages in the command search and opens the chosen page with the keyboard', async () => {
@@ -63,6 +47,14 @@ describe('application shell', () => {
 
     fireEvent.keyDown(search, { key: 'Enter' });
     expect(await screen.findByRole('heading', { level: 1, name: 'ISL Dictionary' })).toBeInTheDocument();
+  });
+
+  it('finds pages that are not in the sidebar, such as Voice to Text', () => {
+    renderApp('/dashboard');
+
+    fireEvent.change(screen.getByRole('combobox', { name: 'Search pages' }), { target: { value: 'voice' } });
+
+    expect(screen.getByRole('option', { name: /Voice to Text/ })).toBeInTheDocument();
   });
 
   it('reports when no page matches the search', () => {
@@ -106,7 +98,7 @@ describe('application shell', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Open navigation' }));
     const drawer = screen.getByRole('dialog', { name: 'Navigation' });
-    expect(within(drawer).getByRole('link', { name: 'Sign to Voice' })).toBeInTheDocument();
+    expect(within(drawer).getByRole('link', { name: 'Live Studio' })).toBeInTheDocument();
 
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('dialog', { name: 'Navigation' })).not.toBeInTheDocument();
@@ -115,6 +107,6 @@ describe('application shell', () => {
   it('shows the backend as unreachable when the health check fails', async () => {
     renderApp('/dashboard');
 
-    expect(await screen.findByText('Backend unreachable')).toBeInTheDocument();
+    expect((await screen.findAllByText('Backend unreachable')).length).toBeGreaterThan(0);
   });
 });

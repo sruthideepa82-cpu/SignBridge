@@ -38,7 +38,7 @@ export default function Navbar() {
         </ul>
 
         <Link
-          to="/translator"
+          to="/live"
           className="hidden rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-blue-600/20 transition hover:-translate-y-0.5 hover:shadow-lg md:inline-flex"
         >
           Start Communicating
@@ -72,7 +72,7 @@ export default function Navbar() {
             ))}
             <li className="pt-2">
               <Link
-                to="/translator"
+                to="/live"
                 onClick={closeMenu}
                 className="block rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2.5 text-center text-sm font-semibold text-white"
               >

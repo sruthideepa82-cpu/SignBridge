@@ -22,3 +22,9 @@ class CameraNotRunningError(SignBridgeError):
 class HandDetectionUnavailableError(SignBridgeError):
     status_code = 503
     code = "hand_detection_unavailable"
+
+
+class FaceDetectionUnavailableError(SignBridgeError):
+    status_code = 503
+    code = "face_detection_unavailable"
+

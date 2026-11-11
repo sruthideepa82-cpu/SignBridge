@@ -17,7 +17,7 @@ export const SECTION_LINKS = [
 ];
 
 export const ROUTE_LINKS = [
-  { label: 'Translator', to: '/translator' },
+  { label: 'Live Studio', to: '/live' },
   { label: 'Learn', to: '/learn' },
 ];
 

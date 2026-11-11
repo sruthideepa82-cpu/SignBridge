@@ -29,7 +29,7 @@ export default function AppShell() {
     <div className="flex h-screen overflow-hidden bg-app-bg text-app-text">
       <a
         href="#main-content"
-        className="sr-only z-[60] rounded-lg bg-lime-signal px-3 py-2 text-sm font-semibold text-black focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
+        className="sr-only z-[60] rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-app-bg focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
       >
         Skip to content
       </a>
@@ -52,7 +52,7 @@ export default function AppShell() {
               type="button"
               aria-label="Close navigation"
               onClick={() => setDrawerOpen(false)}
-              className="absolute right-2 top-3 flex h-8 w-8 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text focus-visible:outline-2 focus-visible:outline-lime-signal"
+              className="absolute right-2 top-3 flex h-8 w-8 items-center justify-center rounded-lg text-app-muted hover:bg-white/5 hover:text-app-text focus-visible:outline-2 focus-visible:outline-accent"
             >
               <X size={16} aria-hidden="true" />
             </button>

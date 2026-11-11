@@ -1,12 +1,14 @@
 import { describeRecognition, pct } from '../../lib/recognitionStatus.js';
 
 const TONE_TEXT = {
-  neutral: 'text-zinc-400',
-  success: 'text-lime-signal',
-  warning: 'text-amber-300',
-  danger: 'text-red-300',
+  neutral: 'text-app-muted',
+  success: 'text-success',
+  warning: 'text-warning',
+  danger: 'text-danger',
 };
 
+// Gesture overlay on the webcam. It only shows a sign when the backend returned one, and a confidence
+// value only when the model provided it.
 export default function RecognitionIndicator({ result, error, cameraLive, holding }) {
   const view = describeRecognition(result, error, cameraLive);
   const confidence = result?.confidence ?? null;
@@ -14,34 +16,39 @@ export default function RecognitionIndicator({ result, error, cameraLive, holdin
 
   return (
     <div
-      className="max-w-[16rem] rounded-md border border-white/10 bg-black/70 px-3 py-2 backdrop-blur-sm"
+      className="flex max-w-full items-center gap-4 rounded-lg bg-app-bg/85 px-3 py-2 ring-1 ring-white/10"
       aria-live="polite"
       data-testid="recognition-indicator"
     >
-      <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${TONE_TEXT[view.tone]}`}>{view.label}</p>
-      <p
-        className={`mt-1 break-words font-semibold tracking-tight ${
-          view.headline ? 'text-2xl text-lime-signal' : 'text-sm text-zinc-500'
-        }`}
-        data-testid="predicted-sign"
-      >
-        {view.headline ?? (view.text || '—')}
-      </p>
-      {showConfidence && <p className="mt-0.5 text-[11px] tabular-nums text-zinc-400">Confidence {pct(confidence)}</p>}
+      <div className="flex min-w-0 items-center gap-2.5">
+        <span className={`shrink-0 text-xs font-medium ${TONE_TEXT[view.tone]}`}>{view.label}</span>
+        {view.headline ? (
+          <span
+            className="min-w-0 truncate rounded-md bg-accent/20 px-2 py-0.5 text-sm font-semibold tracking-wide text-accent-hover"
+            data-testid="predicted-sign"
+          >
+            {view.headline}
+          </span>
+        ) : (
+          <span className="truncate text-xs text-app-muted" data-testid="predicted-sign">
+            {view.text || '—'}
+          </span>
+        )}
+      </div>
+
+      {showConfidence && (
+        <div className="flex shrink-0 items-center gap-2.5">
+          <span className="text-xs tabular-nums text-app-text">Confidence {pct(confidence)}</span>
+          <span className="h-1 w-16 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+            <span className="block h-full bg-accent" style={{ width: `${Math.min(100, confidence * 100)}%` }} />
+          </span>
+        </div>
+      )}
+
       {holding && (
-        <div className="mt-2">
-          <div className="flex justify-between text-[10px] text-zinc-500">
-            <span>Holding {holding.label}</span>
-            <span className="tabular-nums">
-              {holding.count}/{holding.of}
-            </span>
-          </div>
-          <div className="mt-1 h-0.5 overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full bg-lime-signal transition-[width] duration-300"
-              style={{ width: `${Math.min(100, (holding.count / holding.of) * 100)}%` }}
-            />
-          </div>
+        <div className="flex shrink-0 items-center gap-2 text-xs text-app-muted">
+          <span>Holding {holding.label}</span>
+          <span className="tabular-nums">{holding.count}/{holding.of}</span>
         </div>
       )}
     </div>

@@ -206,7 +206,16 @@ function frame(now: number): void {
     if (hands.length > 0) lastHandSeenAt = now;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    updateFace(now, canvas.width, canvas.height);
+    // A face failure must not stop hand tracking, so it is isolated here and the face tracker is turned off.
+    try {
+      updateFace(now, canvas.width, canvas.height);
+    } catch (error) {
+      console.error('Facial expression failed on a frame; turning face tracking off.', error);
+      faceTracker = null;
+      faceTag.hidden = true;
+      emotionUnavailable = true;
+      updateStateLabel();
+    }
     for (const hand of hands) {
       drawHandSkeleton(ctx, hand.landmarks, canvas.width, canvas.height);
     }

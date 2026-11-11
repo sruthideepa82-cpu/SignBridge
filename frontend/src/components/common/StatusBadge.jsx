@@ -10,7 +10,7 @@ const TONE_CLASSES = {
 const DARK_TONE_CLASSES = {
   neutral: 'bg-white/5 text-zinc-300 ring-white/10',
   info: 'bg-sky-400/10 text-sky-300 ring-sky-400/20',
-  success: 'bg-lime-signal/10 text-lime-signal ring-lime-signal/25',
+  success: 'bg-success/10 text-success ring-success/25',
   warning: 'bg-amber-400/10 text-amber-300 ring-amber-400/20',
   danger: 'bg-red-500/10 text-red-300 ring-red-500/20',
   accent: 'bg-violet-400/10 text-violet-300 ring-violet-400/20',
@@ -28,7 +28,7 @@ const DOT_CLASSES = {
 const DARK_DOT_CLASSES = {
   neutral: 'bg-zinc-500',
   info: 'bg-sky-400',
-  success: 'bg-lime-signal',
+  success: 'bg-success',
   warning: 'bg-amber-400',
   danger: 'bg-red-400',
   accent: 'bg-violet-400',

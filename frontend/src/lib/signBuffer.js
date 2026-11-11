@@ -67,3 +67,13 @@ export function clearAll(state) {
 export function toText(items) {
   return items.map((item) => (item.type === 'space' ? ' ' : item.label)).join('').trim();
 }
+
+// The draft is the text the user reviews before sending. Letters recognised since the last change are appended
+// to the draft, keeping any edits the user has made. A change that removes text (undo, clear, sending) resets
+// the draft to the recognised text.
+export function nextDraft(draft, previousText, nextText) {
+  if (nextText === previousText) return draft;
+  if (!nextText.startsWith(previousText)) return nextText;
+  const addition = nextText.slice(previousText.length);
+  return draft.endsWith(' ') && addition.startsWith(' ') ? draft + addition.slice(1) : draft + addition;
+}

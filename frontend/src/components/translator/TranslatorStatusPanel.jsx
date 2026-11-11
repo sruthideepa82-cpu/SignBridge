@@ -32,7 +32,7 @@ export default function TranslatorStatusPanel({ recognition, error, cameraLive }
 
   return (
     <section
-      className="rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 backdrop-blur-xl sm:p-6"
+      className="rounded-xl border border-app-border bg-app-surface p-5 sm:p-6"
       aria-labelledby="translator-status-title"
     >
       <h2 id="translator-status-title" className="text-lg font-semibold tracking-tight text-zinc-100">

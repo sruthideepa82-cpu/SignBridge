@@ -1,334 +1,260 @@
-import {
-  ArrowRight,
-  Briefcase,
-  BookOpen,
-  Camera,
-  ChevronRight,
-  Clock,
-  Cloud,
-  Cpu,
-  GraduationCap,
-  Hand,
-  LayoutGrid,
-  Mic,
-  Network,
-  Play,
-  Plane,
-  Settings2,
-  ShoppingBag,
-  Siren,
-  Stethoscope,
-  Volume2,
-  Activity,
-} from 'lucide-react';
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import useBackendHealth, { BACKEND_STATUS } from '../hooks/useBackendHealth.js';
-import usePracticeProgress from '../hooks/usePracticeProgress.js';
-import { ALPHABET_CARDS } from '../data/alphabetCards.js';
-import { PHRASE_CATEGORIES } from '../lib/quickPhrases.js';
-import { loadMessages, SPEAKERS } from '../lib/conversationStore.js';
+import { ArrowRight, CalendarDays, ChevronRight, Hand, MessageSquare, MessageSquarePlus, Plus, Star, Trash2, Video, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import ActionMenu from '../components/app/ActionMenu.jsx';
+import ConfirmDialog from '../components/app/ConfirmDialog.jsx';
+import { buttonClass } from '../components/app/ui.jsx';
+import useConversationStore from '../hooks/useConversationStore.js';
+import usePhraseFavourites from '../hooks/usePhraseFavourites.js';
 import { USER_PROFILE } from '../config/userProfile.js';
+import { conversationActions, formatListTime, previewText, sortedConversations } from '../lib/conversationStore.js';
 
-const TOOL_ICONS = {
-  healthcare: Stethoscope,
-  education: GraduationCap,
-  travel: Plane,
-  shopping: ShoppingBag,
-  workplace: Briefcase,
-  emergency: Siren,
-};
-
-const QUICK_ACTIONS = [
-  { to: '/translator', label: 'Sign to Voice', text: 'Translate signs to speech', icon: Camera },
-  { to: '/voice-to-text', label: 'Voice to Text', text: 'Convert speech to readable text', icon: Mic },
-  { to: '/quick-connect', label: 'Quick Connect', text: 'Use ready phrases instantly', icon: LayoutGrid },
-  { to: '/learn/lessons', label: 'Learn ISL', text: 'Explore lessons and practice', icon: BookOpen },
-];
-
-function formatAgo(timestamp) {
-  const minutes = Math.round((Date.now() - timestamp) / 60000);
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes} min ago`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours} hr ago`;
-  return new Date(timestamp).toLocaleDateString([], { dateStyle: 'medium' });
+function greetingFor(date) {
+  const hour = date.getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
 }
 
-function Card({ className = '', children, labelledBy }) {
+function Section({ id, title, action, children }) {
   return (
-    <section
-      aria-labelledby={labelledBy}
-      className={`rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.015] p-6 ${className}`}
-    >
+    <section aria-labelledby={id} className="flex min-w-0 flex-col rounded-xl border border-app-border bg-app-surface p-5">
+      <header className="mb-3 flex items-center justify-between gap-3">
+        <h2 id={id} className="text-base font-semibold text-app-text">
+          {title}
+        </h2>
+        {action}
+      </header>
       {children}
     </section>
   );
 }
 
-function CardHeader({ icon: Icon, id, title, action }) {
+function ViewAll({ to, label }) {
   return (
-    <div className="mb-5 flex items-center justify-between gap-3">
-      <div className="flex items-center gap-3">
-        <Icon size={20} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-lime-signal" />
-        <h2 id={id} className="text-lg font-semibold text-app-text">
-          {title}
-        </h2>
-      </div>
-      {action}
-    </div>
-  );
-}
-
-function ViewLink({ to, children }) {
-  return (
-    <Link to={to} className="inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-lime-signal hover:underline">
-      {children}
-      <ArrowRight size={14} aria-hidden="true" />
+    <Link to={to} className="inline-flex items-center gap-1 rounded text-xs font-medium text-accent-hover transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-accent">
+      {label}
+      <ChevronRight size={13} aria-hidden="true" />
     </Link>
   );
 }
 
-function FocusIllustration() {
-  return (
-    <div className="relative mx-auto h-64 w-64 shrink-0 sm:h-72 sm:w-72" aria-hidden="true">
-      <div className="absolute inset-4 rotate-6 rounded-3xl border border-lime-signal/25 bg-lime-signal/5" />
-      <div className="absolute inset-0 -rotate-3 rounded-3xl border border-white/15 bg-gradient-to-br from-white/20 via-white/5 to-lime-signal/25 shadow-[0_0_60px_rgba(182,255,0,0.2)] backdrop-blur-md" />
-      <span className="absolute -left-3 -top-3 h-10 w-10 rounded-tl-xl border-l-2 border-t-2 border-lime-signal" />
-      <span className="absolute -right-3 -top-3 h-10 w-10 rounded-tr-xl border-r-2 border-t-2 border-lime-signal" />
-      <span className="absolute -bottom-3 -left-3 h-10 w-10 rounded-bl-xl border-b-2 border-l-2 border-lime-signal" />
-      <span className="absolute -bottom-3 -right-3 h-10 w-10 rounded-br-xl border-b-2 border-r-2 border-lime-signal" />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Hand size={132} strokeWidth={1.25} className="text-lime-signal drop-shadow-[0_0_28px_rgba(182,255,0,0.55)]" />
-      </div>
-    </div>
-  );
-}
-
-function ActivityRow({ message }) {
-  const Icon = message.speaker === 'deaf' ? Hand : Mic;
-  return (
-    <li className="flex items-center gap-4 py-3.5">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-lime-signal">
-        <Icon size={17} aria-hidden="true" />
+function QuickAccessRow({ to, onClick, icon: Icon, title, description }) {
+  const content = (
+    <>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/15 text-accent-hover">
+        <Icon size={17} strokeWidth={1.8} aria-hidden="true" />
       </span>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-app-text">{SPEAKERS[message.speaker]}</p>
-        <p className="truncate text-xs text-app-muted">{message.text}</p>
-      </div>
-      <time dateTime={new Date(message.at).toISOString()} className="shrink-0 text-xs text-app-muted">
-        {formatAgo(message.at)}
-      </time>
-    </li>
-  );
-}
-
-function StatusRow({ icon: Icon, label, detail, tone, value }) {
-  const valueColour = { ok: 'text-lime-signal', error: 'text-red-300', neutral: 'text-app-muted' }[tone];
-  return (
-    <li className="flex items-center justify-between gap-4 py-3.5">
-      <div className="flex min-w-0 items-center gap-3">
-        <Icon size={17} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-app-muted" />
-        <div className="min-w-0">
-          <p className="text-sm text-app-text">{label}</p>
-          <span className="block truncate text-xs text-app-muted">{detail}</span>
-        </div>
-      </div>
-      <span className={`flex shrink-0 items-center gap-2 text-sm font-medium ${valueColour}`}>
-        <span
-          className={`inline-block h-2 w-2 rounded-full ${
-            { ok: 'bg-lime-signal', error: 'bg-red-400', neutral: 'bg-app-muted' }[tone]
-          }`}
-          aria-hidden="true"
-        />
-        {value}
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-medium text-app-text">{title}</span>
+        <span className="block text-xs text-app-muted">{description}</span>
       </span>
-    </li>
+      <ChevronRight size={16} aria-hidden="true" className="shrink-0 text-app-muted" />
+    </>
+  );
+  const className =
+    'flex items-center gap-3 rounded-lg border border-app-border bg-app-bg/60 p-3 transition-colors hover:border-accent/40 hover:bg-accent/[0.06] focus-visible:outline-2 focus-visible:outline-accent';
+  return to ? (
+    <Link to={to} className={className}>
+      {content}
+    </Link>
+  ) : (
+    <button type="button" onClick={onClick} className={`${className} w-full text-left`}>
+      {content}
+    </button>
   );
 }
 
 export default function DashboardPage() {
-  const [messages] = useState(() => loadMessages());
-  const { practised } = usePracticeProgress();
-  const backend = useBackendHealth();
+  const navigate = useNavigate();
+  const store = useConversationStore();
+  const favourites = usePhraseFavourites();
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [notice, setNotice] = useState('');
 
-  const practisedLetters = useMemo(
-    () => ALPHABET_CARDS.filter((card) => practised.includes(card.letter)).length,
-    [practised],
-  );
-  const progressPercent = ALPHABET_CARDS.length === 0 ? 0 : Math.round((practisedLetters / ALPHABET_CARDS.length) * 100);
-  const recentMessages = useMemo(() => messages.slice(-3).reverse(), [messages]);
-  const speechAvailable = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  const now = new Date();
+  const conversations = sortedConversations(store);
+  const recent = conversations.slice(0, 4);
+  const pending = pendingDelete ? store.conversations.find((item) => item.id === pendingDelete) : null;
 
-  const backendOnline = backend.status === BACKEND_STATUS.ONLINE;
-  const backendOffline = backend.status === BACKEND_STATUS.OFFLINE;
-  const backendValue = backendOnline ? 'Connected' : backendOffline ? 'Unreachable' : 'Checking…';
-  const backendTone = backendOnline ? 'ok' : backendOffline ? 'error' : 'neutral';
-  const backendDetail = backendOffline ? 'Start the SignBridge backend.' : 'Local API server';
+  const startNewConversation = () => {
+    conversationActions.startNew();
+    navigate('/live');
+  };
+
+  const sendSavedPhrase = (text) => {
+    conversationActions.append({ text, source: 'phrase', speaker: 'deaf' });
+    setNotice(`Sent to your conversation: ${text}`);
+  };
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <header className="relative flex flex-col gap-6 overflow-hidden pb-2 sm:flex-row sm:items-center sm:justify-between">
-        <svg
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-2 right-0 hidden h-28 w-[48%] md:block"
-          viewBox="0 0 400 120"
-          preserveAspectRatio="none"
-          fill="none"
-        >
-          <path d="M0 30 C120 100 200 10 300 70 S380 95 400 90" stroke="#b6ff00" strokeWidth="6" opacity="0.12" />
-          <path d="M0 30 C120 100 200 10 300 70 S380 95 400 90" stroke="#b6ff00" strokeWidth="1.5" opacity="0.9" />
-        </svg>
-        <div className="relative min-w-0">
-          <h1 className="text-4xl font-bold tracking-tight text-app-text sm:text-5xl">
-            Welcome back, {USER_PROFILE.firstName} <span aria-hidden="true">👋</span>
+    <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-semibold tracking-tight text-app-text sm:text-3xl">
+            {greetingFor(now)}, {USER_PROFILE.firstName}
           </h1>
-          <p className="mt-2 text-lg text-app-muted">Communicate, learn and connect without barriers.</p>
+          <p className="mt-1 text-sm text-app-muted">Ready to communicate without barriers?</p>
         </div>
-        <Link
-          to="/conversation"
-          className="relative inline-flex shrink-0 items-center gap-3 self-start rounded-xl bg-lime-signal px-6 py-4 text-base font-semibold text-black shadow-[0_0_30px_rgba(182,255,0,0.25)] transition-all duration-150 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-signal active:scale-[0.98] sm:self-auto"
-        >
-          Start Communicating
-          <ArrowRight size={18} aria-hidden="true" />
-        </Link>
+        <p className="flex h-9 shrink-0 items-center gap-2 self-start rounded-lg border border-app-border bg-app-surface px-3 text-sm text-app-muted">
+          <CalendarDays size={15} aria-hidden="true" />
+          <time dateTime={now.toISOString()}>
+            {now.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+          </time>
+        </p>
       </header>
 
-      <div className="grid gap-6 xl:grid-cols-[1.45fr_1fr]">
-        <Card className="relative flex flex-col overflow-hidden md:flex-row md:items-center md:gap-8" labelledBy="focus-heading">
-          <div className="relative z-10 flex min-w-0 flex-1 flex-col gap-5 py-2">
-            <span className="inline-flex w-fit rounded-lg border border-lime-signal/20 bg-lime-signal/15 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-lime-signal">
-              Today&apos;s focus
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
+        <section
+          aria-labelledby="live-hero-title"
+          className="relative flex min-h-[15rem] flex-col justify-between overflow-hidden rounded-xl border border-app-border bg-app-surface p-6"
+        >
+          <div className="relative z-10 max-w-md">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/20 text-accent-hover" aria-hidden="true">
+              <Video size={18} strokeWidth={1.8} />
             </span>
-            <h2 id="focus-heading" className="text-4xl font-bold leading-[1.05] tracking-tight text-app-text sm:text-5xl">
-              Break the
-              <span className="block">Communication</span>
-              <span className="block text-lime-signal">Barrier</span>
+            <h2 id="live-hero-title" className="mt-4 text-xl font-semibold text-app-text">
+              Start a Live Conversation
             </h2>
-            <p className="max-w-md text-base leading-relaxed text-app-muted">
-              Translate signs, convert speech to text, use ready phrases or learn Indian Sign Language — all in one place.
+            <p className="mt-2 text-sm leading-relaxed text-app-muted">
+              Use your camera to sign, then check the recognised text and send it. Chat with text or speech, and
+              communicate in real time.
             </p>
           </div>
-          <FocusIllustration />
-        </Card>
+          <div className="relative z-10 mt-6">
+            <Link to="/live" className={buttonClass('primary', 'px-4')}>
+              Open Live Studio
+              <ArrowRight size={15} aria-hidden="true" />
+            </Link>
+          </div>
+          <div aria-hidden="true" className="pointer-events-none absolute -right-6 top-1/2 hidden -translate-y-1/2 md:block">
+            <div className="flex h-44 w-44 rotate-[-8deg] items-center justify-center rounded-2xl border border-accent/25 bg-accent/[0.08]">
+              <Hand size={84} strokeWidth={1.1} className="text-accent/70" />
+            </div>
+          </div>
+        </section>
 
-        <Card labelledBy="quick-actions-heading">
-          <CardHeader icon={Settings2} id="quick-actions-heading" title="Quick Actions" />
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {QUICK_ACTIONS.map((action) => {
-              const Icon = action.icon;
-              return (
-                <li key={action.to}>
-                  <Link
-                    to={action.to}
-                    className="group flex h-full items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-lime-signal/40 hover:bg-lime-signal/5 focus-visible:outline-2 focus-visible:outline-lime-signal"
-                  >
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-lime-signal">
-                      <Icon size={22} strokeWidth={1.8} aria-hidden="true" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-base font-semibold text-app-text">{action.label}</span>
-                      <span className="mt-1 block text-sm leading-snug text-app-muted">{action.text}</span>
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
+        <section aria-labelledby="quick-access-title" className="flex flex-col rounded-xl border border-app-border bg-app-surface p-5">
+          <h2 id="quick-access-title" className="mb-3 text-base font-semibold text-app-text">
+            Quick Access
+          </h2>
+          <div className="flex flex-1 flex-col gap-2.5">
+            <QuickAccessRow to="/phrases" icon={Zap} title="Quick Phrases" description="Common and emergency phrases" />
+            <QuickAccessRow onClick={startNewConversation} icon={MessageSquarePlus} title="New Conversation" description="Start a text or speech chat" />
+          </div>
+        </section>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.3fr_1.25fr_1fr]">
-        <Card labelledBy="recent-activity-heading">
-          <CardHeader icon={Clock} id="recent-activity-heading" title="Recent Activity" action={<ViewLink to="/conversation">View All</ViewLink>} />
-          {recentMessages.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-white/10 px-4 py-8 text-center">
-              <p className="text-sm font-medium text-app-text">No activity yet</p>
-              <p className="mt-1 text-xs leading-relaxed text-app-muted">
-                Messages you send in Conversation Space are kept in this browser and listed here.
-              </p>
+      {notice && (
+        <p role="status" className="text-xs text-app-muted">
+          {notice}
+        </p>
+      )}
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Section
+          id="recent-conversations-title"
+          title="Recent Conversations"
+          action={<ViewAll to="/conversations" label="View all" />}
+        >
+          {recent.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-app-border px-4 py-8 text-center">
+              <p className="text-sm font-medium text-app-text">No conversations yet</p>
+              <p className="mt-1 text-xs text-app-muted">Your conversations appear here after your first message.</p>
             </div>
           ) : (
-            <ul className="divide-y divide-white/10">
-              {recentMessages.map((message) => (
-                <ActivityRow key={message.id} message={message} />
+            <ul className="divide-y divide-app-border">
+              {recent.map((conversation) => (
+                <li key={conversation.id} className="flex items-center gap-2 py-1">
+                  <Link
+                    to={`/conversations/${conversation.id}`}
+                    className="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-2.5 pr-2 transition-colors hover:bg-white/[0.03] focus-visible:outline-2 focus-visible:outline-accent"
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/[0.05] text-app-muted" aria-hidden="true">
+                      <MessageSquare size={16} strokeWidth={1.8} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        <span className="truncate text-sm font-medium text-app-text">{conversation.title}</span>
+                        {conversation.favourite && <Star size={11} fill="currentColor" className="shrink-0 text-accent-hover" aria-label="Favourite" />}
+                      </span>
+                      <span className="block truncate text-xs text-app-muted">{previewText(conversation)}</span>
+                    </span>
+                    <time dateTime={new Date(conversation.updatedAt).toISOString()} className="shrink-0 text-xs tabular-nums text-app-muted">
+                      {formatListTime(conversation.updatedAt)}
+                    </time>
+                  </Link>
+                  <ActionMenu
+                    label={`Actions for ${conversation.title}`}
+                    items={[
+                      { label: 'Open', icon: MessageSquare, onSelect: () => navigate(`/conversations/${conversation.id}`) },
+                      {
+                        label: conversation.favourite ? 'Remove from favourites' : 'Add to favourites',
+                        icon: Star,
+                        onSelect: () => conversationActions.toggleFavourite(conversation.id),
+                      },
+                      { label: 'Delete', icon: Trash2, danger: true, onSelect: () => setPendingDelete(conversation.id) },
+                    ]}
+                  />
+                </li>
               ))}
             </ul>
           )}
-        </Card>
+        </Section>
 
-        <Card labelledBy="continue-learning-heading">
-          <CardHeader icon={GraduationCap} id="continue-learning-heading" title="Continue Learning" action={<ViewLink to="/learn/lessons">View Path</ViewLink>} />
-          <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-            <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-lime-signal/30 via-white/5 to-transparent text-lime-signal">
-              <Hand size={36} strokeWidth={1.6} aria-hidden="true" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-base font-semibold text-app-text">Beginner ISL</p>
-              <p className="mt-0.5 text-sm text-app-muted">
-                {practisedLetters} of {ALPHABET_CARDS.length} pilot letters
+        <Section
+          id="saved-phrases-title"
+          title="Saved Phrases"
+          action={<ViewAll to="/phrases?category=favourites" label="View all" />}
+        >
+          {favourites.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-app-border px-4 py-8 text-center">
+              <p className="text-sm font-medium text-app-text">No saved phrases yet</p>
+              <p className="mt-1 text-xs text-app-muted">
+                Star a phrase in{' '}
+                <Link to="/phrases" className="text-accent-hover hover:underline">
+                  Quick Phrases
+                </Link>{' '}
+                to keep it here.
               </p>
-              <div className="mt-3 flex items-center gap-3">
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/10" role="progressbar" aria-valuemin={0} aria-valuemax={ALPHABET_CARDS.length} aria-valuenow={practisedLetters} aria-label="Pilot letters practised">
-                  <div className="h-full rounded-full bg-lime-signal shadow-[0_0_12px_rgba(182,255,0,0.6)] transition-[width] duration-500" style={{ width: `${progressPercent}%` }} />
-                </div>
-                <span className="text-sm text-app-muted">{progressPercent}%</span>
-              </div>
             </div>
-            <Link
-              to="/learn/practice"
-              aria-label="Open Practice Lab"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-lime-signal text-black transition-all hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-signal active:scale-[0.96]"
-            >
-              <Play size={18} fill="currentColor" aria-hidden="true" />
-            </Link>
-          </div>
-        </Card>
-
-        <Card labelledBy="system-status-heading">
-          <CardHeader icon={Activity} id="system-status-heading" title="System Status" />
-          <ul className="divide-y divide-white/10">
-            <StatusRow icon={Camera} label="Camera" detail="Checked on Sign to Voice" tone="neutral" value="Not checked" />
-            <StatusRow icon={Cpu} label="AI Model" detail="Checked on Sign to Voice" tone="neutral" value="Not checked" />
-            <StatusRow icon={Cloud} label="Backend" detail={backendDetail} tone={backendTone} value={backendValue} />
-            <StatusRow
-              icon={Volume2}
-              label="Speech Output"
-              detail="Browser text-to-speech"
-              tone={speechAvailable ? 'ok' : 'error'}
-              value={speechAvailable ? 'Ready' : 'Unavailable'}
-            />
-          </ul>
-        </Card>
+          ) : (
+            <ul className="flex flex-col gap-1.5">
+              {favourites.slice(0, 5).map((item) => (
+                <li key={item.text} className="flex items-center gap-2.5 rounded-lg border border-app-border bg-app-bg/60 py-1.5 pl-3 pr-1.5">
+                  <Star size={14} fill="currentColor" aria-hidden="true" className="shrink-0 text-accent-hover" />
+                  <span className="min-w-0 flex-1 truncate text-sm text-app-text">{item.text}</span>
+                  <button
+                    type="button"
+                    onClick={() => sendSavedPhrase(item.text)}
+                    aria-label={`Send to conversation: ${item.text}`}
+                    title="Send to conversation"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-app-muted transition-colors hover:bg-accent/15 hover:text-accent-hover focus-visible:outline-2 focus-visible:outline-accent"
+                  >
+                    <Plus size={15} aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Section>
       </div>
 
-      <Card labelledBy="tools-heading">
-        <CardHeader icon={Network} id="tools-heading" title="Explore Communication Tools" />
-        <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-          {PHRASE_CATEGORIES.filter((category) => TOOL_ICONS[category.id]).map((category) => {
-            const Icon = TOOL_ICONS[category.id];
-            return (
-              <li key={category.id}>
-                <Link
-                  to={`/quick-connect?category=${category.id}`}
-                  className="group flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4 transition-colors hover:border-lime-signal/40 hover:bg-lime-signal/5 focus-visible:outline-2 focus-visible:outline-lime-signal"
-                >
-                  <span className="flex items-center gap-3">
-                    <Icon size={22} strokeWidth={1.8} aria-hidden="true" className="text-lime-signal" />
-                    <span className="text-sm font-medium text-app-text">{category.label}</span>
-                  </span>
-                  <ChevronRight size={16} aria-hidden="true" className="text-app-muted transition-transform group-hover:translate-x-0.5" />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </Card>
-
-      <p className="flex items-center gap-2 text-xs text-app-muted">
-        <Activity size={13} aria-hidden="true" />
-        Learning progress and conversations stay in this browser.
-      </p>
+      <ConfirmDialog
+        open={pending !== null}
+        title="Delete this conversation?"
+        description={
+          pending
+            ? `“${pending.title}” and its ${pending.messages.length} ${pending.messages.length === 1 ? 'message' : 'messages'} will be removed from this browser. This cannot be undone.`
+            : ''
+        }
+        confirmLabel="Delete conversation"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          conversationActions.remove(pendingDelete);
+          setPendingDelete(null);
+        }}
+      />
     </div>
   );
 }

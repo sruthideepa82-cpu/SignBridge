@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  nextDraft,
   HOLD_FRAMES,
   appendSpace,
   applyRecognition,
@@ -120,5 +121,29 @@ describe('signBuffer: correction and text', () => {
     const state = feed(initialBuffer(), Array.from({ length: HOLD_FRAMES }, () => seen('O')));
 
     expect(clearAll(state).items).toEqual([]);
+  });
+});
+
+describe('nextDraft', () => {
+  it('appends recognised letters to the draft', () => {
+    expect(nextDraft('', '', 'H')).toBe('H');
+    expect(nextDraft('H', 'H', 'HI')).toBe('HI');
+  });
+
+  it('keeps the words the user edited when new letters arrive', () => {
+    expect(nextDraft('Hallo', 'HA', 'HAT')).toBe('HalloT');
+  });
+
+  it('adds one space when a space was added and then a letter follows it', () => {
+    expect(nextDraft('HI ', 'HI', 'HI T')).toBe('HI T');
+  });
+
+  it('resets to the recognised text when text was removed (undo, clear or send)', () => {
+    expect(nextDraft('Hallo there', 'HI', 'H')).toBe('H');
+    expect(nextDraft('Hallo', 'HI', '')).toBe('');
+  });
+
+  it('leaves the draft alone when nothing changed', () => {
+    expect(nextDraft('Edited', 'HI', 'HI')).toBe('Edited');
   });
 });

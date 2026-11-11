@@ -1,13 +1,14 @@
-"""OpenCV webcam capture with optional MediaPipe hand landmark detection.
+"""OpenCV webcam capture with optional MediaPipe hand and face detection.
 
 Two background threads run while the camera is on:
 
 - The capture thread owns the camera handle and reads frames at the camera rate.
-- The processing thread takes the newest raw frame, runs hand detection (if
+- The processing thread takes the newest raw frame, runs hand detection and face detection (if
   enabled), draws the annotations, and publishes a JPEG for the stream.
 
-If processing is slower than capture, the processing thread skips to the newest
-frame instead of building a backlog. Any number of viewers share one capture device.
+Hand and face detection run on the same frame in the same thread, so one camera session serves both.
+If processing is slower than capture, the processing thread skips to the newest frame instead of
+building a backlog. Any number of viewers share one capture device.
 """
 
 import logging
@@ -23,6 +24,8 @@ import numpy as np
 
 from app.core.config import Settings
 from app.core.exceptions import CameraUnavailableError, HandDetectionUnavailableError
+from app.services.face_detection_service import DetectedFace, FaceDetector, FaceDetectorFactory
+from app.services.face_expression_service import ExpressionSmoother, SmoothedExpression, classify_expression
 from app.services.hand_detection_service import DetectedHand, HandDetector, HandDetectorFactory
 
 logger = logging.getLogger(__name__)
@@ -32,6 +35,7 @@ STREAM_WAIT_SECONDS = 1.0
 STOP_JOIN_TIMEOUT_SECONDS = 5.0
 READ_RETRY_DELAY_SECONDS = 0.05
 DETECTION_DISABLED_MESSAGE = "Hand detection is disabled in the backend settings."
+FACE_DETECTION_DISABLED_MESSAGE = "Face detection is disabled in the backend settings."
 
 CaptureFactory = Callable[[int], Any]
 
@@ -60,6 +64,16 @@ class LandmarkSnapshot:
     hands: tuple[DetectedHand, ...]
 
 
+@dataclass(frozen=True)
+class FaceSnapshot:
+    running: bool
+    detection_available: bool
+    detection_error: str | None
+    frame_sequence: int
+    faces: tuple[DetectedFace, ...]
+    expression: SmoothedExpression | None
+
+
 def mjpeg_part(jpeg_bytes: bytes) -> bytes:
     header = (
         f"--{MJPEG_BOUNDARY}\r\n"
@@ -75,11 +89,14 @@ class CameraService:
         settings: Settings,
         capture_factory: CaptureFactory = open_default_capture,
         detector_factory: HandDetectorFactory | None = None,
+        face_detector_factory: FaceDetectorFactory | None = None,
     ) -> None:
         self._settings = settings
         self._capture_factory = capture_factory
         self._detector_factory = detector_factory
+        self._face_detector_factory = face_detector_factory
         self._detector: HandDetector | None = None
+        self._face_detector: FaceDetector | None = None
         self._control_lock = threading.Lock()
         self._frame_condition = threading.Condition()
         self._threads: list[threading.Thread] = []
@@ -90,9 +107,15 @@ class CameraService:
         self._latest_frame: bytes | None = None
         self._frame_sequence = 0
         self._latest_hands: tuple[DetectedHand, ...] | None = None
+        self._latest_faces: tuple[DetectedFace, ...] | None = None
+        self._latest_expression: SmoothedExpression | None = None
+        self._expression_smoother = ExpressionSmoother()
         self._last_error: str | None = None
         self._detection_error: str | None = (
             None if detector_factory is not None else DETECTION_DISABLED_MESSAGE
+        )
+        self._face_detection_error: str | None = (
+            None if face_detector_factory is not None else FACE_DETECTION_DISABLED_MESSAGE
         )
 
     @property
@@ -125,6 +148,20 @@ class CameraService:
                 hands=hands,
             )
 
+    def face_snapshot(self) -> FaceSnapshot:
+        with self._frame_condition:
+            running = self._active
+            faces = self._latest_faces if running and self._latest_faces is not None else ()
+            expression = self._latest_expression if running else None
+            return FaceSnapshot(
+                running=running,
+                detection_available=self._face_detector is not None,
+                detection_error=self._face_detection_error,
+                frame_sequence=self._frame_sequence,
+                faces=faces,
+                expression=expression,
+            )
+
     def start(self) -> CameraStatus:
         with self._control_lock:
             if self.is_running:
@@ -132,13 +169,17 @@ class CameraService:
             self._join_threads()
             capture = self._open_capture()
             detector = self._load_detector()
+            face_detector = self._load_face_detector()
             self._stop_event = threading.Event()
+            self._expression_smoother.reset()
             with self._frame_condition:
                 self._active = True
                 self._last_error = None
                 self._raw_frame = None
                 self._latest_frame = None
                 self._latest_hands = None
+                self._latest_faces = None
+                self._latest_expression = None
             self._threads = [
                 threading.Thread(
                     target=self._capture_loop,
@@ -148,7 +189,7 @@ class CameraService:
                 ),
                 threading.Thread(
                     target=self._processing_loop,
-                    args=(detector, self._stop_event),
+                    args=(detector, face_detector, self._stop_event),
                     name="signbridge-processing",
                     daemon=True,
                 ),
@@ -167,11 +208,14 @@ class CameraService:
     def shutdown(self) -> None:
         self.stop()
         if any(thread.is_alive() for thread in self._threads):
-            logger.error("Camera threads are still running; leaving the hand detector open to avoid a crash.")
+            logger.error("Camera threads are still running; leaving the detectors open to avoid a crash.")
             return
         if self._detector is not None:
             self._detector.close()
             self._detector = None
+        if self._face_detector is not None:
+            self._face_detector.close()
+            self._face_detector = None
 
     def iter_mjpeg_frames(self) -> Iterator[bytes]:
         last_sequence = -1
@@ -222,6 +266,16 @@ class CameraService:
                 self._set_detection_error(error.message)
         return self._detector
 
+    def _load_face_detector(self) -> FaceDetector | None:
+        if self._face_detector is None and self._face_detector_factory is not None:
+            try:
+                self._face_detector = self._face_detector_factory()
+                self._set_face_detection_error(None)
+            except Exception as error:
+                logger.error("Face detection unavailable: %s", error)
+                self._set_face_detection_error(str(error))
+        return self._face_detector
+
     def _capture_loop(self, capture: Any, stop_event: threading.Event) -> None:
         frame_interval = 1.0 / self._settings.camera_fps
         consecutive_failures = 0
@@ -256,10 +310,17 @@ class CameraService:
                 self._raw_frame = None
                 self._latest_frame = None
                 self._latest_hands = None
+                self._latest_faces = None
+                self._latest_expression = None
                 self._frame_condition.notify_all()
             logger.info("Camera %d released", self._settings.camera_index)
 
-    def _processing_loop(self, detector: HandDetector | None, stop_event: threading.Event) -> None:
+    def _processing_loop(
+        self,
+        detector: HandDetector | None,
+        face_detector: FaceDetector | None,
+        stop_event: threading.Event,
+    ) -> None:
         encode_params = [cv2.IMWRITE_JPEG_QUALITY, self._settings.camera_jpeg_quality]
         last_sequence = 0
         while True:
@@ -288,12 +349,41 @@ class CameraService:
                 hands = None
                 annotated = frame
 
+            faces: tuple[DetectedFace, ...] | None = None
+            expression: SmoothedExpression | None = None
+            try:
+                if face_detector is not None:
+                    face_result = face_detector.detect(frame)
+                    faces = face_result.faces
+                    expression = self._expression_for(faces)
+                    annotated = face_detector.annotate(annotated, face_result)
+            except Exception:
+                logger.exception("Face processing failed")
+                self._set_face_detection_error("Facial tracking failed on a frame. See backend logs.")
+                faces = None
+                expression = None
+
             try:
                 encoded, buffer = cv2.imencode(".jpg", annotated, encode_params)
                 if encoded:
-                    self._publish_processed_frame(buffer.tobytes(), hands)
+                    self._publish_processed_frame(
+                        buffer.tobytes(),
+                        hands,
+                        faces=faces,
+                        expression=expression,
+                    )
             except Exception:
                 logger.exception("Frame encoding failed")
+
+    def _expression_for(self, faces: tuple[DetectedFace, ...]) -> SmoothedExpression | None:
+        if not faces:
+            self._expression_smoother.reset()
+            return None
+        blendshapes = faces[0].blendshapes
+        if blendshapes is None:
+            self._expression_smoother.reset()
+            return None
+        return self._expression_smoother.push(classify_expression(blendshapes))
 
     def _publish_raw_frame(self, frame: np.ndarray) -> None:
         with self._frame_condition:
@@ -305,18 +395,29 @@ class CameraService:
         self,
         jpeg_bytes: bytes,
         hands: tuple[DetectedHand, ...] | None,
+        *,
+        faces: tuple[DetectedFace, ...] | None = None,
+        expression: SmoothedExpression | None = None,
     ) -> None:
         with self._frame_condition:
             self._latest_frame = jpeg_bytes
             self._latest_hands = hands
+            self._latest_faces = faces
+            self._latest_expression = expression
             self._frame_sequence += 1
             if hands is not None:
                 self._detection_error = None
+            if faces is not None:
+                self._face_detection_error = None
             self._frame_condition.notify_all()
 
     def _set_detection_error(self, message: str | None) -> None:
         with self._frame_condition:
             self._detection_error = message
+
+    def _set_face_detection_error(self, message: str | None) -> None:
+        with self._frame_condition:
+            self._face_detection_error = message
 
     def _record_error(self, message: str) -> None:
         logger.error(message)

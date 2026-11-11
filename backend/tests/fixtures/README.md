@@ -9,3 +9,9 @@ These photos are used by the hand detection tests to run real MediaPipe inferenc
 | `two_hands_composite.jpg` | Created for this project by placing the two images above side by side (no edits to the hands) | Two hands, 42 landmarks |
 
 The MediaPipe hand model (`backend/models/hand_landmarker.task`) is distributed by Google under the Apache 2.0 license.
+
+## Face fixtures
+
+| File | Source | Used for |
+| --- | --- | --- |
+| `face/grace_hopper.jpg` | matplotlib sample data (`mpl-data/sample_data/grace_hopper.jpg`). A U.S. Navy photograph of Grace Hopper, public domain | One face, 478 landmarks, blendshapes. A neutral expression |

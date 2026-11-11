@@ -13,6 +13,7 @@ from app.api.router import api_router
 from app.core.config import Settings, get_settings
 from app.core.exceptions import SignBridgeError
 from app.services.camera_service import CameraService
+from app.services.face_detection_service import create_face_detector_factory
 from app.services.hand_detection_service import create_hand_detector_factory
 from app.services.recognition_service import StaticRecognizer
 
@@ -68,6 +69,7 @@ def create_app(
     camera = camera_service or CameraService(
         settings,
         detector_factory=create_hand_detector_factory(settings),
+        face_detector_factory=create_face_detector_factory(settings),
     )
 
     @asynccontextmanager

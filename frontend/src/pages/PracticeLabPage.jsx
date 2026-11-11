@@ -40,7 +40,7 @@ export function feedbackFor(target, cameraLive, result, error) {
 }
 
 const TONE = {
-  ok: 'text-lime-signal',
+  ok: 'text-success',
   warning: 'text-amber-200',
   error: 'text-red-200',
   neutral: 'text-app-muted',
@@ -117,8 +117,8 @@ export default function PracticeLabPage() {
                     type="button"
                     aria-pressed={selected}
                     onClick={() => setTarget(entry.label)}
-                    className={`flex h-11 items-center justify-center rounded-lg border text-base font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-lime-signal ${
-                      selected ? 'border-lime-signal/50 bg-lime-signal/10 text-lime-signal' : 'border-app-border text-app-muted hover:text-app-text'
+                    className={`flex h-11 items-center justify-center rounded-lg border text-base font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-accent ${
+                      selected ? 'border-accent/50 bg-accent/10 text-accent' : 'border-app-border text-app-muted hover:text-app-text'
                     }`}
                   >
                     {entry.label}

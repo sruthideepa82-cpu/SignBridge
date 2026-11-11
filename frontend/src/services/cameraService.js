@@ -4,6 +4,10 @@ export function getCameraStatus(options) {
   return apiRequest('/camera/status', options);
 }
 
+export function getFaceExpression(options) {
+  return apiRequest('/face/latest', options);
+}
+
 export function getHandLandmarks(options) {
   return apiRequest('/camera/landmarks', options);
 }

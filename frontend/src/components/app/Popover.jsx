@@ -31,7 +31,7 @@ export default function Popover({ label, trigger, align = 'right', children }) {
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
-        className="flex h-9 w-9 items-center justify-center rounded-lg text-app-muted transition-colors hover:bg-white/5 hover:text-app-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-signal"
+        className="flex h-9 w-9 items-center justify-center rounded-lg text-app-muted transition-colors hover:bg-white/5 hover:text-app-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         {trigger}
       </button>
