@@ -8,6 +8,8 @@ const MORE_TOOLS = [
   { label: 'Guided Learning', to: '/learn/lessons' },
   { label: 'Practice Lab', to: '/learn/practice' },
   { label: 'Dataset Contribution', to: '/contribute' },
+  { label: 'Dataset Collector', to: '/contribute/collector' },
+  { label: 'Fingerspelling', to: '/fingerspelling' },
   { label: 'Community & Feedback', to: '/community' },
 ];
 

@@ -1,0 +1,28 @@
+// A small built-in list of common English words, used only to complete what the user has typed.
+// Suggestions are spelling completions. They are not recognised from signs.
+export const DICTIONARY_WORDS = [
+  'ABOUT', 'ACCESS', 'ACTION', 'ADDRESS', 'AFTER', 'AGAIN', 'AIRPORT', 'ALL', 'ALONE', 'ALWAYS', 'AMBULANCE',
+  'AND', 'ANSWER', 'ANYONE', 'APPOINTMENT', 'ARE', 'AREA', 'ASK', 'AWAY', 'BABY', 'BACK', 'BAD', 'BANK',
+  'BEAUTIFUL', 'BECAUSE', 'BED', 'BEFORE', 'BEGIN', 'BEST', 'BETTER', 'BIG', 'BILL', 'BIRTHDAY', 'BLUE', 'BOOK',
+  'BOTH', 'BRING', 'BROTHER', 'BUS', 'BUSY', 'BUT', 'BUY', 'CALL', 'CAN', 'CAR', 'CARE', 'CHANGE', 'CHILD',
+  'CLASS', 'CLEAN', 'CLOSE', 'COFFEE', 'COLD', 'COLLEGE', 'COME', 'COMPUTER', 'CONTINUE', 'COULD', 'COURSE',
+  'DAD', 'DAY', 'DEAF', 'DOCTOR', 'DOES', 'DOG', 'DONE', 'DOOR', 'DOWN', 'DRINK', 'DRIVE', 'EARLY', 'EASY',
+  'EAT', 'EMERGENCY', 'ENOUGH', 'EVERY', 'EVERYONE', 'EXAM', 'EXPLAIN', 'FAMILY', 'FAST', 'FATHER', 'FEEL',
+  'FINE', 'FINISH', 'FIRST', 'FOOD', 'FOR', 'FRIEND', 'FROM', 'FUTURE', 'GAME', 'GET', 'GIRL', 'GIVE', 'GO',
+  'GOOD', 'GOODBYE', 'GREAT', 'HAPPY', 'HAVE', 'HE', 'HEALTH', 'HELLO', 'HELP', 'HELPFUL', 'HERE', 'HIGH',
+  'HOME', 'HOSPITAL', 'HOT', 'HOUR', 'HOUSE', 'HOW', 'HUNGRY', 'I', 'IDEA', 'IF', 'IN', 'INTERPRETER', 'IS',
+  'IT', 'JOB', 'JUST', 'KEEP', 'KIND', 'KNOW', 'LANGUAGE', 'LATE', 'LEARN', 'LEAVE', 'LETTER', 'LIKE', 'LINE',
+  'LISTEN', 'LONG', 'LOOK', 'LOVE', 'MAKE', 'MAN', 'MANY', 'MEAN', 'MEDICINE', 'MEET', 'MEETING', 'MESSAGE',
+  'MINE', 'MONEY', 'MORNING', 'MOTHER', 'MOVE', 'MUCH', 'MY', 'NAME', 'NEAR', 'NEED', 'NEVER', 'NEW', 'NEXT',
+  'NICE', 'NIGHT', 'NO', 'NOT', 'NOW', 'NUMBER', 'OFF', 'OK', 'OLD', 'ON', 'ONE', 'ONLY', 'OPEN', 'OR', 'OTHER',
+  'OUR', 'OUT', 'OVER', 'PAIN', 'PAPER', 'PARENT', 'PAY', 'PEOPLE', 'PERSON', 'PHONE', 'PICK', 'PLACE', 'PLAN',
+  'PLAY', 'PLEASE', 'POLICE', 'PRACTICE', 'PROBLEM', 'QUESTION', 'QUICK', 'QUIET', 'READ', 'READY', 'REAL',
+  'REALLY', 'REPEAT', 'RIGHT', 'ROOM', 'SAFE', 'SAME', 'SAY', 'SCHOOL', 'SEE', 'SEND', 'SHE', 'SHOW', 'SIGN',
+  'SIGNING', 'SISTER', 'SIT', 'SLOW', 'SMALL', 'SO', 'SOME', 'SOON', 'SORRY', 'SPEAK', 'START', 'STAY', 'STOP',
+  'STORY', 'STUDY', 'SUN', 'SURE', 'SYSTEM', 'TAKE', 'TALK', 'TEACHER', 'TELL', 'TEST', 'THANK', 'THANKS', 'THAT',
+  'THE', 'THEIR', 'THEM', 'THEN', 'THERE', 'THESE', 'THEY', 'THING', 'THINK', 'THIS', 'TIME', 'TO', 'TODAY',
+  'TOGETHER', 'TOMORROW', 'TOO', 'TRAIN', 'TRY', 'TURN', 'UNDERSTAND', 'UNTIL', 'UP', 'US', 'USE', 'VERY',
+  'VISIT', 'WAIT', 'WALK', 'WANT', 'WATER', 'WAY', 'WE', 'WEEK', 'WELL', 'WHAT', 'WHEN', 'WHERE', 'WHICH',
+  'WHILE', 'WHO', 'WHY', 'WILL', 'WITH', 'WORD', 'WORK', 'WORLD', 'WOULD', 'WRITE', 'YEAR', 'YES', 'YET', 'YOU',
+  'YOUR', 'YOUNG',
+];

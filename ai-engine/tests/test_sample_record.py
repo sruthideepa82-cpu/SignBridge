@@ -1,3 +1,4 @@
+import string
 import json
 import sys
 from pathlib import Path
@@ -51,13 +52,23 @@ def test_only_verified_classes_with_reference_are_usable() -> None:
     assert set(verified_classes(vocabulary)) == {"GOOD"}
 
 
-def test_shipped_vocabulary_has_the_six_poster_checked_one_handed_letters() -> None:
+def test_shipped_vocabulary_has_no_verified_classes_so_nothing_can_be_recorded() -> None:
     vocabulary = json.loads((AI_ENGINE_DIR / "dataset" / "metadata" / "vocabulary.json").read_text("utf-8"))
 
-    usable = verified_classes(vocabulary)
-    assert set(usable) == {"C", "L", "O", "S", "U", "V"}
-    assert all(entry["hands"] == 1 for entry in usable.values())
-    assert all(entry["signer_confirmed"] is False for entry in usable.values())
+    assert verified_classes(vocabulary) == {}
+
+
+def test_shipped_vocabulary_lists_every_letter_as_an_unverified_candidate() -> None:
+    vocabulary = json.loads((AI_ENGINE_DIR / "dataset" / "metadata" / "vocabulary.json").read_text("utf-8"))
+    classes = {entry["label"]: entry for entry in vocabulary["classes"]}
+
+    assert set(classes) == set(string.ascii_uppercase)
+    assert all(entry["verification_status"] == "unverified" for entry in classes.values())
+    assert all(entry["signer_confirmed"] is False for entry in classes.values())
+    assert classes["J"]["recognition_type"] == "temporal" and classes["Z"]["recognition_type"] == "temporal"
+    assert classes["J"]["training_status"] == "excluded_temporal"
+    assert classes["A"]["recognition_type"] == "static" and classes["A"]["training_status"] == "blocked_unverified"
+    assert vocabulary["consent"]["status"] == "not_recorded"
 
 
 def test_accepts_exact_hand_count_with_full_landmarks_and_confidence() -> None:

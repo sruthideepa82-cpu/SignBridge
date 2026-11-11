@@ -1,6 +1,7 @@
 import {
   BookOpen,
   Database,
+  Type,
   FlaskConical,
   GraduationCap,
   History,
@@ -42,6 +43,7 @@ export const APP_SECTIONS = [
     label: 'Contribute',
     items: [
       { label: 'Dataset Contribution', to: '/contribute', icon: Database },
+      { label: 'Dataset Collector', to: '/contribute/collector', icon: Database },
       { label: 'Community & Feedback', to: '/community', icon: MessageCircle },
     ],
   },
@@ -49,6 +51,7 @@ export const APP_SECTIONS = [
 
 export const APP_EXTRA_ITEMS = [
   { label: 'Voice to Text', to: '/voice-to-text', icon: Mic, section: 'Workspace' },
+  { label: 'Fingerspelling', to: '/fingerspelling', icon: Type, section: 'Tools' },
 ];
 
 export function allAppPages() {
