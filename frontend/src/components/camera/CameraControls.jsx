@@ -1,4 +1,4 @@
-import { LoaderCircle, Pause, Play, Settings, Square, Video, VideoOff } from 'lucide-react';
+import { LoaderCircle, Pause, Play, ScanFace, Settings, Square, Video, VideoOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CAMERA_STATUS } from '../../hooks/useCamera.js';
 
@@ -7,7 +7,18 @@ const BUTTON =
 
 // Camera toggle, Pause/Resume recognition, Stop session and Settings.
 // Pause keeps the camera running. Stop session turns the camera off and discards the unsent sign draft.
-export default function CameraControls({ status, onStart, onStop, paused = false, onTogglePause, onStopSession, canStopSession }) {
+export default function CameraControls({
+  status,
+  onStart,
+  onStop,
+  paused = false,
+  onTogglePause,
+  onStopSession,
+  canStopSession,
+  showFaceMesh = false,
+  onToggleFaceMesh,
+  canToggleFaceMesh = false,
+}) {
   const isStarting = status === CAMERA_STATUS.STARTING;
   const isLive = status === CAMERA_STATUS.LIVE;
 
@@ -35,6 +46,21 @@ export default function CameraControls({ status, onStart, onStop, paused = false
         {paused ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
         {paused ? 'Resume recognition' : 'Pause recognition'}
       </button>
+
+      {onToggleFaceMesh && (
+        <button
+          type="button"
+          onClick={onToggleFaceMesh}
+          disabled={!canToggleFaceMesh}
+          aria-pressed={showFaceMesh}
+          className={`${BUTTON} border border-app-border ${
+            showFaceMesh ? 'bg-accent/15 text-accent-hover' : 'bg-app-surface text-app-text hover:bg-app-raised'
+          }`}
+        >
+          <ScanFace size={16} aria-hidden="true" />
+          Face landmarks
+        </button>
+      )}
 
       <button
         type="button"

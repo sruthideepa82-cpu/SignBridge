@@ -40,6 +40,7 @@ export default function LiveStudioPage() {
   const [draft, setDraft] = useState('');
   const previousBufferText = useRef('');
   const [largeText, setLargeText] = useState(false);
+  const [showFaceMesh, setShowFaceMesh] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
   const [status, setStatus] = useState('');
 
@@ -173,6 +174,8 @@ export default function LiveStudioPage() {
           holding={signBuffer.holding}
           face={face}
           faceError={faceError}
+          showFaceMesh={showFaceMesh}
+          onToggleFaceMesh={() => setShowFaceMesh((value) => !value)}
         />
 
         <ConversationPanel

@@ -1,46 +1,59 @@
+import { CAMERA_STATUS } from '../hooks/useCamera.js';
+
 // What Live Studio shows about the face. Every value comes from the backend's face result. The expression is an
 // estimate from facial movements, so the strength is labelled as a heuristic and never as a probability.
 export const NO_FACE_MESSAGE = 'Move into the camera frame to enable facial tracking.';
+export const PARTIAL_FACE_MESSAGE = 'Move your face fully into the frame for steadier tracking.';
 export const ESTIMATE_NOTE = 'Estimate from facial movements. Not a verified reading of how someone feels.';
 
-export function describeFace({ face, error, cameraLive, paused }) {
+function view(label, tone, message, extra = {}) {
+  return { label, tone, message, expression: null, strength: null, faceCount: 0, landmarkCount: 0, partiallyOutside: false, blendshapes: null, ...extra };
+}
+
+export function describeFace({ face, error, cameraLive, paused, cameraStatus, cameraError }) {
+  if (cameraStatus === CAMERA_STATUS.ERROR) {
+    return view('Camera disconnected', 'danger', cameraError || 'The camera stopped. Check the connection and start it again.');
+  }
   if (paused) {
-    return { label: 'Paused', tone: 'neutral', message: 'Facial tracking pauses with recognition.', expression: null, strength: null };
+    return view('Paused', 'neutral', 'Facial tracking pauses with recognition.');
   }
   if (!cameraLive) {
-    return { label: 'Waiting for camera', tone: 'neutral', message: 'Start the camera to enable facial tracking.', expression: null, strength: null };
+    return view('Waiting for camera', 'neutral', 'Start the camera to enable facial tracking.');
   }
   if (error) {
-    return { label: 'Unavailable', tone: 'danger', message: error, expression: null, strength: null };
+    return view('Unavailable', 'danger', error);
   }
   if (!face) {
-    return { label: 'Checking', tone: 'neutral', message: null, expression: null, strength: null };
+    return view('Loading face model', 'neutral', null);
   }
 
+  const base = { faceCount: face.face_count, landmarkCount: face.landmark_count, blendshapes: face.faces?.[0]?.blendshapes ?? null };
+
   switch (face.status) {
-    case 'face_detected':
-      return {
-        label: 'Face detected',
-        tone: 'success',
-        message: null,
+    case 'face_detected': {
+      const partiallyOutside = Boolean(face.faces?.[0]?.partially_outside_frame);
+      if (partiallyOutside) {
+        return view('Partly outside frame', 'warning', PARTIAL_FACE_MESSAGE, {
+          ...base,
+          partiallyOutside: true,
+          expression: face.expression,
+          strength: face.strength,
+        });
+      }
+      return view('Face detected', 'success', null, {
+        ...base,
         expression: face.expression,
         strength: face.strength,
-        landmarkCount: face.landmark_count,
-      };
+      });
+    }
     case 'no_face':
-      return { label: 'No face in view', tone: 'warning', message: NO_FACE_MESSAGE, expression: null, strength: null };
+      return view('Face not detected', 'warning', NO_FACE_MESSAGE, { faceCount: 0, landmarkCount: 0 });
     case 'detection_unavailable':
-      return {
-        label: 'Model unavailable',
-        tone: 'danger',
-        message: face.detection_error ?? 'The face model is not loaded on the backend.',
-        expression: null,
-        strength: null,
-      };
+      return view('Model unavailable', 'danger', face.detection_error ?? 'The face model is not loaded on the backend.');
     case 'processing_error':
-      return { label: 'Processing error', tone: 'danger', message: face.detection_error, expression: null, strength: null };
+      return view('Processing error', 'danger', face.detection_error);
     default:
-      return { label: 'Checking', tone: 'neutral', message: null, expression: null, strength: null };
+      return view('Loading face model', 'neutral', null);
   }
 }
 

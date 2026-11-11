@@ -1,6 +1,7 @@
 import { AlertTriangle, Info } from 'lucide-react';
 import { describeRecognition } from '../../lib/recognitionStatus.js';
 import { describeFace, ESTIMATE_NOTE, strengthText } from '../../lib/faceStatus.js';
+import { summariseBlendshapes } from '../../lib/faceBlendshapes.js';
 import {
   describeCamera,
   describeConfidence,
@@ -42,7 +43,15 @@ export default function RecognitionStatus({
   face,
   faceError,
 }) {
-  const faceView = describeFace({ face, error: faceError, cameraLive, paused });
+  const faceView = describeFace({
+    face,
+    error: faceError,
+    cameraLive,
+    paused,
+    cameraStatus: camera.status,
+    cameraError: camera.errorMessage,
+  });
+  const blendshapeRows = summariseBlendshapes(faceView.blendshapes);
   const cameraView = describeCamera(camera.status);
   const tracking = describeHandTracking({ landmarks, landmarkError, cameraLive, paused });
   const gesture = describeGesture({ recognition, recognitionError, cameraLive, paused });
@@ -99,19 +108,36 @@ export default function RecognitionStatus({
           Facial expression
         </h3>
         <dl className="divide-y divide-app-border">
-          <Row label="Face" value={faceView.label} tone={faceView.tone} />
+          <Row label="Face tracking" value={faceView.label} tone={faceView.tone} />
+          <Row label="Faces in frame" value={String(faceView.faceCount)} />
+          <Row
+            label="Landmarks"
+            value={faceView.landmarkCount ? `${faceView.landmarkCount} tracked` : '—'}
+          />
           <Row
             label="Predicted expression"
             value={faceView.expression ?? '—'}
             tone={faceView.expression ? 'info' : 'neutral'}
             detail={faceView.expression ? ESTIMATE_NOTE : undefined}
           />
-          <Row label="Strength" value={strengthText(faceView.strength) ?? '—'} />
-          <Row
-            label="Facial landmarks"
-            value={faceView.landmarkCount ? `${faceView.landmarkCount} tracked` : '—'}
-          />
+          {faceView.expression && <Row label="Strength" value={strengthText(faceView.strength) ?? '—'} />}
         </dl>
+        {blendshapeRows.length > 0 && (
+          <div className="space-y-1.5 pt-1" aria-label="Facial movements from the model">
+            <p className="text-xs text-app-muted">Facial movements (model scores)</p>
+            <ul className="space-y-1.5">
+              {blendshapeRows.map((row) => (
+                <li key={row.key} className="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-2 text-xs">
+                  <span className="truncate text-app-muted">{row.label}</span>
+                  <span className="h-1 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+                    <span className="block h-full bg-accent" style={{ width: `${Math.round(row.value * 100)}%` }} />
+                  </span>
+                  <span className="text-right tabular-nums text-app-text">{row.value.toFixed(2)}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         {faceView.message && (
           <p role="status" className="rounded-lg bg-white/[0.03] px-3 py-2 text-xs leading-relaxed text-app-muted">
             {faceView.message}

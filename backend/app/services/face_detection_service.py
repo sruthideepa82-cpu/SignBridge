@@ -22,9 +22,6 @@ from app.core.exceptions import FaceDetectionUnavailableError
 
 logger = logging.getLogger(__name__)
 
-BOX_COLOR = (255, 117, 152)
-POINT_COLOR = (235, 235, 235)
-
 FaceDetectorFactory = Callable[[], "FaceDetector"]
 
 
@@ -96,22 +93,6 @@ class FaceDetector:
                 )
             )
         return FaceDetectionResult(faces=tuple(faces))
-
-    def annotate(self, frame_bgr: np.ndarray, result: FaceDetectionResult) -> np.ndarray:
-        annotated = frame_bgr.copy()
-        height, width = annotated.shape[:2]
-        for face in result.faces:
-            for x, y in face.points:
-                cv2.circle(annotated, (int(x * width), int(y * height)), 1, POINT_COLOR, -1)
-            xmin, ymin, xmax, ymax = face.bbox
-            cv2.rectangle(
-                annotated,
-                (int(xmin * width), int(ymin * height)),
-                (int(xmax * width), int(ymax * height)),
-                BOX_COLOR,
-                2,
-            )
-        return annotated
 
     def close(self) -> None:
         self._landmarker.close()

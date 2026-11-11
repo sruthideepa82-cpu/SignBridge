@@ -2,6 +2,7 @@ import { Check } from 'lucide-react';
 import CameraControls from '../camera/CameraControls.jsx';
 import CameraPreview from '../camera/CameraPreview.jsx';
 import RecognitionIndicator from '../recognition/RecognitionIndicator.jsx';
+import FaceLandmarkOverlay from './FaceLandmarkOverlay.jsx';
 import { describeHandTracking } from '../../lib/liveGuidance.js';
 import { describeFace } from '../../lib/faceStatus.js';
 
@@ -13,8 +14,8 @@ const TONE_DOT = {
   neutral: 'bg-app-muted',
 };
 
-// The webcam is the largest element on Live Studio. The landmark drawing comes from the backend's annotated
-// MediaPipe stream; the overlays here only report real states from the same camera frames.
+// The webcam is the largest element on Live Studio. Hand skeletons are drawn by the backend on the stream. The face
+// overlay is drawn here from the face result, so it can be switched off without touching detection.
 export default function WebcamPreview({
   camera,
   cameraLive,
@@ -29,16 +30,29 @@ export default function WebcamPreview({
   holding,
   face,
   faceError,
+  showFaceMesh,
+  onToggleFaceMesh,
 }) {
   const { status, errorMessage, streamUrl, startCamera, stopCamera, handleStreamError } = camera;
   const tracking = describeHandTracking({ landmarks, landmarkError, cameraLive, paused });
   const tracked = tracking.tone === 'success';
-  const faceView = describeFace({ face, error: faceError, cameraLive, paused });
+  const faceView = describeFace({
+    face,
+    error: faceError,
+    cameraLive,
+    paused,
+    cameraStatus: status,
+    cameraError: errorMessage,
+  });
+  const facePoints = face?.faces?.[0]?.landmarks ?? null;
+  const showOverlay = cameraLive && showFaceMesh && Boolean(facePoints);
 
   return (
     <section aria-label="Live camera" className="flex min-w-0 flex-col gap-3">
       <div className="relative">
         <CameraPreview status={status} streamUrl={streamUrl} errorMessage={errorMessage} onStreamError={handleStreamError} />
+
+        {showOverlay && <FaceLandmarkOverlay points={facePoints} />}
 
         {cameraLive && (
           <div className="pointer-events-none absolute right-3 top-3">
@@ -78,6 +92,9 @@ export default function WebcamPreview({
         onTogglePause={onTogglePause}
         onStopSession={onStopSession}
         canStopSession={canStopSession}
+        showFaceMesh={showFaceMesh}
+        onToggleFaceMesh={onToggleFaceMesh}
+        canToggleFaceMesh={cameraLive}
       />
     </section>
   );

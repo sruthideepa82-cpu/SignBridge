@@ -194,3 +194,36 @@ def test_real_model_runs_inside_the_camera_loop_on_a_photo(settings: Settings) -
     assert body["status"] == "face_detected"
     assert body["landmark_count"] == 478
     assert body["expression"] == "Neutral"
+
+
+def test_face_payload_carries_landmarks_blendshapes_and_frame_position(make_client) -> None:
+    client = make_client(lambda: FakeFaceDetector(SMILE))
+    client.post("/api/camera/start")
+
+    body = wait_for(lambda: client.get("/api/face/latest").json(), lambda item: item["status"] == "face_detected")
+
+    face = body["faces"][0]
+    assert len(face["landmarks"]) == 1
+    assert face["landmarks"][0] == [0.5, 0.5]
+    assert face["blendshapes"]["mouthSmileLeft"] == 0.8
+    assert face["partially_outside_frame"] is False
+    assert face["bbox"] == [0.2, 0.2, 0.8, 0.8]
+
+
+def test_a_face_extending_past_the_frame_edge_is_flagged(make_client) -> None:
+    class EdgeDetector(FakeFaceDetector):
+        def detect(self, _frame):
+            face = DetectedFace(
+                landmark_count=478,
+                bbox=(-0.05, 0.1, 0.7, 0.9),
+                points=((-0.05, 0.1),),
+                blendshapes=dict(SMILE),
+            )
+            return FaceDetectionResult(faces=(face,))
+
+    client = make_client(lambda: EdgeDetector(SMILE))
+    client.post("/api/camera/start")
+
+    body = wait_for(lambda: client.get("/api/face/latest").json(), lambda item: item["status"] == "face_detected")
+
+    assert body["faces"][0]["partially_outside_frame"] is True

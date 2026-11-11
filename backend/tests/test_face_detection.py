@@ -52,11 +52,13 @@ def test_blank_frame_has_no_face() -> None:
     assert result.faces == ()
 
 
-def test_annotation_draws_on_a_copy_and_keeps_the_frame_size(face_detector: FaceDetector) -> None:
-    frame = load_fixture_image("face/grace_hopper.jpg")
-    result = face_detector.detect(frame)
+def test_landmarks_are_normalised_and_inside_the_frame(face_detector: FaceDetector) -> None:
+    face = face_detector.detect(load_fixture_image("face/grace_hopper.jpg")).faces[0]
 
-    annotated = face_detector.annotate(frame, result)
-
-    assert annotated.shape == frame.shape
-    assert not np.array_equal(annotated, frame)
+    xs = [x for x, _ in face.points]
+    ys = [y for _, y in face.points]
+    assert 0.0 <= min(xs) and max(xs) <= 1.0
+    assert 0.0 <= min(ys) and max(ys) <= 1.0
+    xmin, ymin, xmax, ymax = face.bbox
+    assert xmin == pytest.approx(min(xs)) and xmax == pytest.approx(max(xs))
+    assert ymin == pytest.approx(min(ys)) and ymax == pytest.approx(max(ys))

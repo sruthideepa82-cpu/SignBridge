@@ -356,7 +356,6 @@ class CameraService:
                     face_result = face_detector.detect(frame)
                     faces = face_result.faces
                     expression = self._expression_for(faces)
-                    annotated = face_detector.annotate(annotated, face_result)
             except Exception:
                 logger.exception("Face processing failed")
                 self._set_face_detection_error("Facial tracking failed on a frame. See backend logs.")
