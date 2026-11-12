@@ -13,7 +13,7 @@ describe('application shell', () => {
     renderApp('/dashboard');
 
     const nav = screen.getByRole('navigation', { name: 'Main application navigation' });
-    for (const label of ['Overview', 'Live Studio', 'Conversations', 'Quick Phrases', 'History', 'Settings']) {
+    for (const label of ['Overview', 'Live Studio', 'Conversations', 'Quick Phrases', 'Learn Signs', 'History', 'Settings']) {
       expect(within(nav).getByRole('link', { name: label })).toBeInTheDocument();
     }
     expect(within(nav).getByRole('link', { name: 'Profile' })).toBeInTheDocument();

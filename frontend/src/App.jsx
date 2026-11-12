@@ -15,6 +15,7 @@ import HelpPage from './pages/HelpPage.jsx';
 import HistoryPage from './pages/HistoryPage.jsx';
 import LandingPage from './pages/LandingPage.jsx';
 import LearnPage from './pages/LearnPage.jsx';
+import LearnSignsPage from './pages/LearnSignsPage.jsx';
 import LiveStudioPage from './pages/LiveStudioPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 import PracticeLabPage from './pages/PracticeLabPage.jsx';
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="phrases" element={<QuickPhrasesPage />} />
         <Route path="history" element={<HistoryPage />} />
         <Route path="voice-to-text" element={<VoiceToTextPage />} />
+        <Route path="learn/signs" element={<LearnSignsPage />} />
         <Route path="learn/dictionary" element={<DictionaryPage />} />
         <Route path="learn/lessons" element={<GuidedLearningPage />} />
         <Route path="learn/practice" element={<PracticeLabPage />} />

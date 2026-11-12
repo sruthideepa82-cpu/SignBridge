@@ -21,6 +21,7 @@ export const SIDEBAR_ITEMS = [
   { label: 'Live Studio', to: '/live', icon: Video },
   { label: 'Conversations', to: '/conversations', icon: MessagesSquare },
   { label: 'Quick Phrases', to: '/phrases', icon: Zap },
+  { label: 'Learn Signs', to: '/learn/signs', icon: BookOpen },
   { label: 'History', to: '/history', icon: History },
   { label: 'Settings', to: '/settings', icon: Settings },
 ];

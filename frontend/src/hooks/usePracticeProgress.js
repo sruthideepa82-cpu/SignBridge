@@ -32,10 +32,21 @@ export default function usePracticeProgress(storage = window.localStorage) {
     [storage],
   );
 
+  const merge = useCallback(
+    (letters) => {
+      setPractised((current) => {
+        const next = [...new Set([...current, ...letters])];
+        writeProgress(storage, next);
+        return next;
+      });
+    },
+    [storage],
+  );
+
   const reset = useCallback(() => {
     storage.removeItem(PROGRESS_KEY);
     setPractised([]);
   }, [storage]);
 
-  return { practised, toggle, reset };
+  return { practised, toggle, merge, reset };
 }

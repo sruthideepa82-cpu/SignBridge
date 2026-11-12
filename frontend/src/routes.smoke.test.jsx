@@ -15,6 +15,7 @@ const ROUTES = [
   ['/quick-connect', 'Quick Phrases'],
   ['/history', 'History'],
   ['/voice-to-text', 'Voice to Text'],
+  ['/learn/signs', 'Learn Signs'],
   ['/learn/dictionary', 'ISL Dictionary'],
   ['/learn/lessons', 'Guided Learning'],
   ['/learn/practice', 'Practice Lab'],
