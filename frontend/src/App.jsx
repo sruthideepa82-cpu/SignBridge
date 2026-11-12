@@ -40,7 +40,7 @@ export default function App() {
 
       <Route element={<AppShell />}>
         <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="live" element={<LiveStudioPage />} />
+        <Route path="workspace/live-studio" element={<LiveStudioPage />} />
         <Route path="conversations" element={<ConversationsPage />} />
         <Route path="conversations/:conversationId" element={<ConversationDetailPage />} />
         <Route path="phrases" element={<QuickPhrasesPage />} />
@@ -78,7 +78,8 @@ export default function App() {
           }
         />
 
-        <Route path="translator" element={<Moved to="/live" />} />
+        <Route path="live" element={<Moved to="/workspace/live-studio" />} />
+        <Route path="translator" element={<Moved to="/workspace/live-studio" />} />
         <Route path="conversation" element={<Moved to="/conversations" />} />
         <Route path="quick-connect" element={<Moved to="/phrases" />} />
         <Route path="accessibility" element={<Moved to="/settings" />} />

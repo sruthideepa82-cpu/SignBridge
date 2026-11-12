@@ -20,7 +20,7 @@ describe('application shell', () => {
   });
 
   it('marks the current page as active in the sidebar', () => {
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     const nav = screen.getByRole('navigation', { name: 'Main application navigation' });
     expect(within(nav).getByRole('link', { name: 'Live Studio' })).toHaveClass('text-app-text');

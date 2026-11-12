@@ -17,7 +17,7 @@ export const SECTION_LINKS = [
 ];
 
 export const ROUTE_LINKS = [
-  { label: 'Live Studio', to: '/live' },
+  { label: 'Live Studio', to: '/workspace/live-studio' },
   { label: 'Learn', to: '/learn' },
 ];
 

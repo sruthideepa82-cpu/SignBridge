@@ -79,7 +79,7 @@ export default function DashboardPage() {
 
   const startNewConversation = () => {
     conversationActions.startNew();
-    navigate('/live');
+    navigate('/workspace/live-studio');
   };
 
   const sendSavedPhrase = (text) => {
@@ -122,7 +122,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="relative z-10 mt-6">
-            <Link to="/live" className={buttonClass('primary', 'px-4')}>
+            <Link to="/workspace/live-studio" className={buttonClass('primary', 'px-4')}>
               Open Live Studio
               <ArrowRight size={15} aria-hidden="true" />
             </Link>

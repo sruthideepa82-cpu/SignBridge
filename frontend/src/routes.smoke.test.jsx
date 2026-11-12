@@ -7,6 +7,7 @@ const ROUTES = [
   ['/', null],
   ['/learn', null],
   ['/dashboard', /^(Good (morning|afternoon|evening)), Sruthi$/],
+  ['/workspace/live-studio', 'Live Studio'],
   ['/live', 'Live Studio'],
   ['/translator', 'Live Studio'],
   ['/conversations', 'Conversations'],

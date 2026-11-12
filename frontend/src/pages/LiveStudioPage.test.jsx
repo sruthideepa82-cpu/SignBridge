@@ -51,7 +51,7 @@ afterEach(() => {
 describe('Live Studio with a running camera', () => {
   it('turns a held recognised letter into an editable draft and sends it as a sign message', async () => {
     vi.stubGlobal('fetch', mockBackend());
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     fireEvent.click(screen.getByRole('button', { name: 'Start Camera' }));
     expect((await screen.findAllByText('1 hand tracked', {}, { timeout: 3000 })).length).toBeGreaterThan(0);
@@ -75,7 +75,7 @@ describe('Live Studio with a running camera', () => {
 
   it('shows the detected face and its expression as an estimate, with the strength in the Recognition tab', async () => {
     vi.stubGlobal('fetch', mockBackend());
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     fireEvent.click(screen.getByRole('button', { name: 'Start Camera' }));
     await waitFor(() => expect(screen.getByTestId('face-overlay')).toHaveTextContent('Face detected'), { timeout: 3000 });
@@ -90,7 +90,7 @@ describe('Live Studio with a running camera', () => {
 
   it('draws the face landmark overlay only when the toggle is on, independently of detection', async () => {
     vi.stubGlobal('fetch', mockBackend());
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     const toggle = screen.getByRole('button', { name: 'Face landmarks' });
     expect(toggle).toBeDisabled();
@@ -108,7 +108,7 @@ describe('Live Studio with a running camera', () => {
 
   it('lists the facial movements the model reported in the Recognition tab', async () => {
     vi.stubGlobal('fetch', mockBackend());
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     fireEvent.click(screen.getByRole('button', { name: 'Start Camera' }));
     await waitFor(() => expect(screen.getByTestId('face-overlay')).toHaveTextContent('Face detected'), { timeout: 3000 });
@@ -122,7 +122,7 @@ describe('Live Studio with a running camera', () => {
 
   it('pauses recognition without stopping the camera', async () => {
     vi.stubGlobal('fetch', mockBackend());
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     fireEvent.click(screen.getByRole('button', { name: 'Start Camera' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Pause recognition' }));

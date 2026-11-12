@@ -15,10 +15,13 @@ import {
   Zap,
 } from 'lucide-react';
 
+// The dedicated workspace route for Live Studio. Public pages link here, and /live redirects to it.
+export const LIVE_STUDIO_PATH = '/workspace/live-studio';
+
 // The sidebar shows the six primary destinations. Other pages stay reachable from the Help page and search.
 export const SIDEBAR_ITEMS = [
   { label: 'Overview', to: '/dashboard', icon: LayoutDashboard },
-  { label: 'Live Studio', to: '/live', icon: Video },
+  { label: 'Live Studio', to: LIVE_STUDIO_PATH, icon: Video },
   { label: 'Conversations', to: '/conversations', icon: MessagesSquare },
   { label: 'Quick Phrases', to: '/phrases', icon: Zap },
   { label: 'Learn Signs', to: '/learn/signs', icon: BookOpen },

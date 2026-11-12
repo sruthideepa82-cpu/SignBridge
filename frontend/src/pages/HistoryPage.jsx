@@ -176,7 +176,7 @@ export default function HistoryPage() {
           {!hasAny ? (
             <EmptyState icon={MessageSquare} title="No conversation history yet">
               <span className="block">Conversations appear here after you send your first message.</span>
-              <Link to="/live" className="mt-2 inline-block font-medium text-accent-hover hover:underline">
+              <Link to="/workspace/live-studio" className="mt-2 inline-block font-medium text-accent-hover hover:underline">
                 Open Live Studio
               </Link>
             </EmptyState>

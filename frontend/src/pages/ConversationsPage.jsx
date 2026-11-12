@@ -42,7 +42,7 @@ export default function ConversationsPage() {
 
   const startNew = () => {
     conversationActions.startNew();
-    navigate('/live');
+    navigate('/workspace/live-studio');
   };
 
   const pending = pendingDelete ? store.conversations.find((item) => item.id === pendingDelete) : null;

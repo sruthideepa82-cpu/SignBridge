@@ -15,7 +15,7 @@ describe('SignBridge routes', () => {
       screen.getByRole('heading', { level: 1, name: 'Breaking Barriers. Connecting People.' }),
     ).toBeInTheDocument();
     const hero = screen.getByRole('heading', { level: 1 }).closest('section');
-    expect(within(hero).getByRole('link', { name: /start communicating/i })).toHaveAttribute('href', '/live');
+    expect(within(hero).getByRole('link', { name: /start communicating/i })).toHaveAttribute('href', '/workspace/live-studio');
     expect(within(hero).getByRole('link', { name: /explore learning/i })).toHaveAttribute('href', '/learn');
   });
 
@@ -30,7 +30,7 @@ describe('SignBridge routes', () => {
   });
 
   it('shows Live Studio with an idle camera and its controls', () => {
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     expect(screen.getByRole('heading', { level: 1, name: 'Live Studio' })).toBeInTheDocument();
     expect(screen.getByText('Camera is off')).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe('SignBridge routes', () => {
   });
 
   it('sends an emergency phrase from Live Studio into the conversation in one tap', () => {
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     fireEvent.click(screen.getByRole('button', { name: 'Emergency' }));
     fireEvent.click(screen.getByRole('button', { name: 'I need help now.' }));
@@ -57,7 +57,7 @@ describe('SignBridge routes', () => {
   });
 
   it('shows the application shell instead of the public navigation on app routes', () => {
-    renderApp('/live');
+    renderApp('/workspace/live-studio');
 
     expect(screen.getByRole('navigation', { name: 'Main application navigation' })).toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Main' })).not.toBeInTheDocument();
@@ -68,6 +68,54 @@ describe('SignBridge routes', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'Interactive sign-language learning' })).toBeInTheDocument();
     expect(screen.getByText('Finger spelling')).toBeInTheDocument();
+  });
+
+  it('keeps the old /live link working by redirecting to the workspace route', () => {
+    renderApp('/live');
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Live Studio' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Live Studio', current: 'page' })).toHaveAttribute('href', '/workspace/live-studio');
+  });
+
+  it('renders no public website content inside the workspace', () => {
+    renderApp('/workspace/live-studio');
+
+    expect(screen.queryByRole('heading', { name: 'Breaking Barriers. Connecting People.' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Main' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+    expect(screen.queryByText('Start Communicating')).not.toBeInTheDocument();
+  });
+
+  it('does not request camera permission or start the camera until Start Camera is pressed', () => {
+    renderApp('/workspace/live-studio');
+
+    expect(fetch.mock.calls.some(([url]) => String(url).includes('/camera/start'))).toBe(false);
+    expect(screen.getByText('Camera is off')).toBeInTheDocument();
+  });
+
+  it('explains when the webcam access is blocked', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((url) => {
+        if (String(url).includes('/camera/start')) {
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({
+                running: false,
+                last_error: 'The webcam opened but did not deliver any frames. Camera access may be blocked by privacy settings.',
+              }),
+              { status: 200, headers: { 'content-type': 'application/json' } },
+            ),
+          );
+        }
+        return Promise.reject(new TypeError('Failed to fetch'));
+      }),
+    );
+    renderApp('/workspace/live-studio');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start Camera' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Camera access is blocked');
   });
 
   it('shows a not-found page for unknown routes', () => {

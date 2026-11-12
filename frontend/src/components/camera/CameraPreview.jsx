@@ -1,6 +1,9 @@
 import { CameraOff, LoaderCircle, TriangleAlert } from 'lucide-react';
 import { CAMERA_STATUS } from '../../hooks/useCamera.js';
 
+// The backend opens the webcam, so a blocked camera shows up as a privacy or permission message from the server.
+const ACCESS_DENIED_PATTERN = /blocked|permission|denied/i;
+
 function PreviewPlaceholder({ status, errorMessage }) {
   if (status === CAMERA_STATUS.STARTING) {
     return (
@@ -13,10 +16,11 @@ function PreviewPlaceholder({ status, errorMessage }) {
   }
 
   if (status === CAMERA_STATUS.ERROR) {
+    const denied = ACCESS_DENIED_PATTERN.test(errorMessage ?? '');
     return (
       <PlaceholderContent
         icon={<TriangleAlert size={36} className="text-amber-300" aria-hidden="true" />}
-        title="Camera unavailable"
+        title={denied ? 'Camera access is blocked' : 'Camera unavailable'}
         description={errorMessage}
         role="alert"
       />
