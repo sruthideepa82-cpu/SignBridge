@@ -52,6 +52,20 @@ class Settings(BaseSettings):
     recognition_model_path: Path = BACKEND_DIR.parent / "ai-engine" / "models" / "static_classifier.joblib"
     recognition_threshold: float = Field(default=0.7, ge=0.0, le=1.0)
 
+    # Temporal sign model trained by signbridge_training/02_train.py. The folder also holds features.py,
+    # which the backend imports so training and serving share one feature function.
+    sequence_code_dir: Path = BACKEND_DIR.parent / "signbridge_training"
+    sequence_model_dir: Path = BACKEND_DIR.parent / "signbridge_training" / "model"
+    sequence_threshold: float = Field(default=0.6, ge=0.0, le=1.0)
+
+    # Developer-only dataset collection. Off unless explicitly enabled; the routes return 404 otherwise.
+    developer_tools_enabled: bool = False
+    ai_engine_dir: Path = BACKEND_DIR.parent / "ai-engine"
+    dataset_dir: Path = BACKEND_DIR.parent / "ai-engine" / "dataset"
+    dataset_vocabulary_path: Path = BACKEND_DIR.parent / "ai-engine" / "dataset" / "metadata" / "vocabulary.json"
+    dataset_min_frames: int = Field(default=10, ge=1)
+    dataset_max_frames: int = Field(default=600, ge=10)
+
 
 @lru_cache
 def get_settings() -> Settings:

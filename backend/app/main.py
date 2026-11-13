@@ -17,6 +17,8 @@ from app.services.face_detection_service import create_face_detector_factory
 from app.services.video_file_capture import LoopingVideoFile
 from app.services.hand_detection_service import create_hand_detector_factory
 from app.services.recognition_service import StaticRecognizer
+from app.services.dataset_store import DatasetStore
+from app.services.sequence_recognizer import SequenceRecognizer
 
 logger = logging.getLogger("signbridge")
 
@@ -92,6 +94,18 @@ def create_app(
     app.state.settings = settings
     app.state.camera_service = camera
     app.state.recognizer = StaticRecognizer(settings.recognition_model_path, settings.recognition_threshold)
+    app.state.dataset_store = DatasetStore(
+        settings.dataset_dir,
+        settings.dataset_vocabulary_path,
+        settings.dataset_min_frames,
+        settings.dataset_max_frames,
+        settings.ai_engine_dir,
+    )
+    app.state.sequence_recognizer = SequenceRecognizer(
+        settings.sequence_model_dir,
+        settings.sequence_threshold,
+        code_dir=settings.sequence_code_dir,
+    )
 
     app.add_middleware(
         CORSMiddleware,

@@ -23,12 +23,17 @@ class Prediction:
     accepted: bool
 
 
+FEATURE_COUNT = 63
+
+
 class StaticRecognizer:
     def __init__(self, model_path: Path, threshold: float) -> None:
         self._threshold = threshold
         self._model = None
         self._labels: list[str] = []
         self._error: str | None = None
+        self._verification: str | None = None
+        self._experimental: bool | None = None
         if not model_path.is_file():
             self._error = (
                 "No trained model found. Record samples and run ai-engine/training/train_static_classifier.py."
@@ -38,11 +43,26 @@ class StaticRecognizer:
             import joblib
 
             bundle = joblib.load(model_path)
-            self._model = bundle["model"]
-            self._labels = [str(label) for label in bundle["labels"]]
+            model = bundle["model"]
+            labels = [str(label) for label in bundle["labels"]]
+            feature_count = bundle.get("feature_count")
         except Exception as error:
             logger.exception("Could not load the recognition model")
             self._error = f"The recognition model could not be loaded: {error}"
+            return
+        if feature_count != FEATURE_COUNT:
+            self._error = f"The model expects {feature_count} features; the server uses {FEATURE_COUNT}."
+            return
+        # predict() indexes labels by the position of the highest probability. That is only correct when the
+        # labels are in the model's own class order.
+        if [str(label) for label in getattr(model, "classes_", [])] != labels:
+            self._error = "The model's labels do not match its class order. Retrain the model."
+            return
+        self._model = model
+        self._labels = labels
+        # Bundles without these keys are treated as experimental, so an unknown model is never shown as verified.
+        self._verification = str(bundle.get("verification", "unverified"))
+        self._experimental = bool(bundle.get("experimental", True))
 
     @property
     def available(self) -> bool:
@@ -55,6 +75,14 @@ class StaticRecognizer:
     @property
     def threshold(self) -> float:
         return self._threshold
+
+    @property
+    def verification(self) -> str | None:
+        return self._verification if self.available else None
+
+    @property
+    def experimental(self) -> bool | None:
+        return self._experimental if self.available else None
 
     def predict(self, landmarks) -> Prediction:
         if self._model is None:

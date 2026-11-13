@@ -61,10 +61,17 @@ def test_threshold_controls_whether_a_label_is_returned(tmp_path: Path) -> None:
         assert above.label is None
 
 
-def test_endpoint_reports_no_model_while_camera_runs(client: TestClient) -> None:
-    client.post("/api/camera/start")
-    body = client.get("/api/recognition/latest").json()
-    client.post("/api/camera/stop")
+def test_endpoint_reports_no_model_while_camera_runs(
+    settings: Settings,
+    camera_service: CameraService,
+    tmp_path: Path,
+) -> None:
+    # Points at a model file that does not exist, so the result does not depend on what is installed locally.
+    missing_model = settings.model_copy(update={"recognition_model_path": tmp_path / "missing.joblib"})
+    with TestClient(create_app(settings=missing_model, camera_service=camera_service)) as client:
+        client.post("/api/camera/start")
+        body = client.get("/api/recognition/latest").json()
+        client.post("/api/camera/stop")
 
     assert body["status"] == "no_model"
     assert body["label"] is None

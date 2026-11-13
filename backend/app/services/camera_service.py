@@ -15,6 +15,7 @@ import logging
 import sys
 import threading
 import time
+from collections import deque
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from typing import Any
@@ -31,6 +32,8 @@ from app.services.hand_detection_service import DetectedHand, HandDetector, Hand
 logger = logging.getLogger(__name__)
 
 MJPEG_BOUNDARY = "frame"
+# Enough processed frames for one 32-frame sign window plus some slack.
+HAND_HISTORY_FRAMES = 64
 STREAM_WAIT_SECONDS = 1.0
 STOP_JOIN_TIMEOUT_SECONDS = 5.0
 READ_RETRY_DELAY_SECONDS = 0.05
@@ -108,6 +111,7 @@ class CameraService:
         self._frame_sequence = 0
         self._latest_hands: tuple[DetectedHand, ...] | None = None
         self._latest_faces: tuple[DetectedFace, ...] | None = None
+        self._hand_history: deque[tuple[int, tuple[DetectedHand, ...]]] = deque(maxlen=HAND_HISTORY_FRAMES)
         self._latest_expression: SmoothedExpression | None = None
         self._expression_smoother = ExpressionSmoother()
         self._last_error: str | None = None
@@ -148,6 +152,17 @@ class CameraService:
                 hands=hands,
             )
 
+    def hand_history(self, count: int) -> tuple[tuple[int, tuple[DetectedHand, ...]], ...]:
+        """The newest `count` processed frames that ran hand detection, oldest first.
+
+        Each item is (frame_sequence, hands). A frame with no hands has an empty tuple, so the window keeps
+        real timing. Empty while the camera is off.
+        """
+        with self._frame_condition:
+            if not self._active or count <= 0:
+                return ()
+            return tuple(list(self._hand_history)[-count:])
+
     def face_snapshot(self) -> FaceSnapshot:
         with self._frame_condition:
             running = self._active
@@ -180,6 +195,7 @@ class CameraService:
                 self._latest_hands = None
                 self._latest_faces = None
                 self._latest_expression = None
+                self._hand_history.clear()
             self._threads = [
                 threading.Thread(
                     target=self._capture_loop,
@@ -404,6 +420,8 @@ class CameraService:
             self._latest_faces = faces
             self._latest_expression = expression
             self._frame_sequence += 1
+            if hands is not None:
+                self._hand_history.append((self._frame_sequence, hands))
             if hands is not None:
                 self._detection_error = None
             if faces is not None:
