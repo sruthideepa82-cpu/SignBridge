@@ -16,6 +16,7 @@ from app.services.camera_service import CameraService
 from app.services.face_detection_service import create_face_detector_factory
 from app.services.video_file_capture import LoopingVideoFile
 from app.services.hand_detection_service import create_hand_detector_factory
+from app.services.phrase_recognizer import PhraseRecognizer
 from app.services.recognition_service import StaticRecognizer
 from app.services.dataset_store import DatasetStore
 from app.services.sequence_recognizer import SequenceRecognizer
@@ -94,6 +95,7 @@ def create_app(
     app.state.settings = settings
     app.state.camera_service = camera
     app.state.recognizer = StaticRecognizer(settings.recognition_model_path, settings.recognition_threshold)
+    app.state.phrase_recognizer = PhraseRecognizer(settings.phrase_model_path, settings.phrase_threshold)
     app.state.dataset_store = DatasetStore(
         settings.dataset_dir,
         settings.dataset_vocabulary_path,

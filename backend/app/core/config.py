@@ -57,6 +57,8 @@ class Settings(BaseSettings):
     sequence_code_dir: Path = BACKEND_DIR.parent / "signbridge_training"
     sequence_model_dir: Path = BACKEND_DIR.parent / "signbridge_training" / "model"
     sequence_threshold: float = Field(default=0.6, ge=0.0, le=1.0)
+    phrase_model_path: Path = BACKEND_DIR.parent / "ai-engine" / "models" / "phrase_classifier.joblib"
+    phrase_threshold: float = Field(default=0.7, ge=0.0, le=1.0)
 
     # Developer-only dataset collection. Off unless explicitly enabled; the routes return 404 otherwise.
     developer_tools_enabled: bool = False

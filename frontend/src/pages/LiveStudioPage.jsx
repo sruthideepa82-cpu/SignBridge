@@ -6,8 +6,16 @@ import ActionMenu from '../components/app/ActionMenu.jsx';
 import { buttonClass } from '../components/app/ui.jsx';
 import BackendStatusIndicator from '../components/common/BackendStatusIndicator.jsx';
 import ConversationPanel from '../components/studio/ConversationPanel.jsx';
+import PhrasePanel from '../components/studio/PhrasePanel.jsx';
 import QuickPhraseSelector from '../components/studio/QuickPhraseSelector.jsx';
 import SignSentencePanel from '../components/studio/SignSentencePanel.jsx';
+import { appendPhraseToDraft } from '../lib/phraseStabilizer.js';
+import {
+  RECOGNITION_MODE_LABELS,
+  RECOGNITION_MODES,
+  loadRecognitionMode,
+  saveRecognitionMode,
+} from '../lib/recognitionMode.js';
 import { effectiveRecognition, loadLetterSettings, saveLetterSettings } from '../lib/letterSettings.js';
 import WebcamPreview from '../components/studio/WebcamPreview.jsx';
 import useBackendHealth from '../hooks/useBackendHealth.js';
@@ -28,10 +36,12 @@ export default function LiveStudioPage() {
   const camera = useCamera();
   const cameraLive = camera.status === CAMERA_STATUS.LIVE;
   const [paused, setPaused] = useState(false);
+  const [mode, setMode] = useState(loadRecognitionMode);
+  const phraseMode = mode === RECOGNITION_MODES.PHRASES;
   const recognitionOn = cameraLive && !paused;
   const { landmarks, error: landmarkError } = useHandLandmarks(recognitionOn);
   const { face, error: faceError } = useFaceExpression(recognitionOn);
-  const { result: rawRecognition, error: recognitionError, receivedAt } = useRecognition(recognitionOn);
+  const { result: rawRecognition, error: recognitionError, receivedAt } = useRecognition(recognitionOn && !phraseMode);
   const [letterSettings, setLetterSettings] = useState(loadLetterSettings);
   // Recognised letters below the user's threshold become UNKNOWN before anything else uses them.
   const recognition = useMemo(() => effectiveRecognition(rawRecognition, letterSettings.minConfidence), [rawRecognition, letterSettings.minConfidence]);
@@ -68,6 +78,14 @@ export default function LiveStudioPage() {
     previousBufferText.current = next;
     setDraft((current) => nextDraft(current, previous, next));
   }, [signBuffer.text]);
+
+  const chooseMode = (next) => {
+    setMode(saveRecognitionMode(next));
+  };
+
+  const addPhraseToDraft = (phrase) => {
+    setDraft((current) => appendPhraseToDraft(current, phrase));
+  };
 
   const messageCount = conversation?.messages.length ?? 0;
   const savedCount = conversation?.messages.filter((message) => message.saved).length ?? 0;
@@ -172,6 +190,20 @@ export default function LiveStudioPage() {
         </div>
       </header>
 
+      <div role="group" aria-label="Recognition mode" className="flex flex-wrap gap-2">
+        {Object.values(RECOGNITION_MODES).map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={mode === value}
+            onClick={() => chooseMode(value)}
+            className={buttonClass(mode === value ? 'primary' : 'secondary')}
+          >
+            {RECOGNITION_MODE_LABELS[value]}
+          </button>
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2.2fr)_minmax(19rem,1fr)] 2xl:grid-cols-[minmax(0,2.2fr)_minmax(21rem,1fr)]">
         <div className="flex min-w-0 flex-col gap-4">
           <WebcamPreview
@@ -192,7 +224,11 @@ export default function LiveStudioPage() {
             onToggleFaceMesh={() => setShowFaceMesh((value) => !value)}
           />
 
-          <SignSentencePanel cameraLive={cameraLive} paused={paused} />
+          {phraseMode ? (
+            <PhrasePanel cameraLive={cameraLive} paused={paused} onConfirm={addPhraseToDraft} />
+          ) : (
+            <SignSentencePanel cameraLive={cameraLive} paused={paused} />
+          )}
         </div>
 
         <ConversationPanel
