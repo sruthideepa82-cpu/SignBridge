@@ -23,7 +23,7 @@ const STEPS = [
 const TIPS = [
   'Sit so that your hand and face are fully in the frame, about an arm’s length from the camera.',
   'Use even light on your hand. Avoid strong light behind you.',
-  'Keep one hand in view. Two hands are not recognised together.',
+  'With two hands in view, a letter is shown only when the hands agree. Otherwise it stays UNKNOWN.',
   'Hold the sign steady with the palm towards the camera.',
 ];
 

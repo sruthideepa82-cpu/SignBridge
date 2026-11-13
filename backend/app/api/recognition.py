@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.dependencies import CameraServiceDep, RecognizerDep, SequenceRecognizerDep
 from app.schemas.recognition import RecognitionResponse, SequenceResponse, SequenceTopItem
+from app.services.recognition_service import Prediction
 from app.services.sequence_recognizer import MIN_HAND_FRAME_SHARE, build_window
 
 router = APIRouter(prefix="/recognition", tags=["recognition"])
@@ -9,9 +10,11 @@ router = APIRouter(prefix="/recognition", tags=["recognition"])
 
 @router.get("/latest", response_model=RecognitionResponse)
 def latest_recognition(camera: CameraServiceDep, recognizer: RecognizerDep) -> RecognitionResponse:
-    """Classify the newest processed frame. Only one hand is classified at a time.
+    """Classify the newest processed frame. Each visible hand is classified on its own.
 
-    This is a single-frame result. Temporal smoothing is added in Phase 5.
+    With two hands, a letter is returned only when the accepted hand predictions agree. If the hands give
+    different accepted letters, or no hand clears the threshold, the result is uncertain. This is a
+    single-frame result. Temporal smoothing is added in Phase 5.
     """
     snapshot = camera.landmark_snapshot()
     base = {
@@ -27,25 +30,47 @@ def latest_recognition(camera: CameraServiceDep, recognizer: RecognizerDep) -> R
         return RecognitionResponse(status="no_model", detail=recognizer.error, **base)
     if len(snapshot.hands) == 0:
         return RecognitionResponse(status="no_hand", **base)
-    if len(snapshot.hands) > 1:
+
+    predictions = []
+    errors = []
+    for hand in snapshot.hands:
+        points = [[point.x, point.y, point.z] for point in hand.landmarks]
+        try:
+            predictions.append(recognizer.predict(points))
+        except ValueError as error:
+            errors.append(str(error))
+    return combine_hand_predictions(predictions, errors, base)
+
+
+def combine_hand_predictions(
+    predictions: list[Prediction],
+    errors: list[str],
+    base: dict,
+) -> RecognitionResponse:
+    """Turn one prediction per visible hand into a single frame result.
+
+    A label is returned only when the accepted hands agree. Hands that give different accepted letters
+    are uncertain, so an ambiguous frame never produces a letter.
+    """
+    if not predictions:
+        return RecognitionResponse(status="uncertain", detail=errors[0] if errors else None, **base)
+
+    accepted = [prediction for prediction in predictions if prediction.accepted]
+    top_confidence = max(prediction.confidence for prediction in predictions)
+    if len({prediction.label for prediction in accepted}) > 1:
         return RecognitionResponse(
-            status="two_hands",
-            detail="Show one hand at a time. The recognizer classifies one-handed letters.",
+            status="uncertain",
+            detail="The two hands show different letters. Hold up the signing hand alone.",
+            confidence=top_confidence,
             **base,
         )
-
-    points = [[point.x, point.y, point.z] for point in snapshot.hands[0].landmarks]
-    try:
-        prediction = recognizer.predict(points)
-    except ValueError as error:
-        return RecognitionResponse(status="uncertain", detail=str(error), **base)
-
-    if not prediction.accepted:
-        return RecognitionResponse(status="uncertain", confidence=prediction.confidence, **base)
+    if not accepted:
+        return RecognitionResponse(status="uncertain", confidence=top_confidence, **base)
+    best = max(accepted, key=lambda prediction: prediction.confidence)
     return RecognitionResponse(
         status="recognized",
-        label=prediction.label,
-        confidence=prediction.confidence,
+        label=best.label,
+        confidence=best.confidence,
         **base,
     )
 
