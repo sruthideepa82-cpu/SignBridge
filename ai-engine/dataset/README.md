@@ -136,3 +136,19 @@ Expect these before a model is useful:
 - Recordings come from the webcam and detector in use, which may not represent other devices or lighting.
 - The detector tracks hands between frames (VIDEO mode). A hand that enters the frame can take a few frames to be detected, so the first moment of a posture may be dropped. Two-hand classes need the second hand to be steady before the sample is taken. The tool skips frames that do not match, so this lowers the number of accepted samples rather than corrupting them.
 - ISL vocabulary must be checked by a qualified reviewer. Automated checks cannot confirm sign meaning.
+
+## 8. Browser Dataset Collector (developer only)
+
+The Dataset Collector page is a developer tool. It is shown only when the frontend is built or run with
+VITE_SIGNBRIDGE_DEVELOPER_TOOLS=true, and the backend routes return 404 unless SIGNBRIDGE_DEVELOPER_TOOLS_ENABLED=true.
+Keep both off in any deployed build.
+
+- It uses the camera and landmark pipeline Live Studio already uses. Frames are taken from processed frames only, so
+  the same frame is never stored twice.
+- Each recording is a clip of frames, not a single pose. A clip must last at least 1.5 seconds and have at least 10
+  frames. Hands must be in view for at least 30% of frames, the same rule as the offline extractor.
+- Clips are saved to ai-engine/dataset/clips/<LABEL>/<clip_id>.json (gitignored). Export them as CSV (one row per
+  frame) or JSON from the page or from GET /api/dataset/export?format=csv|json.
+- The same gates apply on the page and on the server: the letter must be verified in vocabulary.json (UNKNOWN is
+  always allowed), the participant must be a P### pseudonym, and a consent reference is required.
+- Until a qualified signer verifies a letter and consent is recorded, recording stays locked for that letter.

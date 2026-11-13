@@ -10,3 +10,14 @@
 5. Read: top-1 / top-3 on unseen signers, the "most confused" list, model/model_card.json.
 
 `make_synthetic.py` makes fake data to check the scripts run. Its 100% means nothing.
+
+## Connecting the model to Live Studio
+
+02_train.py writes model/model.joblib and model/model_card.json. The SignBridge backend loads them at startup and
+serves predictions at GET /api/recognition/sequence. Live Studio shows "Model unavailable" until the files exist.
+
+- The model card must not have "synthetic": true. Synthetic models are refused by the server.
+- The backend reads the folder from SIGNBRIDGE_SEQUENCE_MODEL_DIR (default: this folder's model/).
+- Words are shown only when the model's confidence is at least SIGNBRIDGE_SEQUENCE_THRESHOLD (default 0.6).
+- A word appears in the sentence only after it is held steady for several results (see frontend/src/lib/sentenceBuilder.js).
+- The model card's caveat is shown in Live Studio. Check it before relying on the output.

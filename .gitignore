@@ -44,3 +44,7 @@ ai-engine/models/*
 *.keras
 *.tflite
 *.onnx
+
+# Raw public datasets: licence-restricted, research use only. Never commit.
+/Static gestures of Indian Sign Language (ISL) for English Alphabet, Hindi Vowels and Numerals/
+/Dataset for everyday phrases and words in Indian sign language/
