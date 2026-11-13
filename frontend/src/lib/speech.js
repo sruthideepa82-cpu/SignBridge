@@ -19,7 +19,7 @@ export function pickVoice(voices, lang) {
   return voices.find((voice) => voice.lang?.split('-')[0] === language) ?? null;
 }
 
-export function speak(text, { lang = 'en-IN', voices = availableVoices() } = {}) {
+export function speak(text, { lang = 'en-IN', voices = availableVoices(), rate = 1, voiceName = '' } = {}) {
   if (!isSpeechSupported()) {
     throw new Error('Text-to-speech is not supported in this browser.');
   }
@@ -30,7 +30,9 @@ export function speak(text, { lang = 'en-IN', voices = availableVoices() } = {})
   synth.cancel();
   const utterance = new window.SpeechSynthesisUtterance(text);
   utterance.lang = lang;
-  const voice = pickVoice(voices, lang);
+  utterance.rate = rate;
+  const named = voiceName ? voices.find((item) => item.name === voiceName && item.lang?.split('-')[0] === lang.split('-')[0]) : null;
+  const voice = named ?? pickVoice(voices, lang);
   if (voice) utterance.voice = voice;
   synth.speak(utterance);
   return { utterance, voice };

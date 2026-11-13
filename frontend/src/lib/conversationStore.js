@@ -164,8 +164,17 @@ export function sortedConversations(store) {
   return [...store.conversations].sort((a, b) => b.updatedAt - a.updatedAt);
 }
 
-export function appendMessage(store, { text, speaker, source, conversationId, now = Date.now() }) {
-  const message = { id: newId(now), speaker, source, text, at: now, saved: false, edited: false };
+export function appendMessage(store, { text, speaker, source, conversationId, now = Date.now(), experimental = false }) {
+  const message = {
+    id: newId(now),
+    speaker,
+    source,
+    text,
+    at: now,
+    saved: false,
+    edited: false,
+    ...(experimental ? { experimental: true } : {}),
+  };
   let targetId = conversationId ?? store.activeId;
   let conversations = store.conversations;
 

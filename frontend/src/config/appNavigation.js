@@ -1,3 +1,4 @@
+import { developerToolsEnabled } from './developerTools.js';
 import {
   BookOpen,
   Database,
@@ -47,7 +48,7 @@ export const APP_SECTIONS = [
     label: 'Contribute',
     items: [
       { label: 'Dataset Contribution', to: '/contribute', icon: Database },
-      { label: 'Dataset Collector', to: '/contribute/collector', icon: Database },
+      { label: 'Dataset Collector', to: '/contribute/collector', icon: Database, developer: true },
       { label: 'Community & Feedback', to: '/community', icon: MessageCircle },
     ],
   },
@@ -59,9 +60,14 @@ export const APP_EXTRA_ITEMS = [
 ];
 
 export function allAppPages() {
+  const developer = developerToolsEnabled();
   return [
     ...SIDEBAR_ITEMS.map((item) => ({ ...item, section: 'Workspace' })),
-    ...APP_SECTIONS.flatMap((section) => section.items.map((item) => ({ ...item, section: section.label }))),
+    ...APP_SECTIONS.flatMap((section) =>
+      section.items
+        .filter((item) => developer || !item.developer)
+        .map((item) => ({ ...item, section: section.label })),
+    ),
     ...APP_EXTRA_ITEMS,
     { label: 'Help & Support', to: '/help', icon: LifeBuoy, section: 'Account' },
   ];

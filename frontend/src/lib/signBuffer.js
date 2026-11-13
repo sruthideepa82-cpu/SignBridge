@@ -42,7 +42,10 @@ export function applyRecognition(state, result, { holdFrames = HOLD_FRAMES } = {
   if (holdCount >= holdFrames) {
     return {
       ...next,
-      items: [...next.items, { type: 'letter', label, confidence: result.confidence }],
+      items: [
+        ...next.items,
+        { type: 'letter', label, confidence: result.confidence, ...(result.experimental === true ? { experimental: true } : {}) },
+      ],
       candidate: label,
       holdCount: 0,
       committedLabel: label,

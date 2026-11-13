@@ -26,6 +26,7 @@ export default function useRecognitionHistory(result, receivedAt) {
       label: result.label ?? null,
       confidence: result.confidence,
       timestamp: receivedAt,
+      ...(result.experimental === true ? { experimental: true } : {}),
     };
     setEntries((current) => [entry, ...current].slice(0, HISTORY_LIMIT));
   }, [result, receivedAt]);

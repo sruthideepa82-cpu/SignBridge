@@ -1,5 +1,6 @@
 import StatusBadge from '../common/StatusBadge.jsx';
 import { formatTime } from '../../lib/recognitionHistory.js';
+import { EXPERIMENTAL_LABEL } from '../../lib/recognitionStatus.js';
 
 const BUTTON =
   'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40';
@@ -16,6 +17,7 @@ function HistoryItem({ entry }) {
         <p className="text-xs text-zinc-500">Confidence {Math.round(entry.confidence * 100)}%</p>
       </div>
       <div className="flex flex-wrap items-center gap-2">
+        {entry.experimental && <StatusBadge label={EXPERIMENTAL_LABEL} tone="warning" dark />}
         {recognized ? (
           <StatusBadge label="Recognized" tone="success" dark />
         ) : (

@@ -1,5 +1,8 @@
 export const pct = (value) => `${Math.round(value * 100)}%`;
 
+// Shown wherever a letter from an unverified model appears: overlay, draft, history and conversation.
+export const EXPERIMENTAL_LABEL = 'Experimental – Unverified Dataset';
+
 // Maps a /recognition/latest response to what the UI may say. A sign is only returned for the
 // 'recognized' status; every other status shows no sign.
 export function describeRecognition(result, error, cameraLive) {
@@ -36,6 +39,16 @@ export function describeRecognition(result, error, cameraLive) {
           : `Confidence ${pct(result.confidence)} is below the ${pct(result.threshold)} threshold, so no sign is shown.`,
       };
     case 'recognized':
+      if (result.experimental === true) {
+        // The model was trained on an unverified public dataset. Its letters are shown as experimental, never as a
+        // verified translation, and they are not spoken.
+        return {
+          tone: 'warning',
+          label: EXPERIMENTAL_LABEL,
+          headline: result.label,
+          text: `Confidence ${pct(result.confidence)}. Experimental prediction from a model trained on an unverified dataset. Not a verified ISL translation.`,
+        };
+      }
       return {
         tone: 'success',
         label: 'Recognized',

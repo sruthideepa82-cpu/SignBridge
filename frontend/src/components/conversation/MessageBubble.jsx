@@ -49,6 +49,11 @@ export default function MessageBubble({ message, largeText, onEdit, onDelete, on
         <div className="flex items-center gap-2 text-xs">
           <span className="font-medium text-app-text">{SPEAKERS[message.speaker]}</span>
           <span className="text-app-muted">· {SOURCES[message.source]}</span>
+          {message.experimental && (
+            <span className="rounded bg-warning/15 px-1.5 py-0.5 text-[10px] font-semibold text-warning">
+              Experimental – Unverified Dataset
+            </span>
+          )}
           {message.edited && <span className="italic text-app-muted">edited</span>}
           {message.saved && (
             <span className="inline-flex items-center gap-1 text-accent-hover">

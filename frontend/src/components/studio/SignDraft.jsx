@@ -1,5 +1,6 @@
 import { Send, Trash2, Undo2, WrapText } from 'lucide-react';
 import { buttonClass } from '../app/ui.jsx';
+import { EXPERIMENTAL_LABEL } from '../../lib/recognitionStatus.js';
 
 // Recognised letters waiting for review. This is not a message yet: it is only sent when the user presses Send.
 export default function SignDraft({ draft, onDraftChange, items, holding, onUndo, onAddSpace, onDiscard, onSend }) {
@@ -35,6 +36,12 @@ export default function SignDraft({ draft, onDraftChange, items, holding, onUndo
         className="mt-2 block w-full resize-none rounded-lg border border-app-border bg-app-bg px-3 py-2 font-mono text-lg tracking-wider text-app-text placeholder:font-sans placeholder:text-sm placeholder:tracking-normal placeholder:text-app-muted focus:border-accent/60 focus:outline-none"
       />
 
+      {items.some((item) => item.experimental) && (
+        <p className="mt-2 text-xs text-warning">
+          {EXPERIMENTAL_LABEL}. Check these letters before you send them.
+        </p>
+      )}
+
       {hasItems && (
         <ol className="mt-2 flex flex-wrap gap-1.5" aria-label="Recognised letters, in order">
           {items.map((item, index) => (
@@ -47,6 +54,11 @@ export default function SignDraft({ draft, onDraftChange, items, holding, onUndo
               ) : (
                 <>
                   <span className="font-semibold">{item.label}</span>
+                  {item.experimental && (
+                    <span className="rounded bg-warning/15 px-1 text-[10px] font-semibold text-warning" aria-label="Experimental, unverified">
+                      Exp.
+                    </span>
+                  )}
                   <span className="tabular-nums text-app-muted">{Math.round(item.confidence * 100)}%</span>
                 </>
               )}

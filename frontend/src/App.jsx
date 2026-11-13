@@ -4,6 +4,7 @@ import AppShell from './components/app/AppShell.jsx';
 import ComingSoonPage from './components/app/ComingSoonPage.jsx';
 import MainLayout from './layouts/MainLayout.jsx';
 import ContributePage from './pages/ContributePage.jsx';
+import { developerToolsEnabled } from './config/developerTools.js';
 import DatasetCollectorPage from './pages/DatasetCollectorPage.jsx';
 import FingerspellingPage from './pages/FingerspellingPage.jsx';
 import ConversationDetailPage from './pages/ConversationDetailPage.jsx';
@@ -51,7 +52,10 @@ export default function App() {
         <Route path="learn/lessons" element={<GuidedLearningPage />} />
         <Route path="learn/practice" element={<PracticeLabPage />} />
         <Route path="contribute" element={<ContributePage />} />
-        <Route path="contribute/collector" element={<DatasetCollectorPage />} />
+        <Route
+          path="contribute/collector"
+          element={developerToolsEnabled() ? <DatasetCollectorPage /> : <NotFoundPage />}
+        />
         <Route path="fingerspelling" element={<FingerspellingPage />} />
         <Route
           path="community"

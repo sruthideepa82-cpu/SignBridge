@@ -23,7 +23,7 @@ const ROUTES = [
   ['/contribute', 'Dataset Contribution'],
   ['/community', 'Community & Feedback'],
   ['/help', 'Help & Support'],
-  ['/contribute/collector', 'Dataset Collector'],
+  ['/contribute/collector', 'Page not found'],
   ['/fingerspelling', 'Fingerspelling'],
   ['/accessibility', 'Settings'],
   ['/settings', 'Settings'],

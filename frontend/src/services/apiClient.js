@@ -20,12 +20,13 @@ async function parseJson(response) {
   }
 }
 
-export async function apiRequest(path, { method = 'GET', signal } = {}) {
+export async function apiRequest(path, { method = 'GET', signal, body } = {}) {
   let response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       method,
-      headers: { Accept: 'application/json' },
+      headers: body === undefined ? { Accept: 'application/json' } : { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: body === undefined ? undefined : JSON.stringify(body),
       signal,
     });
   } catch (error) {

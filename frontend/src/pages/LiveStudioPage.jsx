@@ -7,6 +7,7 @@ import { buttonClass } from '../components/app/ui.jsx';
 import BackendStatusIndicator from '../components/common/BackendStatusIndicator.jsx';
 import ConversationPanel from '../components/studio/ConversationPanel.jsx';
 import QuickPhraseSelector from '../components/studio/QuickPhraseSelector.jsx';
+import SignSentencePanel from '../components/studio/SignSentencePanel.jsx';
 import WebcamPreview from '../components/studio/WebcamPreview.jsx';
 import useBackendHealth from '../hooks/useBackendHealth.js';
 import useCamera, { CAMERA_STATUS } from '../hooks/useCamera.js';
@@ -63,7 +64,8 @@ export default function LiveStudioPage() {
   const sendDraft = () => {
     const text = draft.trim();
     if (!text) return;
-    conversationActions.append({ text, speaker: 'deaf', source: 'sign' });
+    const experimental = signBuffer.items.some((item) => item.experimental);
+    conversationActions.append({ text, speaker: 'deaf', source: 'sign', experimental });
     signBuffer.clear();
     setDraft('');
     setStatus('Sent recognised text to the conversation.');
@@ -160,23 +162,27 @@ export default function LiveStudioPage() {
       </header>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2.2fr)_minmax(19rem,1fr)] 2xl:grid-cols-[minmax(0,2.2fr)_minmax(21rem,1fr)]">
-        <WebcamPreview
-          camera={camera}
-          cameraLive={cameraLive}
-          paused={paused}
-          onTogglePause={() => setPaused((value) => !value)}
-          onStopSession={stopSession}
-          canStopSession={canStopSession}
-          landmarks={landmarks}
-          landmarkError={landmarkError}
-          recognition={recognition}
-          recognitionError={recognitionError}
-          holding={signBuffer.holding}
-          face={face}
-          faceError={faceError}
-          showFaceMesh={showFaceMesh}
-          onToggleFaceMesh={() => setShowFaceMesh((value) => !value)}
-        />
+        <div className="flex min-w-0 flex-col gap-4">
+          <WebcamPreview
+            camera={camera}
+            cameraLive={cameraLive}
+            paused={paused}
+            onTogglePause={() => setPaused((value) => !value)}
+            onStopSession={stopSession}
+            canStopSession={canStopSession}
+            landmarks={landmarks}
+            landmarkError={landmarkError}
+            recognition={recognition}
+            recognitionError={recognitionError}
+            holding={signBuffer.holding}
+            face={face}
+            faceError={faceError}
+            showFaceMesh={showFaceMesh}
+            onToggleFaceMesh={() => setShowFaceMesh((value) => !value)}
+          />
+
+          <SignSentencePanel cameraLive={cameraLive} paused={paused} />
+        </div>
 
         <ConversationPanel
           conversation={conversation}
