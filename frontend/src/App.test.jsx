@@ -8,25 +8,13 @@ describe('SignBridge routes', () => {
     window.localStorage.clear();
   });
 
-  it('renders the landing page hero with primary and secondary calls to action', () => {
+  it('redirects the root URL straight to Live Studio without rendering the landing page', () => {
     renderApp('/');
 
-    expect(
-      screen.getByRole('heading', { level: 1, name: 'Breaking Barriers. Connecting People.' }),
-    ).toBeInTheDocument();
-    const hero = screen.getByRole('heading', { level: 1 }).closest('section');
-    expect(within(hero).getByRole('link', { name: /start communicating/i })).toHaveAttribute('href', '/workspace/live-studio');
-    expect(within(hero).getByRole('link', { name: /explore learning/i })).toHaveAttribute('href', '/learn');
-  });
-
-  it('lists every landing page feature', () => {
-    renderApp('/');
-
-    const features = document.getElementById('features');
-    expect(within(features).getByText('Real-Time Sign Recognition')).toBeInTheDocument();
-    expect(within(features).getByText('Sign-to-Text Translation')).toBeInTheDocument();
-    expect(within(features).getByText('Text-to-Speech')).toBeInTheDocument();
-    expect(within(features).getByText('Interactive Learning')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Live Studio' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Breaking Barriers. Connecting People.' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Main' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
   });
 
   it('shows Live Studio with an idle camera and its controls', () => {
@@ -124,8 +112,8 @@ describe('SignBridge routes', () => {
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
   });
 
-  it('shows the navigation bar with the SignBridge logo link', () => {
-    renderApp('/');
+  it('shows the navigation bar with the SignBridge logo link on public pages', () => {
+    renderApp('/learn');
 
     const nav = screen.getByRole('navigation', { name: 'Main' });
     expect(within(nav).getByRole('link', { name: 'SignBridge home' })).toBeInTheDocument();

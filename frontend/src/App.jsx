@@ -14,7 +14,6 @@ import DictionaryPage from './pages/DictionaryPage.jsx';
 import GuidedLearningPage from './pages/GuidedLearningPage.jsx';
 import HelpPage from './pages/HelpPage.jsx';
 import HistoryPage from './pages/HistoryPage.jsx';
-import LandingPage from './pages/LandingPage.jsx';
 import LearnPage from './pages/LearnPage.jsx';
 import LearnSignsPage from './pages/LearnSignsPage.jsx';
 import LiveStudioPage from './pages/LiveStudioPage.jsx';
@@ -33,8 +32,9 @@ function Moved({ to }) {
 export default function App() {
   return (
     <Routes>
+      <Route index element={<Navigate to="/workspace/live-studio" replace />} />
+
       <Route element={<MainLayout />}>
-        <Route index element={<LandingPage />} />
         <Route path="learn" element={<LearnPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
