@@ -1,5 +1,5 @@
 import { Copy, MessageSquarePlus, MessagesSquare, Trash2, Type } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/app/ConfirmDialog.jsx';
 import ActionMenu from '../components/app/ActionMenu.jsx';
@@ -8,6 +8,7 @@ import BackendStatusIndicator from '../components/common/BackendStatusIndicator.
 import ConversationPanel from '../components/studio/ConversationPanel.jsx';
 import QuickPhraseSelector from '../components/studio/QuickPhraseSelector.jsx';
 import SignSentencePanel from '../components/studio/SignSentencePanel.jsx';
+import { effectiveRecognition, loadLetterSettings, saveLetterSettings } from '../lib/letterSettings.js';
 import WebcamPreview from '../components/studio/WebcamPreview.jsx';
 import useBackendHealth from '../hooks/useBackendHealth.js';
 import useCamera, { CAMERA_STATUS } from '../hooks/useCamera.js';
@@ -30,9 +31,19 @@ export default function LiveStudioPage() {
   const recognitionOn = cameraLive && !paused;
   const { landmarks, error: landmarkError } = useHandLandmarks(recognitionOn);
   const { face, error: faceError } = useFaceExpression(recognitionOn);
-  const { result: recognition, error: recognitionError, receivedAt } = useRecognition(recognitionOn);
+  const { result: rawRecognition, error: recognitionError, receivedAt } = useRecognition(recognitionOn);
+  const [letterSettings, setLetterSettings] = useState(loadLetterSettings);
+  // Recognised letters below the user's threshold become UNKNOWN before anything else uses them.
+  const recognition = useMemo(() => effectiveRecognition(rawRecognition, letterSettings.minConfidence), [rawRecognition, letterSettings.minConfidence]);
   const history = useRecognitionHistory(recognition, receivedAt);
-  const signBuffer = useSignBuffer(recognition);
+  const signBuffer = useSignBuffer(recognition, { holdFrames: letterSettings.stableFrames });
+  const draftControls = {
+    experimental: recognition?.experimental === true,
+    backendThreshold: rawRecognition?.threshold ?? null,
+    settings: letterSettings,
+    onSettingsChange: (patch) => setLetterSettings((current) => saveLetterSettings({ ...current, ...patch })),
+    onRemoveAt: (index) => signBuffer.remove(index),
+  };
 
   const store = useConversationStore();
   const conversation = activeConversation(store);
@@ -211,6 +222,7 @@ export default function LiveStudioPage() {
           cameraLive={cameraLive}
           recognition={recognition}
           recognitionError={recognitionError}
+          draftControls={draftControls}
         />
       </div>
 

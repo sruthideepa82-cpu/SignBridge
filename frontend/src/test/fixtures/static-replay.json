@@ -1,0 +1,478 @@
+{
+  "source": "Real MediaPipe + real active static model via /api/recognition/latest (see make_replay_fixture.py).",
+  "images": {
+    "B": "2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/B/B (289).jpg",
+    "C": "2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/C/C (139).jpg",
+    "uncertain_B": "2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/B/B (282).jpg"
+  },
+  "frames": [
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 6,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 7,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 8,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 9,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 10,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 11,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 12,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 13,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "uncertain",
+      "response": {
+        "status": "uncertain",
+        "label": null,
+        "confidence": 0.67,
+        "threshold": 0.7,
+        "frame_sequence": 14,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 15,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 16,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 17,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 18,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 19,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 20,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 21,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 22,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 23,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 24,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 25,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 26,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 27,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 28,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 29,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "C",
+      "response": {
+        "status": "recognized",
+        "label": "C",
+        "confidence": 0.9566666666666667,
+        "threshold": 0.7,
+        "frame_sequence": 30,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "none",
+      "response": {
+        "status": "no_hand",
+        "label": null,
+        "confidence": null,
+        "threshold": 0.7,
+        "frame_sequence": 31,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "none",
+      "response": {
+        "status": "no_hand",
+        "label": null,
+        "confidence": null,
+        "threshold": 0.7,
+        "frame_sequence": 32,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "none",
+      "response": {
+        "status": "no_hand",
+        "label": null,
+        "confidence": null,
+        "threshold": 0.7,
+        "frame_sequence": 33,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 34,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 35,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 36,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 37,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 38,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 39,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 40,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    },
+    {
+      "scripted": "B",
+      "response": {
+        "status": "recognized",
+        "label": "B",
+        "confidence": 0.75,
+        "threshold": 0.7,
+        "frame_sequence": 41,
+        "detail": null,
+        "experimental": true,
+        "verification": "unverified_dataset"
+      }
+    }
+  ]
+}

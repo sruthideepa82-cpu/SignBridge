@@ -42,8 +42,8 @@ describe('SignSentencePanel', () => {
     setResult({ status: 'no_model', frame_sequence: 1, detail: 'No trained sign model found.' });
     render(<SignSentencePanel cameraLive paused={false} />);
 
-    expect(screen.getByText('Model unavailable')).toBeInTheDocument();
-    expect(screen.getByText(/Awaiting model integration/)).toBeInTheDocument();
+    expect(screen.getByText('Sentence model not installed')).toBeInTheDocument();
+    expect(screen.getByText(/Sentences need the temporal sign model/)).toBeInTheDocument();
     expect(screen.getByText('No confirmed sign.')).toBeInTheDocument();
     expect(screen.getByText('Nothing to translate yet.')).toBeInTheDocument();
   });

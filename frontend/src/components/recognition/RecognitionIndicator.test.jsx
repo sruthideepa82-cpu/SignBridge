@@ -24,7 +24,7 @@ describe('RecognitionIndicator', () => {
   it('hides the sign and explains the threshold for an uncertain result', () => {
     render(<RecognitionIndicator result={{ ...base, status: 'uncertain', confidence: 0.4 }} error="" {...live} />);
 
-    expect(screen.getByText('Not recognized')).toBeInTheDocument();
+    expect(screen.getByText('UNKNOWN')).toBeInTheDocument();
     expect(screen.getByText(/below the 70% threshold/i)).toBeInTheDocument();
     expect(screen.getByTestId('predicted-sign')).not.toHaveTextContent('L');
   });

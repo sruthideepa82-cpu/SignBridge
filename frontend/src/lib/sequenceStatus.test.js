@@ -17,8 +17,9 @@ describe('describeRecognition', () => {
     });
 
     expect(state.key).toBe('no_model');
-    expect(state.label).toBe('Model unavailable');
-    expect(state.detail).toMatch(/Awaiting model integration/);
+    expect(state.label).toBe('Sentence model not installed');
+    expect(state.detail).toMatch(/Sentences need the temporal sign model/);
+    expect(state.detail).toMatch(/Single letters above come from the static classifier/);
   });
 
   it('shows each detection stage', () => {

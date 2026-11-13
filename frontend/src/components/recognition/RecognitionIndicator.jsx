@@ -1,4 +1,4 @@
-import { describeRecognition, pct } from '../../lib/recognitionStatus.js';
+import { describeRecognition, EXPERIMENTAL_LABEL, pct } from '../../lib/recognitionStatus.js';
 
 const TONE_TEXT = {
   neutral: 'text-app-muted',
@@ -35,6 +35,12 @@ export default function RecognitionIndicator({ result, error, cameraLive, holdin
           </span>
         )}
       </div>
+
+      {result?.experimental === true && result.status !== 'no_model' && (
+        <span className="shrink-0 rounded bg-warning/15 px-1.5 py-0.5 text-[10px] font-semibold text-warning">
+          {EXPERIMENTAL_LABEL}
+        </span>
+      )}
 
       {showConfidence && (
         <div className="flex shrink-0 items-center gap-2.5">

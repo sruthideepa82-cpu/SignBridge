@@ -1,10 +1,16 @@
-// Turns a stream of single-frame recognition results into committed text.
+// Turns a stream of single-frame recognition results into committed letters.
 //
-// A letter is committed only after the same label is recognized on HOLD_FRAMES new frames in a row.
-// Once committed, that letter cannot be committed again until the hand has moved to a different
-// recognized sign or stopped being recognized. Uncertain, missing, or unavailable results reset the hold.
+// A letter is committed only after the same label is recognized on HOLD_FRAMES new frames in a row. Once a letter is
+// committed, it is held: the same letter cannot be committed again while the hand keeps making it. Two kinds of result
+// are treated differently:
+//   - An uncertain frame (the hand is there, but the model is not sure) restarts the count but keeps the committed
+//     letter, so one noisy frame cannot cause a duplicate.
+//   - No hand, camera off, or a different letter that lasts RELEASE_FRAMES frames releases the committed letter, so the
+//     same letter can be committed again after a real change.
+// Results are applied once per processed frame (frame_sequence).
 
 export const HOLD_FRAMES = 6;
+export const RELEASE_FRAMES = 3;
 
 export function initialBuffer() {
   return {
@@ -12,34 +18,52 @@ export function initialBuffer() {
     candidate: null,
     holdCount: 0,
     committedLabel: null,
+    releaseCount: 0,
     lastFrame: -1,
   };
 }
 
-function resetHold(state) {
-  return { ...state, candidate: null, holdCount: 0, committedLabel: null };
+function restartCount(state) {
+  return { ...state, candidate: null, holdCount: 0 };
 }
 
-export function applyRecognition(state, result, { holdFrames = HOLD_FRAMES } = {}) {
+function release(state) {
+  return { ...state, committedLabel: null, releaseCount: 0 };
+}
+
+export function applyRecognition(state, result, { holdFrames = HOLD_FRAMES, releaseFrames = RELEASE_FRAMES } = {}) {
   if (!result) {
-    return resetHold(state);
+    return release(restartCount(state));
   }
   if (result.frame_sequence === state.lastFrame) {
     return state;
   }
 
   const next = { ...state, lastFrame: result.frame_sequence };
+
   if (result.status !== 'recognized' || !result.label) {
-    return resetHold(next);
+    // The hand is in view but the model is not sure: keep any committed letter.
+    if (result.status === 'uncertain') return restartCount(next);
+    return release(restartCount(next));
   }
 
   const { label } = result;
   if (label === next.committedLabel) {
-    return { ...next, candidate: label, holdCount: 0 };
+    return { ...next, candidate: label, holdCount: 0, releaseCount: 0 };
+  }
+
+  let committedLabel = next.committedLabel;
+  let releaseCount = next.releaseCount;
+  if (committedLabel !== null) {
+    releaseCount += 1;
+    if (releaseCount >= releaseFrames) {
+      committedLabel = null;
+      releaseCount = 0;
+    }
   }
 
   const holdCount = label === next.candidate ? next.holdCount + 1 : 1;
-  if (holdCount >= holdFrames) {
+  if (holdCount >= holdFrames && committedLabel === null) {
     return {
       ...next,
       items: [
@@ -49,10 +73,11 @@ export function applyRecognition(state, result, { holdFrames = HOLD_FRAMES } = {
       candidate: label,
       holdCount: 0,
       committedLabel: label,
+      releaseCount: 0,
     };
   }
 
-  return { ...next, candidate: label, holdCount, committedLabel: null };
+  return { ...next, candidate: label, holdCount, committedLabel, releaseCount };
 }
 
 export function appendSpace(state) {
@@ -61,6 +86,11 @@ export function appendSpace(state) {
 
 export function undoLast(state) {
   return { ...state, items: state.items.slice(0, -1) };
+}
+
+// Removes one item the user does not want, for example a wrong letter. Other items keep their order.
+export function removeAt(state, index) {
+  return { ...state, items: state.items.filter((_, position) => position !== index) };
 }
 
 export function clearAll(state) {

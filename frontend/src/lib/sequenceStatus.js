@@ -30,9 +30,9 @@ export function describeRecognition({ cameraLive, paused, error, result, sentenc
     case 'no_model':
       return {
         key: 'no_model',
-        label: 'Model unavailable',
+        label: 'Sentence model not installed',
         tone: 'warning',
-        detail: 'Awaiting model integration. No signs are translated until a trained sign model is connected.',
+        detail: 'Sentences need the temporal sign model, which is not installed. Single letters above come from the static classifier.',
       };
     case 'warming_up':
       return {

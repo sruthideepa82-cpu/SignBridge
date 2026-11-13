@@ -32,11 +32,11 @@ export function describeRecognition(result, error, cameraLive) {
     case 'uncertain':
       return {
         tone: 'warning',
-        label: 'Not recognized',
+        label: 'UNKNOWN',
         headline: null,
         text: result.confidence == null
-          ? result.detail ?? 'This hand could not be classified.'
-          : `Confidence ${pct(result.confidence)} is below the ${pct(result.threshold)} threshold, so no sign is shown.`,
+          ? result.detail ?? 'This hand could not be classified. It is UNKNOWN and is not added to the draft.'
+          : `Confidence ${pct(result.confidence)} is below the ${pct(result.threshold)} threshold. It is UNKNOWN and is not added to the draft.`,
       };
     case 'recognized':
       if (result.experimental === true) {

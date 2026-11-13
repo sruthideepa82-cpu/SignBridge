@@ -33,6 +33,7 @@ export default function ConversationPanel({
   cameraLive,
   recognition,
   recognitionError,
+  draftControls,
 }) {
   const [tab, setTab] = useState('conversation');
   const listRef = useRef(null);
@@ -103,6 +104,7 @@ export default function ConversationPanel({
                 onAddSpace={onAddSpace}
                 onDiscard={onDiscardDraft}
                 onSend={onSendDraft}
+                controls={draftControls}
               />
             </div>
           </div>
