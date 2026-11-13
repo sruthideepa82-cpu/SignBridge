@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getRecognition } from '../services/recognitionService.js';
 
-const RECOGNITION_POLL_INTERVAL_MS = 500;
+// Polled faster than the camera's frame rate, so every processed frame is seen once. Holds count frames, not polls.
+const RECOGNITION_POLL_INTERVAL_MS = 100;
 
 export default function useRecognition(enabled) {
   const [result, setResult] = useState(null);

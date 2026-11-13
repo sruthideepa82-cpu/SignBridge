@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getPhraseModel, getPhraseRecognition } from '../services/recognitionService.js';
 
-const PHRASE_POLL_INTERVAL_MS = 500;
+// Polled faster than the camera's frame rate, so every processed frame is seen once. Holds count frames, not polls.
+const PHRASE_POLL_INTERVAL_MS = 100;
 
 // Polls the phrase recogniser while enabled, and loads the list of phrases the model can recognise.
 export default function usePhraseRecognition(enabled, { phrase = '' } = {}) {

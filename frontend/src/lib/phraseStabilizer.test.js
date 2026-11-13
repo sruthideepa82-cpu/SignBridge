@@ -87,6 +87,22 @@ describe('phrase stabiliser', () => {
   });
 });
 
+describe('phrase stabiliser frame counting', () => {
+  it('counts each processed frame once, even when the same frame is returned by several polls', () => {
+    const frame = (n) => ({ status: 'recognized', label: 'sick', confidence: 0.9, frame_sequence: n });
+    let state = initialPhraseState();
+    for (let i = 0; i < 5; i += 1) state = stepPhraseState(state, frame(7), { holdFrames: 3 });
+
+    expect(state.count).toBe(1);
+    expect(state.suggestion).toBeNull();
+
+    state = stepPhraseState(state, frame(8), { holdFrames: 3 });
+    state = stepPhraseState(state, frame(9), { holdFrames: 3 });
+
+    expect(state.suggestion?.label).toBe('sick');
+  });
+});
+
 describe('appendPhraseToDraft', () => {
   it('starts the draft with the phrase when it is empty', () => {
     expect(appendPhraseToDraft('', 'sick')).toBe('sick');

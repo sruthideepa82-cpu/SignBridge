@@ -14,9 +14,16 @@ export const initialPhraseState = () => ({
   released: true,
   lastSuggested: null,
   suggestion: null,
+  lastFrame: -1,
 });
 
 export function stepPhraseState(state, result, { holdFrames = DEFAULT_HOLD_FRAMES } = {}) {
+  if (result && result.frame_sequence !== undefined && result.frame_sequence === state.lastFrame) {
+    return state;
+  }
+  if (result && result.frame_sequence !== undefined) {
+    state = { ...state, lastFrame: result.frame_sequence };
+  }
   const recognized = result?.status === 'recognized' && typeof result.label === 'string' && result.label.length > 0;
   if (!recognized) {
     return { ...state, candidate: null, count: 0, released: true };
