@@ -35,6 +35,7 @@ export function speak(text, { lang = 'en-IN', voices = availableVoices(), rate =
   }
   const synth = window.speechSynthesis;
   synth.cancel();
+  clearPausedEngine(synth);
   const utterance = new window.SpeechSynthesisUtterance(text);
   utterance.lang = lang;
   utterance.rate = rate;
@@ -54,5 +55,13 @@ export function resumeSpeaking() {
 }
 
 export function stopSpeaking() {
-  if (isSpeechSupported()) window.speechSynthesis.cancel();
+  if (!isSpeechSupported()) return;
+  window.speechSynthesis.cancel();
+  clearPausedEngine(window.speechSynthesis);
+}
+
+// Some browsers keep the engine paused after the queue is cancelled, so the next utterance is accepted but never
+// plays. Clearing the flag here means a new utterance always starts.
+function clearPausedEngine(synth) {
+  if (synth.paused) synth.resume();
 }

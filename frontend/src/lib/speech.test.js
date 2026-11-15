@@ -63,4 +63,12 @@ describe('speech', () => {
 
     expect(synth.cancel).toHaveBeenCalled();
   });
+
+  it('clears a paused engine before speaking, so the next utterance is not held silently', () => {
+    synth.paused = true;
+    synth.resume = vi.fn();
+    speak('CAT');
+
+    expect(synth.resume).toHaveBeenCalled();
+  });
 });
