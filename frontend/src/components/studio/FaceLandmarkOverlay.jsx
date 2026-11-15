@@ -4,7 +4,7 @@ import { drawFaceOverlay } from '../../lib/faceOverlay.js';
 // Draws the face contour, eyes, eyebrows, nose and lips over the webcam image. The canvas covers the same box as
 // the image and is mirrored with the same CSS transform, so landmark points line up with the face on screen.
 // Redraws when the face result changes and when the preview is resized.
-export default function FaceLandmarkOverlay({ points }) {
+export default function FaceLandmarkOverlay({ points, frameAspect = null }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function FaceLandmarkOverlay({ points }) {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawFaceOverlay(ctx, points, width, height);
+      drawFaceOverlay(ctx, points, width, height, frameAspect);
     };
 
     draw();
@@ -30,7 +30,7 @@ export default function FaceLandmarkOverlay({ points }) {
     const observer = new ResizeObserver(draw);
     observer.observe(canvas);
     return () => observer.disconnect();
-  }, [points]);
+  }, [points, frameAspect]);
 
   return (
     <canvas

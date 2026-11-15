@@ -3,7 +3,33 @@ import { useEffect, useMemo } from 'react';
 import SignAnimationPlayer from '../animation/SignAnimationPlayer.jsx';
 import { Panel, StatusDot, buttonClass } from '../app/ui.jsx';
 
-// Shows a set of signs as a grid with a detail panel. The alphabet explorer and any future word list use it.
+const MOTION_LABELS = { moving: 'Moving sign', static: 'Static sign' };
+
+const RECOGNITION_VALUES = {
+  in_model: 'covered by the camera model',
+  excluded_dynamic: 'not covered (needs movement)',
+  excluded_undetermined: 'not covered yet',
+};
+
+// Four independent statuses. An animation or a trained model does not imply an approved mapping.
+function statusRows(sign, hasClip) {
+  const rows = [
+    { label: 'Clip file', value: hasClip ? 'present' : 'missing', tone: hasClip ? 'ok' : 'warn' },
+    { label: 'Mapping', value: sign.verified ? 'approved' : 'not yet approved', tone: sign.verified ? 'ok' : 'warn' },
+    { label: 'Signer', value: sign.signerConfirmed ? 'confirmed' : 'confirmation pending', tone: sign.signerConfirmed ? 'ok' : 'warn' },
+    { label: 'Training', value: sign.trainingReady ? 'ready' : 'not ready', tone: sign.trainingReady ? 'ok' : 'warn' },
+  ];
+  if (sign.recognitionStatus) {
+    rows.push({
+      label: 'Camera model',
+      value: RECOGNITION_VALUES[sign.recognitionStatus] ?? 'unknown',
+      tone: sign.recognitionStatus === 'in_model' ? 'ok' : 'warn',
+    });
+  }
+  return rows;
+}
+
+// Shows a set of signs as a grid with a detail panel. The letter, number and phrase browsers all use it.
 export default function SignBrowser({
   signs,
   categoryId,
@@ -107,7 +133,7 @@ export default function SignBrowser({
 
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wider text-app-muted">
-            {sign.motion === 'moving' ? 'Moving sign' : 'Static sign'}
+            {MOTION_LABELS[sign.motion] ?? 'Motion not yet determined'}
           </p>
           <h2 id="sign-detail-title" className="mt-1 text-xl font-semibold tracking-tight text-app-text">
             {sign.title}
@@ -122,6 +148,16 @@ export default function SignBrowser({
               {!hasClip && ' No animation yet.'}
             </span>
           </p>
+          <ul aria-label="Sign status" className="mt-3 grid gap-1.5 text-xs text-app-muted sm:grid-cols-2">
+            {statusRows(sign, hasClip).map((row) => (
+              <li key={row.label} className="flex items-center gap-2">
+                <StatusDot tone={row.tone} />
+                <span>
+                  {row.label}: {row.value}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

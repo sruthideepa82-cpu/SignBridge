@@ -7,3 +7,4 @@ pydantic-settings==2.16.2
 opencv-contrib-python==5.0.0.93
 numpy==2.5.4
 mediapipe==1.2.2
+google-genai==3.3.0

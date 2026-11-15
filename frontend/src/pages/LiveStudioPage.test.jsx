@@ -131,4 +131,53 @@ describe('Live Studio with a running camera', () => {
     expect(screen.getByRole('button', { name: 'Stop Camera' })).toBeEnabled();
     expect(screen.getAllByText('Paused').length).toBeGreaterThan(0);
   });
+
+  it('reads the recognised text aloud only when asked, and keeps it visible on the Recognition tab', async () => {
+    const synth = { speak: vi.fn(), cancel: vi.fn(), pause: vi.fn(), resume: vi.fn(), getVoices: vi.fn(() => []) };
+    vi.stubGlobal('speechSynthesis', synth);
+    vi.stubGlobal('SpeechSynthesisUtterance', class {
+      constructor(text) {
+        this.text = text;
+      }
+    });
+    vi.stubGlobal('fetch', mockBackend());
+    renderApp('/workspace/live-studio');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start Camera' }));
+    const draft = await screen.findByRole('textbox', { name: 'Recognised text, editable before sending' }, { timeout: 6000 });
+    await waitFor(() => expect(draft).toHaveValue('U'), { timeout: 6000 });
+    expect(synth.speak).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Speak sentence' }));
+    expect(synth.speak).toHaveBeenCalledTimes(1);
+    expect(synth.speak.mock.calls[0][0].text).toBe('U');
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Recognition' }));
+    expect(screen.getByRole('textbox', { name: 'Recognised text, editable before sending' })).toHaveValue('U');
+  }, 15000);
+});
+
+describe('Live Studio sentence box with the camera off', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new TypeError('Failed to fetch'))));
+    vi.stubGlobal('speechSynthesis', { speak: vi.fn(), cancel: vi.fn(), pause: vi.fn(), resume: vi.fn(), getVoices: vi.fn(() => []) });
+    vi.stubGlobal('SpeechSynthesisUtterance', class {
+      constructor(text) {
+        this.text = text;
+      }
+    });
+  });
+
+  it('accepts typed text without the camera, and enables Speak only once there is text', () => {
+    renderApp('/workspace/live-studio');
+    const box = screen.getByRole('textbox', { name: 'Recognised text, editable before sending' });
+
+    expect(screen.getByRole('button', { name: 'Speak sentence' })).toBeDisabled();
+    expect(screen.getByText('Type or sign some text to read it aloud.')).toBeInTheDocument();
+
+    fireEvent.change(box, { target: { value: 'HELLO' } });
+
+    expect(box).toHaveValue('HELLO');
+    expect(screen.getByRole('button', { name: 'Speak sentence' })).toBeEnabled();
+  });
 });

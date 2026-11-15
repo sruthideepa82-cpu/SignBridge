@@ -3,7 +3,11 @@
 import { FINGERSPELLING_CLASSES } from '../data/fingerspelling.js';
 
 export const UNKNOWN_LABEL = 'UNKNOWN';
-export const LABELS = [...FINGERSPELLING_CLASSES.map((item) => item.label), UNKNOWN_LABEL];
+// Recording covers the letters only. Number classes are catalogued but not recorded until they are approved for collection.
+export const LABELS = [
+  ...FINGERSPELLING_CLASSES.filter((item) => item.category === 'alphabet').map((item) => item.label),
+  UNKNOWN_LABEL,
+];
 export const MIN_RECORDING_MS = 1500;
 export const MAX_RECORDING_MS = 8000;
 

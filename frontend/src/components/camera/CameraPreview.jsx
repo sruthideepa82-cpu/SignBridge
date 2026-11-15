@@ -48,25 +48,39 @@ function PlaceholderContent({ icon, title, description, role }) {
   );
 }
 
-export default function CameraPreview({ status, streamUrl, errorMessage, onStreamError }) {
+// `studio` is the Live Studio frame: a fixed 16:10 box, with the stream cropped to fill it (object-fit: cover).
+// The default keeps the stream uncropped, as the other camera pages expect.
+export default function CameraPreview({ status, streamUrl, errorMessage, onStreamError, variant = 'default' }) {
   const isLive = status === CAMERA_STATUS.LIVE && Boolean(streamUrl);
+  const studio = variant === 'studio';
 
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-xl border bg-black transition-all duration-700 ${
-        isLive ? 'border-accent/40' : 'aspect-video border-app-border'
+      className={`relative w-full overflow-hidden bg-black transition-all duration-700 ${
+        studio ? 'aspect-[16/10] max-h-[680px] rounded-[1.25rem]' : 'rounded-xl border'
+      } ${
+        isLive ? (studio ? '' : 'border-accent/40') : studio ? '' : 'aspect-video border-app-border'
       }`}
       aria-label="Camera preview"
     >
       {isLive ? (
         <>
-          {/* The image sets its own height from the stream's aspect ratio, so it is shown uncropped. */}
-          <img
-            src={streamUrl}
-            alt="Live webcam feed"
-            className="block h-auto w-full animate-fade-up -scale-x-100"
-            onError={onStreamError}
-          />
+          {studio ? (
+            <img
+              src={streamUrl}
+              alt="Live webcam feed"
+              className="absolute inset-0 h-full w-full animate-fade-up object-cover object-center -scale-x-100"
+              onError={onStreamError}
+            />
+          ) : (
+            /* The image sets its own height from the stream's aspect ratio, so it is shown uncropped. */
+            <img
+              src={streamUrl}
+              alt="Live webcam feed"
+              className="block h-auto w-full animate-fade-up -scale-x-100"
+              onError={onStreamError}
+            />
+          )}
           <span
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 h-1/4 animate-scan-line bg-gradient-to-b from-transparent via-accent/10 to-transparent"

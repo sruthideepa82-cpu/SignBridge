@@ -1,4 +1,4 @@
-import { ArrowRight, Send } from 'lucide-react';
+import { ArrowRight, Send, Zap } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PHRASE_CATEGORIES } from '../../lib/quickPhrases.js';
@@ -23,12 +23,17 @@ export default function QuickPhraseSelector({ favourites, onSendPhrase, status }
       : (PHRASE_CATEGORIES.find((item) => item.id === category)?.phrases ?? []);
 
   return (
-    <section aria-labelledby="live-quick-phrases-title" className="rounded-xl border border-app-border bg-app-surface p-4">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-        <h2 id="live-quick-phrases-title" className="text-sm font-semibold text-app-text">
-          Quick Phrases
-        </h2>
-        <div role="group" aria-label="Phrase categories" className="flex min-w-0 flex-1 gap-1.5 overflow-x-auto">
+    <section aria-labelledby="live-quick-phrases-title" className="ls-quick flex min-w-0 flex-col gap-3 px-4 py-3">
+      <div className="flex min-w-0 items-center gap-4">
+        <div className="flex shrink-0 items-center gap-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-accent" aria-hidden="true">
+            <Zap size={16} />
+          </span>
+          <h2 id="live-quick-phrases-title" className="text-sm font-semibold text-app-text">
+            Quick Phrases
+          </h2>
+        </div>
+        <div role="group" aria-label="Phrase categories" className="ls-scroll flex min-w-0 flex-1 gap-1.5 overflow-x-auto">
           {CATEGORY_TABS.map((item) => {
             const selected = item.id === category;
             const emergency = item.id === 'emergency';
@@ -53,10 +58,14 @@ export default function QuickPhraseSelector({ favourites, onSendPhrase, status }
             );
           })}
         </div>
+        <Link to="/phrases" className="hidden shrink-0 items-center gap-1 whitespace-nowrap text-xs text-app-muted hover:text-app-text xl:inline-flex">
+          All phrases
+          <ArrowRight size={12} aria-hidden="true" />
+        </Link>
       </div>
 
       {phrases.length === 0 ? (
-        <p className="mt-3 text-xs text-app-muted">
+        <p className="text-xs text-app-muted">
           No starred phrases yet.{' '}
           <Link to="/phrases" className="font-medium text-accent-hover hover:underline">
             Star phrases in Quick Phrases
@@ -64,13 +73,13 @@ export default function QuickPhraseSelector({ favourites, onSendPhrase, status }
           to keep them here.
         </p>
       ) : (
-        <ul className="mt-3 flex gap-2 overflow-x-auto pb-1" aria-label={`${CATEGORY_TABS.find((item) => item.id === category)?.label} phrases`}>
+        <ul className="ls-scroll flex gap-2 overflow-x-auto pb-1" aria-label={`${CATEGORY_TABS.find((item) => item.id === category)?.label} phrases`}>
           {phrases.map((phrase) => (
             <li key={phrase} className="shrink-0">
               <button
                 type="button"
                 onClick={() => onSendPhrase(phrase)}
-                className="group flex h-9 max-w-[18rem] items-center gap-2.5 rounded-lg border border-app-border bg-app-bg pl-3 pr-2.5 text-left text-sm text-app-text transition-colors hover:border-accent/50 hover:bg-accent/10 focus-visible:outline-2 focus-visible:outline-accent"
+                className="ls-quick-pill group flex h-9 max-w-[18rem] items-center gap-2.5 border border-app-border bg-app-raised pl-3.5 pr-3 text-left text-sm text-app-text transition-colors hover:border-accent/60 hover:bg-accent/15 focus-visible:outline-2 focus-visible:outline-accent"
               >
                 <span className="truncate">{phrase}</span>
                 <Send size={13} aria-hidden="true" className="shrink-0 text-app-muted transition-colors group-hover:text-accent-hover" />
@@ -83,10 +92,6 @@ export default function QuickPhraseSelector({ favourites, onSendPhrase, status }
       <p className="sr-only" aria-live="polite">
         {status}
       </p>
-      <Link to="/phrases" className="mt-2 inline-flex items-center gap-1 text-xs text-app-muted hover:text-app-text">
-        All phrases
-        <ArrowRight size={12} aria-hidden="true" />
-      </Link>
     </section>
   );
 }

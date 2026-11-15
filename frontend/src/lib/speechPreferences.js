@@ -21,8 +21,12 @@ export function loadSpeechPrefs(storage = window.localStorage) {
   }
 }
 
+// Fired on the window after every save, so every panel that reads the preferences stays in step.
+export const SPEECH_PREFS_EVENT = 'signbridge:speech-prefs';
+
 export function saveSpeechPrefs(prefs, storage = window.localStorage) {
   const next = normaliseSpeechPrefs(prefs);
   storage.setItem(SPEECH_PREFS_KEY, JSON.stringify(next));
+  window.dispatchEvent(new CustomEvent(SPEECH_PREFS_EVENT, { detail: next }));
   return next;
 }

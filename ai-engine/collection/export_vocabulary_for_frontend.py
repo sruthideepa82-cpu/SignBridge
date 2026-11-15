@@ -2,6 +2,12 @@
 
 Usage (from the ai-engine folder):  python collection/export_vocabulary_for_frontend.py
 The frontend test suite fails if the generated file no longer matches vocabulary.json.
+
+Status fields are kept apart:
+- verified: a human has approved the mapping (vocabulary.json, set by hand only).
+- signer_confirmed: a Deaf ISL signer or qualified interpreter confirmed the handshape (set by hand only).
+- asset_available: the animation file exists in frontend/public/animations. Computed here from disk.
+- training_ready: the mapping is verified and the class is static. An animation file does not make a class ready.
 """
 
 import json
@@ -10,10 +16,12 @@ from pathlib import Path
 AI_ENGINE_DIR = Path(__file__).resolve().parents[1]
 VOCABULARY = AI_ENGINE_DIR / "dataset" / "metadata" / "vocabulary.json"
 OUTPUT = AI_ENGINE_DIR.parent / "frontend" / "src" / "data" / "fingerspelling.js"
+ANIMATIONS = AI_ENGINE_DIR.parent / "frontend" / "public" / "animations"
 
 FIELDS = (
     "label",
     "class_id",
+    "category",
     "recognition_type",
     "verification_status",
     "training_status",
@@ -25,9 +33,22 @@ FIELDS = (
 )
 
 
+def asset_available(entry: dict, animations: Path = ANIMATIONS) -> bool:
+    return (animations / entry["category"] / f"{entry['label']}.mp4").is_file()
+
+
+def training_ready(entry: dict) -> bool:
+    return entry["verified"] is True and entry.get("recognition_type") == "static" and bool(entry.get("reference_folders"))
+
+
 def main() -> None:
     data = json.loads(VOCABULARY.read_text(encoding="utf-8"))
-    classes = [{field: entry.get(field) for field in FIELDS} for entry in data["classes"]]
+    classes = []
+    for entry in data["classes"]:
+        item = {field: entry.get(field) for field in FIELDS}
+        item["asset_available"] = asset_available(entry)
+        item["training_ready"] = training_ready(entry)
+        classes.append(item)
     verified = sum(1 for entry in classes if entry["verified"] is True)
     body = json.dumps(classes, ensure_ascii=False, indent=2)
     lines = [

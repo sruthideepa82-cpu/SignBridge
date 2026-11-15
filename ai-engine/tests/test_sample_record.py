@@ -58,11 +58,11 @@ def test_shipped_vocabulary_has_no_verified_classes_so_nothing_can_be_recorded()
     assert verified_classes(vocabulary) == {}
 
 
-def test_shipped_vocabulary_lists_every_letter_as_an_unverified_candidate() -> None:
+def test_shipped_vocabulary_lists_every_letter_and_number_as_an_unverified_candidate() -> None:
     vocabulary = json.loads((AI_ENGINE_DIR / "dataset" / "metadata" / "vocabulary.json").read_text("utf-8"))
     classes = {entry["label"]: entry for entry in vocabulary["classes"]}
 
-    assert set(classes) == set(string.ascii_uppercase)
+    assert set(classes) == set(string.ascii_uppercase) | set(string.digits)
     assert all(entry["verification_status"] == "unverified" for entry in classes.values())
     assert all(entry["signer_confirmed"] is False for entry in classes.values())
     assert classes["J"]["recognition_type"] == "temporal" and classes["Z"]["recognition_type"] == "temporal"

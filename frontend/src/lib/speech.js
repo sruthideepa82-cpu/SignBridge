@@ -12,6 +12,13 @@ export function availableVoices() {
   return window.speechSynthesis.getVoices();
 }
 
+// Browsers load their voice lists asynchronously, so the list is empty until 'voiceschanged' fires.
+export function onVoicesChanged(callback) {
+  if (!isSpeechSupported() || typeof window.speechSynthesis.addEventListener !== 'function') return () => {};
+  window.speechSynthesis.addEventListener('voiceschanged', callback);
+  return () => window.speechSynthesis.removeEventListener('voiceschanged', callback);
+}
+
 export function pickVoice(voices, lang) {
   const exact = voices.find((voice) => voice.lang === lang);
   if (exact) return exact;

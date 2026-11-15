@@ -61,9 +61,17 @@ describe('displayableSigns', () => {
     expect(letters.every((sign) => sign.verified === false)).toBe(true);
   });
 
-  it('hides numbers and words until they have verified entries', () => {
-    expect(displayableSigns('numbers')).toEqual([]);
-    expect(displayableSigns('words')).toEqual([]);
+  it('lists every number under numbers, unapproved and never under the alphabet', () => {
+    const numbers = displayableSigns('numbers');
+    expect(numbers).toHaveLength(10);
+    expect(numbers.every((sign) => sign.verified === false)).toBe(true);
+    expect(displayableSigns('alphabet').some((sign) => /\d/.test(sign.label))).toBe(false);
+  });
+
+  it('lists every phrase under words, unapproved, and keeps approval visible per entry', () => {
+    const phrases = displayableSigns('words');
+    expect(phrases).toHaveLength(44);
+    expect(phrases.every((sign) => sign.verified === false && sign.trainingReady === false)).toBe(true);
     expect(displayableSigns('words', [VERIFIED])).toEqual([VERIFIED]);
   });
 });

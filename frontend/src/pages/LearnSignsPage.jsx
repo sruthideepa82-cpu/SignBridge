@@ -6,20 +6,20 @@ import PracticePanel from '../components/learn-signs/PracticePanel.jsx';
 import ProgressPanel from '../components/learn-signs/ProgressPanel.jsx';
 import SignBrowser from '../components/learn-signs/SignBrowser.jsx';
 import { AppPageHeader, EmptyState } from '../components/app/ui.jsx';
-import { SIGN_CATEGORIES, SIGNS, displayableSigns, signById } from '../data/signLibrary.js';
+import { SIGN_CATEGORIES, SIGNS, displayableSigns, isQuizEligible, signById } from '../data/signLibrary.js';
 import useClipAvailability from '../hooks/useClipAvailability.js';
 import useLearnProgress from '../hooks/useLearnProgress.js';
 
 const EMPTY_TEXT = {
   numbers: {
     icon: Hash,
-    title: 'No verified number signs yet',
-    text: 'Numbers 0–9 are not shown until each sign has a verified mapping and an animation. None has been verified yet, so none are shown.',
+    title: 'No number signs loaded',
+    text: 'The number catalog is empty. Run the catalog export to load the signs for 0–9.',
   },
   words: {
     icon: MessageSquareText,
-    title: 'No verified words or phrases yet',
-    text: 'Words and phrases are not shown until each has a verified mapping and an animation. None has been verified yet, so none are shown.',
+    title: 'No phrases loaded',
+    text: 'The phrase catalog is empty. Run the phrase export to load the everyday phrases.',
   },
 };
 
@@ -32,8 +32,8 @@ export default function LearnSignsPage() {
   const categoryId = SIGN_CATEGORIES.some((item) => item.id === requested) ? requested : 'alphabet';
 
   const alphabet = useMemo(() => displayableSigns('alphabet'), []);
-  const alphabetLabels = useMemo(() => alphabet.map((sign) => sign.label), [alphabet]);
-  const quizPool = useMemo(() => alphabet.filter((sign) => clipStatus[sign.clipPath] === true), [alphabet, clipStatus]);
+  const alphabetLabels = useMemo(() => alphabet.filter((sign) => sign.verified).map((sign) => sign.label), [alphabet]);
+  const quizPool = useMemo(() => alphabet.filter((sign) => isQuizEligible(sign, clipStatus)), [alphabet, clipStatus]);
   const categorySigns = useMemo(() => displayableSigns(categoryId), [categoryId]);
 
   const requestedSign = signById(params.get('sign'));
@@ -55,9 +55,9 @@ export default function LearnSignsPage() {
 
   const counts = {
     alphabet: `${alphabet.length} letters`,
-    numbers: `${displayableSigns('numbers').length} verified`,
-    words: `${displayableSigns('words').length} verified`,
-    practice: `${quizPool.length} clips ready`,
+    numbers: `${displayableSigns('numbers').length} numbers`,
+    words: `${displayableSigns('words').length} phrases`,
+    practice: `${quizPool.length} ready for quiz`,
   };
 
   const sharedBrowserProps = {
@@ -101,7 +101,7 @@ export default function LearnSignsPage() {
       <AppPageHeader
         eyebrow="Learn"
         title="Learn Signs"
-        description="Learn the manual alphabet, numbers and everyday phrases with short animations. Only signs with a verified mapping are shown."
+        description="Learn the manual alphabet, numbers and everyday phrases. Each sign shows whether its animation, mapping, signer check and model status are in place. Quizzes use only approved signs that have an animation."
       />
 
       <LearnSignsCategories selected={categoryId} counts={counts} onSelect={selectCategory} />

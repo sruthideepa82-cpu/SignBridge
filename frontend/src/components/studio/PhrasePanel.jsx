@@ -4,7 +4,7 @@ import { buttonClass, Panel, StatusDot } from '../app/ui.jsx';
 import usePhraseRecognition from '../../hooks/usePhraseRecognition.js';
 import { isSpeechSupported, speak } from '../../lib/speech.js';
 import { loadSpeechPrefs } from '../../lib/speechPreferences.js';
-import { EXPERIMENTAL_LABEL, pct } from '../../lib/recognitionStatus.js';
+import { PHRASE_MODEL_EXPLANATION, describePhraseModel, pct } from '../../lib/recognitionStatus.js';
 import {
   correctSuggestion,
   confirmSuggestion,
@@ -23,17 +23,17 @@ export function describePhraseResult(result, error, cameraLive) {
   if (!result) return { tone: 'neutral', text: 'Waiting for the first phrase result.' };
   switch (result.status) {
     case 'no_model':
-      return { tone: 'warning', text: 'No phrase model is loaded, so no phrase is predicted.' };
+      return { tone: 'warning', text: 'Phrase model unavailable. No phrase is predicted.' };
     case 'no_hand':
-      return { tone: 'neutral', text: 'Show your hands to the camera.' };
+      return { tone: 'neutral', text: 'Ready to recognise phrases. Show your hands to the camera.' };
     case 'unsupported':
       return { tone: 'warning', text: result.detail ?? 'This phrase is not supported by the phrase model.' };
     case 'uncertain':
       return {
         tone: 'warning',
         text: result.confidence == null
-          ? 'Not recognised. Nothing is suggested.'
-          : `Confidence ${pct(result.confidence)} is below the ${pct(result.threshold)} threshold. Nothing is suggested.`,
+          ? 'Ready to recognise phrases. Not recognised, so nothing is suggested.'
+          : `Ready to recognise phrases. Confidence ${pct(result.confidence)} is below the ${pct(result.threshold)} threshold. Nothing is suggested.`,
       };
     case 'recognized':
       return { tone: 'success', text: `Confidence ${pct(result.confidence)}. Not verified by a signer.` };
@@ -64,7 +64,9 @@ function reducer(state, action) {
 export default function PhrasePanel({ cameraLive, paused, onConfirm, holdFrames = 8 }) {
   const [expected, setExpected] = useState('');
   const recognitionOn = cameraLive && !paused;
-  const { result, error, model } = usePhraseRecognition(recognitionOn, { phrase: expected });
+  const { result, error, errorCode, model, modelError, modelErrorCode } = usePhraseRecognition(recognitionOn, {
+    phrase: expected,
+  });
   const [state, dispatch] = useReducer(reducer, undefined, initialPhraseState);
   const [confirmed, setConfirmed] = useState([]);
   const [status, setStatus] = useState('');
@@ -77,6 +79,8 @@ export default function PhrasePanel({ cameraLive, paused, onConfirm, holdFrames 
     if (!cameraLive) dispatch({ type: 'reset' });
   }, [cameraLive]);
 
+  const backendDown = errorCode === 'network_error' || modelErrorCode === 'network_error';
+  const modelStatus = describePhraseModel({ backendDown, model, modelError });
   const view = describePhraseResult(result, error, cameraLive && !paused);
   const labels = useMemo(() => model?.labels ?? [], [model]);
   const excluded = useMemo(() => Object.entries(model?.excluded_phrases ?? {}), [model]);
@@ -107,13 +111,16 @@ export default function PhrasePanel({ cameraLive, paused, onConfirm, holdFrames 
       title="Daily phrases"
       description="Hold a phrase steady. A suggestion appears; you confirm it before it is added to the draft."
       actions={
-        <span className="flex items-center gap-1.5 text-xs text-warning" aria-live="polite">
-          <StatusDot tone={TONE_DOT.warning} />
-          {EXPERIMENTAL_LABEL}
+        <span className={`flex items-center gap-1.5 text-xs ${TONE_TEXT[modelStatus.tone]}`} aria-live="polite">
+          <StatusDot tone={TONE_DOT[modelStatus.tone]} />
+          {modelStatus.label}
         </span>
       }
     >
       <div className="flex flex-col gap-4">
+        {modelStatus.detail && <p className="text-xs text-app-muted">{modelStatus.detail}</p>}
+        {modelStatus.experimental && <p className="text-sm text-app-muted">{PHRASE_MODEL_EXPLANATION}</p>}
+
         <label className="flex flex-col gap-1 text-sm text-app-muted">
           Phrase you are signing (optional)
           <select
@@ -200,6 +207,22 @@ export default function PhrasePanel({ cameraLive, paused, onConfirm, holdFrames 
             <summary className="cursor-pointer">Not supported by the static phrase model ({excluded.length})</summary>
             <p className="mt-2">These phrases need movement across frames. Single images cannot teach them, so they are not predicted.</p>
             <p className="mt-1">{excluded.map(([label]) => label).join(', ')}</p>
+          </details>
+        )}
+
+        {model && (
+          <details className="text-xs text-app-muted">
+            <summary className="cursor-pointer">Model information</summary>
+            <ul className="mt-2 flex list-disc flex-col gap-1 pl-4">
+              <li>Verification: {model.verification ?? 'not stated by the model'}.</li>
+              <li>Experimental: {model.experimental === true ? 'yes' : 'no'}.</li>
+              <li>Research use only. The source archive has no licence file, so its licence and citation are unverified.</li>
+              <li>Approving phrase mappings in Learn Signs is separate and does not change this model.</li>
+              {model.citation && <li>Source: {model.citation}</li>}
+              {(model.limitations ?? []).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
           </details>
         )}
 

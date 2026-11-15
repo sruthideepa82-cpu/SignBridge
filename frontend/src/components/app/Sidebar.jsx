@@ -40,7 +40,7 @@ export default function Sidebar({ collapsed = false, onToggle, onNavigate, showT
     <nav
       aria-label="Main application navigation"
       className={`flex h-full shrink-0 flex-col border-r border-app-border bg-app-sidebar ${
-        collapsed ? 'w-16' : 'w-[10.5rem]'
+        collapsed ? 'w-[68px]' : 'w-[13.125rem]'
       } transition-[width] duration-200`}
     >
       <div className={`flex h-16 shrink-0 items-center ${collapsed ? 'justify-center' : 'px-4'}`}>

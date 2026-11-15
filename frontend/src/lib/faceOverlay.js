@@ -24,9 +24,29 @@ export function faceOverlaySegments(points, connections, width, height) {
   return segments;
 }
 
-export function drawFaceOverlay(ctx, points, width, height) {
+// Where a frame of the given aspect ratio sits inside a box when it is shown with object-fit: cover.
+// Returns the drawn size and the offset of the frame's top-left corner, both in box pixels.
+export function coverFrame(boxWidth, boxHeight, frameAspect) {
+  const scale = Math.max(boxWidth / frameAspect, boxHeight);
+  const drawWidth = frameAspect * scale;
+  const drawHeight = scale;
+  return {
+    drawWidth,
+    drawHeight,
+    offsetX: (boxWidth - drawWidth) / 2,
+    offsetY: (boxHeight - drawHeight) / 2,
+  };
+}
+
+export function drawFaceOverlay(ctx, points, width, height, frameAspect = null) {
   ctx.clearRect(0, 0, width, height);
-  const segments = faceOverlaySegments(points, FACE_OVERLAY_CONNECTIONS, width, height);
+  const frame = frameAspect ? coverFrame(width, height, frameAspect) : { drawWidth: width, drawHeight: height, offsetX: 0, offsetY: 0 };
+  const segments = faceOverlaySegments(points, FACE_OVERLAY_CONNECTIONS, frame.drawWidth, frame.drawHeight).map(([x1, y1, x2, y2]) => [
+    x1 + frame.offsetX,
+    y1 + frame.offsetY,
+    x2 + frame.offsetX,
+    y2 + frame.offsetY,
+  ]);
   if (segments.length === 0) return 0;
   ctx.save();
   ctx.strokeStyle = FACE_OVERLAY_STYLE.color;

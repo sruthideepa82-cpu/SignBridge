@@ -1,4 +1,4 @@
-import { Copy, MessageSquarePlus, MessagesSquare, Trash2, Type } from 'lucide-react';
+import { Copy, MessageSquare, MessageSquarePlus, MessagesSquare, Sparkles, Trash2, Type } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/app/ConfirmDialog.jsx';
@@ -8,7 +8,10 @@ import BackendStatusIndicator from '../components/common/BackendStatusIndicator.
 import ConversationPanel from '../components/studio/ConversationPanel.jsx';
 import PhrasePanel from '../components/studio/PhrasePanel.jsx';
 import QuickPhraseSelector from '../components/studio/QuickPhraseSelector.jsx';
+import RecognitionCard from '../components/studio/RecognitionCard.jsx';
+import SignDraft from '../components/studio/SignDraft.jsx';
 import SignSentencePanel from '../components/studio/SignSentencePanel.jsx';
+import '../styles/liveStudio.css';
 import { appendPhraseToDraft } from '../lib/phraseStabilizer.js';
 import {
   RECOGNITION_MODE_LABELS,
@@ -141,22 +144,47 @@ export default function LiveStudioPage() {
   const canStopSession = cameraLive || draft.trim().length > 0 || signBuffer.items.length > 0;
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <h1 className="text-2xl font-semibold tracking-tight text-app-text">Live Studio</h1>
-          <p className="mt-1 text-sm text-app-muted">
-            Real-time sign recognition and communication
-            {conversation && (
-              <span className="text-app-muted/80">
-                {' '}
-                · {conversation.title} · {messageCount} {messageCount === 1 ? 'message' : 'messages'}
-                {savedCount ? ` · ${savedCount} saved` : ''}
-              </span>
-            )}
-          </p>
+    <div className="live-studio min-h-full">
+    <div className="flex w-full min-w-0 flex-col gap-6 px-5 pb-7 pt-5 sm:px-7">
+      <header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="min-w-0">
+            <h1 className="flex items-center gap-2 text-[40px] font-bold leading-tight tracking-tight text-app-text">
+              Live <span className="text-accent">Studio</span>
+              <Sparkles size={18} className="text-[var(--ls-pink)]" aria-hidden="true" />
+            </h1>
+            <p className="mt-1 text-sm text-app-muted">
+              Real-time sign recognition and communication
+              {conversation && (
+                <span className="text-app-muted/80">
+                  {' '}
+                  · {conversation.title} · {messageCount} {messageCount === 1 ? 'message' : 'messages'}
+                  {savedCount ? ` · ${savedCount} saved` : ''}
+                </span>
+              )}
+            </p>
+          </div>
+          <div role="group" aria-label="Recognition mode" className="ls-segmented">
+            {Object.values(RECOGNITION_MODES).map((value) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={mode === value}
+                onClick={() => chooseMode(value)}
+                className="ls-segment"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex h-5 w-5 items-center justify-center rounded text-[11px] font-bold"
+                >
+                  {value === RECOGNITION_MODES.PHRASES ? <MessageSquare size={14} /> : 'A'}
+                </span>
+                {RECOGNITION_MODE_LABELS[value]}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="lg:hidden">
             <BackendStatusIndicator status={backend.status} onRefresh={backend.refresh} dark />
           </div>
@@ -190,22 +218,8 @@ export default function LiveStudioPage() {
         </div>
       </header>
 
-      <div role="group" aria-label="Recognition mode" className="flex flex-wrap gap-2">
-        {Object.values(RECOGNITION_MODES).map((value) => (
-          <button
-            key={value}
-            type="button"
-            aria-pressed={mode === value}
-            onClick={() => chooseMode(value)}
-            className={buttonClass(mode === value ? 'primary' : 'secondary')}
-          >
-            {RECOGNITION_MODE_LABELS[value]}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2.2fr)_minmax(19rem,1fr)] 2xl:grid-cols-[minmax(0,2.2fr)_minmax(21rem,1fr)]">
-        <div className="flex min-w-0 flex-col gap-4">
+      <div className="grid min-w-0 grid-cols-1 items-stretch gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(340px,0.95fr)]">
+        <div className="flex min-w-0 flex-col gap-5">
           <WebcamPreview
             camera={camera}
             cameraLive={cameraLive}
@@ -224,45 +238,66 @@ export default function LiveStudioPage() {
             onToggleFaceMesh={() => setShowFaceMesh((value) => !value)}
           />
 
-          {phraseMode ? (
-            <PhrasePanel cameraLive={cameraLive} paused={paused} onConfirm={addPhraseToDraft} />
-          ) : (
-            <SignSentencePanel cameraLive={cameraLive} paused={paused} />
-          )}
+          <SignDraft
+            draft={draft}
+            onDraftChange={setDraft}
+            items={signBuffer.items}
+            holding={signBuffer.holding}
+            onUndo={() => signBuffer.undo()}
+            onAddSpace={addSpace}
+            onDiscard={discardDraft}
+            onSend={sendDraft}
+            controls={draftControls}
+            showItems={false}
+          />
+
+          <QuickPhraseSelector favourites={favourites} onSendPhrase={sendPhrase} status={status} />
         </div>
 
-        <ConversationPanel
-          conversation={conversation}
-          largeText={largeText}
-          draft={draft}
-          onDraftChange={setDraft}
-          signBuffer={signBuffer}
-          onSendDraft={sendDraft}
-          onDiscardDraft={discardDraft}
-          onAddSpace={addSpace}
-          onSendReply={sendReply}
-          recognitionProps={{
-            camera,
-            cameraLive,
-            paused,
-            landmarks,
-            landmarkError,
-            recognition,
-            recognitionError,
-            holding: signBuffer.holding,
-            face,
-            faceError,
-          }}
-          history={history}
-          landmarks={landmarks}
-          cameraLive={cameraLive}
-          recognition={recognition}
-          recognitionError={recognitionError}
-          draftControls={draftControls}
-        />
+        <div className="flex min-h-0 min-w-0 flex-col gap-5">
+          <RecognitionCard
+            recognition={recognition}
+            recognitionError={recognitionError}
+            cameraLive={cameraLive}
+            paused={paused}
+            phraseMode={phraseMode}
+            items={signBuffer.items}
+            experimental={draftControls.experimental}
+            onRemoveAt={draftControls.onRemoveAt}
+          />
+
+          <ConversationPanel
+            conversation={conversation}
+            largeText={largeText}
+            onSendReply={sendReply}
+            recognitionProps={{
+              camera,
+              cameraLive,
+              paused,
+              landmarks,
+              landmarkError,
+              recognition,
+              recognitionError,
+              holding: signBuffer.holding,
+              face,
+              faceError,
+            }}
+            history={history}
+            landmarks={landmarks}
+            cameraLive={cameraLive}
+            recognition={recognition}
+            recognitionError={recognitionError}
+          />
+        </div>
       </div>
 
-      <QuickPhraseSelector favourites={favourites} onSendPhrase={sendPhrase} status={status} />
+      <div className="min-w-0">
+        {phraseMode ? (
+          <PhrasePanel cameraLive={cameraLive} paused={paused} onConfirm={addPhraseToDraft} />
+        ) : (
+          <SignSentencePanel cameraLive={cameraLive} paused={paused} />
+        )}
+      </div>
 
       <ConfirmDialog
         open={confirmClear}
@@ -275,6 +310,7 @@ export default function LiveStudioPage() {
           setConfirmClear(false);
         }}
       />
+    </div>
     </div>
   );
 }

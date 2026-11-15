@@ -3,6 +3,35 @@ export const pct = (value) => `${Math.round(value * 100)}%`;
 // Shown wherever a letter from an unverified model appears: overlay, draft, history and conversation.
 export const EXPERIMENTAL_LABEL = 'Experimental – Unverified Dataset';
 
+export const PHRASE_MODEL_EXPLANATION =
+  'Trained on a limited number of signers. Not yet validated by a qualified ISL signer or interpreter.';
+
+// Status of the phrase model, from the backend's own /recognition/phrase/model metadata. The experimental label
+// appears only when the model says it is experimental. Approving phrase mappings in Learn Signs does not change this.
+export function describePhraseModel({ backendDown = false, model = null, modelError = '' } = {}) {
+  if (backendDown) {
+    return { tone: 'danger', label: 'Backend unavailable', experimental: false, detail: null };
+  }
+  if (modelError) {
+    return { tone: 'danger', label: 'Phrase model unavailable', experimental: false, detail: modelError };
+  }
+  if (!model) {
+    return { tone: 'neutral', label: 'Checking phrase model…', experimental: false, detail: null };
+  }
+  if (model.available !== true) {
+    return {
+      tone: 'danger',
+      label: 'Phrase model unavailable',
+      experimental: false,
+      detail: model.error ?? 'The phrase model could not be loaded.',
+    };
+  }
+  if (model.experimental === true) {
+    return { tone: 'warning', label: EXPERIMENTAL_LABEL, experimental: true, detail: null };
+  }
+  return { tone: 'success', label: 'Phrase model loaded', experimental: false, detail: null };
+}
+
 // Maps a /recognition/latest response to what the UI may say. A sign is only returned for the
 // 'recognized' status; every other status shows no sign.
 export function describeRecognition(result, error, cameraLive) {

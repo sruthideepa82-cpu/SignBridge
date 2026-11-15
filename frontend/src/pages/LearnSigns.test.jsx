@@ -84,13 +84,32 @@ describe('Learn Signs page', () => {
     expect(JSON.parse(window.localStorage.getItem(LEARN_PROGRESS_KEY)).favourites).toEqual(['alphabet:C']);
   });
 
-  it('shows no invented numbers or words, and says why', () => {
-    renderApp('/learn/signs?category=numbers');
-    expect(screen.getByText('No verified number signs yet')).toBeInTheDocument();
-    expect(screen.queryByRole('list', { name: 'Signs' })).not.toBeInTheDocument();
+  it('lists numbers 0 to 9 under Numbers, each showing that its mapping is not yet approved', () => {
+    renderApp('/learn/signs?category=numbers&sign=numbers%3A0');
 
-    fireEvent.click(screen.getByRole('button', { name: /Common Words & Phrases/ }));
-    expect(screen.getByText('No verified words or phrases yet')).toBeInTheDocument();
+    const grid = screen.getByRole('list', { name: 'Signs' });
+    expect(within(grid).getAllByRole('listitem')).toHaveLength(10);
+    expect(screen.getByRole('heading', { level: 2, name: 'Number 0' })).toBeInTheDocument();
+    const status = screen.getByRole('list', { name: 'Sign status' });
+    expect(within(status).getByText('Mapping: not yet approved')).toBeInTheDocument();
+    expect(within(status).getByText('Training: not ready')).toBeInTheDocument();
+  });
+
+  it('lists phrases under Common Words & Phrases, showing the camera model status for each', () => {
+    renderApp('/learn/signs?category=words&sign=phrase%3Ahappy-birthday');
+
+    const grid = screen.getByRole('list', { name: 'Signs' });
+    expect(within(grid).getAllByRole('listitem')).toHaveLength(44);
+    const status = screen.getByRole('list', { name: 'Sign status' });
+    expect(within(status).getByText('Camera model: covered by the camera model')).toBeInTheDocument();
+    expect(within(status).getByText('Mapping: not yet approved')).toBeInTheDocument();
+  });
+
+  it('shows a phrase outside the camera model as not covered, without implying recognition', () => {
+    renderApp('/learn/signs?category=words&sign=phrase%3Asun');
+
+    const status = screen.getByRole('list', { name: 'Sign status' });
+    expect(within(status).getByText('Camera model: not covered (needs movement)')).toBeInTheDocument();
   });
 
   it('says the quiz needs animations while none are in the library', () => {

@@ -2,8 +2,10 @@ import { Send, Trash2, Undo2, WrapText, X } from 'lucide-react';
 import { buttonClass } from '../app/ui.jsx';
 import { CONFIDENCE_RANGE, STABLE_FRAMES_RANGE } from '../../lib/letterSettings.js';
 import { EXPERIMENTAL_LABEL } from '../../lib/recognitionStatus.js';
+import DraftSpeech from './DraftSpeech.jsx';
 
 // Recognised letters waiting for review. This is not a message yet: it is only sent when the user presses Send.
+// Read aloud speaks this same text on request, so what is spoken is what the user has checked.
 // `controls` carries what the letter path needs: correction, settings, and whether the active model is experimental.
 export default function SignDraft({
   draft,
@@ -15,6 +17,7 @@ export default function SignDraft({
   onDiscard,
   onSend,
   controls,
+  showItems = true,
 }) {
   const hasItems = items.length > 0;
   const hasDraft = draft.trim().length > 0;
@@ -53,11 +56,11 @@ export default function SignDraft({
         value={draft}
         onChange={(event) => onDraftChange(event.target.value)}
         rows={2}
-        placeholder="Recognised letters appear here. Hold a sign steady to add a letter."
+        placeholder="Type a sentence here, or hold a sign steady to add a letter."
         className="mt-2 block w-full resize-none rounded-lg border border-app-border bg-app-bg px-3 py-2 font-mono text-lg tracking-wider text-app-text placeholder:font-sans placeholder:text-sm placeholder:tracking-normal placeholder:text-app-muted focus:border-accent/60 focus:outline-none"
       />
 
-      {hasItems && (
+      {hasItems && showItems && (
         <ol className="mt-2 flex flex-wrap gap-1.5" aria-label="Recognised letters, in order">
           {items.map((item, index) => (
             <li
@@ -153,6 +156,8 @@ export default function SignDraft({
           Send to conversation
         </button>
       </div>
+
+      <DraftSpeech text={draft} />
     </section>
   );
 }

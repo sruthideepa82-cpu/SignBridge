@@ -2,7 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-const BACKEND_URL = 'http://127.0.0.1:8000';
+// Override with SIGNBRIDGE_BACKEND_URL when the backend runs on another port.
+const BACKEND_URL = process.env.SIGNBRIDGE_BACKEND_URL || 'http://127.0.0.1:8000';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],

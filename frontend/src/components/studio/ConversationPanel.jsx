@@ -8,24 +8,18 @@ import MessageComposer from '../conversation/MessageComposer.jsx';
 import RoadmapPanel from '../translator/RoadmapPanel.jsx';
 import TranslatorStatusPanel from '../translator/TranslatorStatusPanel.jsx';
 import RecognitionStatus from './RecognitionStatus.jsx';
-import SignDraft from './SignDraft.jsx';
 
 const TABS = [
   { id: 'conversation', label: 'Conversation', icon: MessageSquare },
   { id: 'recognition', label: 'Recognition', icon: Activity },
 ];
 
-// Right-hand panel of Live Studio with two tabs. The Conversation tab holds the messages, the editable sign draft
-// and the composer. The Recognition tab shows what the recognizer and hand tracker are doing.
+// Right-hand panel of Live Studio with two tabs. The Conversation tab holds the messages and the composer. The
+// recognised text is edited under the camera (SignDraft), so it stays in view on both tabs. The Recognition tab shows
+// what the recognizer and hand tracker are doing.
 export default function ConversationPanel({
   conversation,
   largeText,
-  draft,
-  onDraftChange,
-  signBuffer,
-  onSendDraft,
-  onDiscardDraft,
-  onAddSpace,
   onSendReply,
   recognitionProps,
   history,
@@ -33,7 +27,6 @@ export default function ConversationPanel({
   cameraLive,
   recognition,
   recognitionError,
-  draftControls,
 }) {
   const [tab, setTab] = useState('conversation');
   const listRef = useRef(null);
@@ -42,10 +35,10 @@ export default function ConversationPanel({
 
   useEffect(() => {
     if (listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight;
-  }, [messages.length, draft.length]);
+  }, [messages.length]);
 
   return (
-    <section aria-label="Conversation and recognition" className="flex min-h-[28rem] min-w-0 flex-col overflow-hidden rounded-xl border border-app-border bg-app-surface xl:min-h-0">
+    <section aria-label="Conversation and recognition" className="flex min-h-[28rem] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-app-border bg-app-surface xl:min-h-0">
       <div role="tablist" aria-label="Live studio panels" className="grid grid-cols-2 border-b border-app-border p-1.5">
         {TABS.map((item) => {
           const Icon = item.icon;
@@ -72,7 +65,7 @@ export default function ConversationPanel({
 
       {tab === 'conversation' ? (
         <div role="tabpanel" id={`${idBase}-conversation-panel`} aria-labelledby={`${idBase}-conversation-tab`} className="flex min-h-0 flex-1 flex-col">
-          <div ref={listRef} className="min-h-0 flex-1 overflow-y-auto p-4">
+          <div ref={listRef} className="min-h-[200px] flex-1 overflow-y-auto p-4">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 text-center">
                 <p className="text-sm font-medium text-app-text">No messages yet</p>
@@ -94,19 +87,6 @@ export default function ConversationPanel({
                 ))}
               </ol>
             )}
-            <div className="mt-4">
-              <SignDraft
-                draft={draft}
-                onDraftChange={onDraftChange}
-                items={signBuffer.items}
-                holding={signBuffer.holding}
-                onUndo={() => signBuffer.undo()}
-                onAddSpace={onAddSpace}
-                onDiscard={onDiscardDraft}
-                onSend={onSendDraft}
-                controls={draftControls}
-              />
-            </div>
           </div>
 
           <div className="border-t border-app-border p-3">

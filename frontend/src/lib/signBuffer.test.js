@@ -143,6 +143,11 @@ describe('nextDraft', () => {
     expect(nextDraft('Hallo', 'HI', '')).toBe('');
   });
 
+  it('takes only the undone letter off the end of an edited draft', () => {
+    expect(nextDraft('Hello HI', 'HI', 'H')).toBe('Hello H');
+    expect(nextDraft('Hello HI', 'HI', '')).toBe('Hello ');
+  });
+
   it('leaves the draft alone when nothing changed', () => {
     expect(nextDraft('Edited', 'HI', 'HI')).toBe('Edited');
   });

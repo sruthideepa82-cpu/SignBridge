@@ -11,7 +11,9 @@
     "verified": "true only after a check against the reference",
     "reviewed_by": "Who checked it",
     "reviewed_on": "YYYY-MM-DD",
-    "signer_confirmed": "true only after a Deaf ISL signer or qualified ISL interpreter confirms the handshape"
+    "signer_confirmed": "true only after a Deaf ISL signer or qualified ISL interpreter confirms the handshape",
+    "category": "alphabet or numbers. Decides which Learn Signs section shows the class.",
+    "reference_folders": "Folders relative to the static gestures folder, one per image set and variant."
   },
   "sources": [
     {
@@ -56,6 +58,13 @@
       "url": null,
       "checked": "Viewed as an image on 2026-11-11. Not confirmed as the official ISLRTC chart.",
       "notes": "Provisional visual reference only. The convention is not confirmed as ISL, and the chart resembles a common ASL-style fingerspelling chart. J and Z are drawn with motion arrows. Do not verify any class from this source alone. Use ISLRTC-ALPHABET as the source of truth."
+    },
+    {
+      "id": "OWNER-STATIC-SET",
+      "name": "Static gestures of Indian Sign Language (ISL) for English Alphabet, Hindi Vowels and Numerals (owner-supplied image sets)",
+      "url": null,
+      "checked": "Folder structure inspected 2026-11-15. Individual images were not reviewed.",
+      "notes": "Six image sets: Kids, Teenagers and Adults, each with full and half sleeves. Used as reference images for training. A mapping is not approved until the project owner reviews it."
     }
   ],
   "classes": [
@@ -74,7 +83,16 @@
       "reference": "USER-CHART, cell A (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/A",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/A",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/A",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/A",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/A",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/A"
+      ]
     },
     {
       "label": "B",
@@ -91,7 +109,16 @@
       "reference": "USER-CHART, cell B (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/B",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/B",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/B",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/B",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/B",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/B"
+      ]
     },
     {
       "label": "C",
@@ -109,7 +136,16 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified."
+      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/C",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/C",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/C",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/C",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/C",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/C"
+      ]
     },
     {
       "label": "D",
@@ -126,7 +162,16 @@
       "reference": "USER-CHART, cell D (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/D",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/D",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/D",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/D",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/D",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/D"
+      ]
     },
     {
       "label": "E",
@@ -143,7 +188,22 @@
       "reference": "USER-CHART, cell E (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/E1",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/E2",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/E1",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/E2",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/E1",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/E2",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/E1",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/E2",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/E1",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/E2",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/E1",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/E2"
+      ]
     },
     {
       "label": "F",
@@ -160,7 +220,16 @@
       "reference": "USER-CHART, cell F (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/F",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/F",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/F",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/F",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/F",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/F"
+      ]
     },
     {
       "label": "G",
@@ -177,7 +246,16 @@
       "reference": "USER-CHART, cell G (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/G",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/G",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/G",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/G",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/G",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/G"
+      ]
     },
     {
       "label": "H",
@@ -194,7 +272,16 @@
       "reference": "USER-CHART, cell H (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/H",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/H",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/H",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/H",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/H",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/H"
+      ]
     },
     {
       "label": "I",
@@ -211,7 +298,16 @@
       "reference": "USER-CHART, cell I (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/I",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/I",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/I",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/I",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/I",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/I"
+      ]
     },
     {
       "label": "J",
@@ -229,7 +325,16 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Moving sign. Excluded from the initial static classifier. Needs a temporal model later."
+      "notes": "Moving sign. Excluded from the initial static classifier. Needs a temporal model later.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/J",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/J",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/J",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/J",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/J",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/J"
+      ]
     },
     {
       "label": "K",
@@ -246,7 +351,16 @@
       "reference": "USER-CHART, cell K (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/K",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/K",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/K",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/K",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/K",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/K"
+      ]
     },
     {
       "label": "L",
@@ -264,7 +378,16 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified."
+      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/L",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/L",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/L",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/L",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/L",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/L"
+      ]
     },
     {
       "label": "M",
@@ -281,7 +404,16 @@
       "reference": "USER-CHART, cell M (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/M",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/M",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/M",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/M",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/M",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/M"
+      ]
     },
     {
       "label": "N",
@@ -298,7 +430,16 @@
       "reference": "USER-CHART, cell N (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/N",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/N",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/N",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/N",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/N",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/N"
+      ]
     },
     {
       "label": "O",
@@ -316,7 +457,16 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified."
+      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/O",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/O",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/O",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/O",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/O",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/O"
+      ]
     },
     {
       "label": "P",
@@ -333,7 +483,16 @@
       "reference": "USER-CHART, cell P (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/P",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/P",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/P",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/P",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/P",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/P"
+      ]
     },
     {
       "label": "Q",
@@ -350,7 +509,16 @@
       "reference": "USER-CHART, cell Q (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/Q",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/Q",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/Q",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/Q",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/Q",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/Q"
+      ]
     },
     {
       "label": "R",
@@ -367,7 +535,16 @@
       "reference": "USER-CHART, cell R (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/R",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/R",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/R",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/R",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/R",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/R"
+      ]
     },
     {
       "label": "S",
@@ -385,7 +562,16 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified."
+      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/S",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/S",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/S",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/S",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/S",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/S"
+      ]
     },
     {
       "label": "T",
@@ -402,7 +588,16 @@
       "reference": "USER-CHART, cell T (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/T",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/T",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/T",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/T",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/T",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/T"
+      ]
     },
     {
       "label": "U",
@@ -420,7 +615,16 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified."
+      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/U",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/U",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/U",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/U",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/U",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/U"
+      ]
     },
     {
       "label": "V",
@@ -438,7 +642,16 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified."
+      "notes": "Earlier AI reading of the ISLRTC chart. It is not a qualified review and is no longer marked verified.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/V",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/V",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/V",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/V",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/V",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/V"
+      ]
     },
     {
       "label": "W",
@@ -455,7 +668,16 @@
       "reference": "USER-CHART, cell W (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/W",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/W",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/W",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/W",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/W",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/W"
+      ]
     },
     {
       "label": "X",
@@ -472,7 +694,16 @@
       "reference": "USER-CHART, cell X (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/X",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/X",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/X",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/X",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/X",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/X"
+      ]
     },
     {
       "label": "Y",
@@ -489,7 +720,16 @@
       "reference": "USER-CHART, cell Y (provisional, unconfirmed source)",
       "reviewed_by": null,
       "reviewed_on": null,
-      "signer_confirmed": false
+      "signer_confirmed": false,
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/Y",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/Y",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/Y",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/Y",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/Y",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/Y"
+      ]
     },
     {
       "label": "Z",
@@ -507,7 +747,282 @@
       "reviewed_by": null,
       "reviewed_on": null,
       "signer_confirmed": false,
-      "notes": "Moving sign. Excluded from the initial static classifier. Needs a temporal model later."
+      "notes": "Moving sign. Excluded from the initial static classifier. Needs a temporal model later.",
+      "category": "alphabet",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/English Alphabet/Z",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/English Alphabet/Z",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/English Alphabet/Z",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/English Alphabet/Z",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/English Alphabet/Z",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/English Alphabet/Z"
+      ]
+    },
+    {
+      "label": "0",
+      "class_id": "NUM-0",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 0",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/0 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/0",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/0",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/0",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/0",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/0",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/0"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "1",
+      "class_id": "NUM-1",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 1",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/1 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/1",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/1",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/1",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/1",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/1",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/1"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "2",
+      "class_id": "NUM-2",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 2",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/2 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/2",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/2",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/2",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/2",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/2",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/2"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "3",
+      "class_id": "NUM-3",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 3",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/3 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/3",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/3",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/3",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/3",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/3",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/3"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "4",
+      "class_id": "NUM-4",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 4",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/4 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/4",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/4",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/4",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/4",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/4",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/4"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "5",
+      "class_id": "NUM-5",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 5",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/5 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/5",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/5",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/5",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/5",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/5",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/5"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "6",
+      "class_id": "NUM-6",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 6",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/6 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/6",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/6",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/6",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/6",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/6",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/6"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "7",
+      "class_id": "NUM-7",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 7",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/7 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/7",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/7",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/7",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/7",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/7",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/7"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "8",
+      "class_id": "NUM-8",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 8",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/8 (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/8",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/8",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/8",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/8",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/8",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/8"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
+    },
+    {
+      "label": "9",
+      "class_id": "NUM-9",
+      "category": "numbers",
+      "type": "static",
+      "recognition_type": "static",
+      "hands": null,
+      "hands_confirmed": false,
+      "meaning": "ISL number 9",
+      "source": "OWNER-STATIC-SET",
+      "verification_status": "unverified",
+      "training_status": "blocked_unverified",
+      "verified": false,
+      "reference": "OWNER-STATIC-SET, Numerals/9a, 9b (not yet reviewed)",
+      "reference_folders": [
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/9a",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Full Sleeves/Numerals/9b",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/9a",
+        "ISL Images/1. Kids ISL images/Kids ISL images in Half Sleeves/Numerals/9b",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/9a",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Full Sleeves/Numerals/9b",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/9a",
+        "ISL Images/2. Teenagers ISL Images/Teenagers ISL images in Half Sleeves/Numerals/9b",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/9a",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Full Sleeves/Numerals/9b",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/9a",
+        "ISL Images/3. Adults ISL Images/Adults ISL images in Half Sleeves/Numerals/9b"
+      ],
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "signer_confirmed": false
     }
   ],
   "consent": {

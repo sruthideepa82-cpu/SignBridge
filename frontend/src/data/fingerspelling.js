@@ -5,6 +5,7 @@ export const FINGERSPELLING_CLASSES = [
   {
     "label": "A",
     "class_id": "FS-A",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -12,11 +13,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter A in fingerspelling",
     "reference": "USER-CHART, cell A (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "B",
     "class_id": "FS-B",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -24,11 +28,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter B in fingerspelling",
     "reference": "USER-CHART, cell B (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "C",
     "class_id": "FS-C",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -36,11 +43,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter C in ISL fingerspelling",
     "reference": "ISLRTC-ALPHABET, chart cell C (not yet checked by a qualified reviewer)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "D",
     "class_id": "FS-D",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -48,11 +58,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter D in fingerspelling",
     "reference": "USER-CHART, cell D (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "E",
     "class_id": "FS-E",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -60,11 +73,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter E in fingerspelling",
     "reference": "USER-CHART, cell E (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "F",
     "class_id": "FS-F",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -72,11 +88,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter F in fingerspelling",
     "reference": "USER-CHART, cell F (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "G",
     "class_id": "FS-G",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -84,11 +103,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter G in fingerspelling",
     "reference": "USER-CHART, cell G (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "H",
     "class_id": "FS-H",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -96,11 +118,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter H in fingerspelling",
     "reference": "USER-CHART, cell H (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "I",
     "class_id": "FS-I",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -108,11 +133,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter I in fingerspelling",
     "reference": "USER-CHART, cell I (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "J",
     "class_id": "FS-J",
+    "category": "alphabet",
     "recognition_type": "temporal",
     "verification_status": "unverified",
     "training_status": "excluded_temporal",
@@ -120,11 +148,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter J in fingerspelling",
     "reference": "USER-CHART, cell J (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "K",
     "class_id": "FS-K",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -132,11 +163,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter K in fingerspelling",
     "reference": "USER-CHART, cell K (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "L",
     "class_id": "FS-L",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -144,11 +178,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter L in ISL fingerspelling",
     "reference": "ISLRTC-ALPHABET, chart cell L (not yet checked by a qualified reviewer)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "M",
     "class_id": "FS-M",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -156,11 +193,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter M in fingerspelling",
     "reference": "USER-CHART, cell M (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "N",
     "class_id": "FS-N",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -168,11 +208,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter N in fingerspelling",
     "reference": "USER-CHART, cell N (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "O",
     "class_id": "FS-O",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -180,11 +223,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter O in ISL fingerspelling",
     "reference": "ISLRTC-ALPHABET, chart cell O (not yet checked by a qualified reviewer)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "P",
     "class_id": "FS-P",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -192,11 +238,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter P in fingerspelling",
     "reference": "USER-CHART, cell P (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "Q",
     "class_id": "FS-Q",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -204,11 +253,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter Q in fingerspelling",
     "reference": "USER-CHART, cell Q (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "R",
     "class_id": "FS-R",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -216,11 +268,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter R in fingerspelling",
     "reference": "USER-CHART, cell R (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "S",
     "class_id": "FS-S",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -228,11 +283,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter S in ISL fingerspelling",
     "reference": "ISLRTC-ALPHABET, chart cell S (not yet checked by a qualified reviewer)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "T",
     "class_id": "FS-T",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -240,11 +298,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter T in fingerspelling",
     "reference": "USER-CHART, cell T (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "U",
     "class_id": "FS-U",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -252,11 +313,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter U in ISL fingerspelling",
     "reference": "ISLRTC-ALPHABET, chart cell U (not yet checked by a qualified reviewer)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "V",
     "class_id": "FS-V",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -264,11 +328,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter V in ISL fingerspelling",
     "reference": "ISLRTC-ALPHABET, chart cell V (not yet checked by a qualified reviewer)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "W",
     "class_id": "FS-W",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -276,11 +343,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter W in fingerspelling",
     "reference": "USER-CHART, cell W (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "X",
     "class_id": "FS-X",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -288,11 +358,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter X in fingerspelling",
     "reference": "USER-CHART, cell X (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "Y",
     "class_id": "FS-Y",
+    "category": "alphabet",
     "recognition_type": "static",
     "verification_status": "unverified",
     "training_status": "blocked_unverified",
@@ -300,11 +373,14 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter Y in fingerspelling",
     "reference": "USER-CHART, cell Y (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   },
   {
     "label": "Z",
     "class_id": "FS-Z",
+    "category": "alphabet",
     "recognition_type": "temporal",
     "verification_status": "unverified",
     "training_status": "excluded_temporal",
@@ -312,7 +388,159 @@ export const FINGERSPELLING_CLASSES = [
     "verified": false,
     "meaning": "English letter Z in fingerspelling",
     "reference": "USER-CHART, cell Z (provisional, unconfirmed source)",
-    "signer_confirmed": false
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "0",
+    "class_id": "NUM-0",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 0",
+    "reference": "OWNER-STATIC-SET, Numerals/0 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "1",
+    "class_id": "NUM-1",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 1",
+    "reference": "OWNER-STATIC-SET, Numerals/1 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "2",
+    "class_id": "NUM-2",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 2",
+    "reference": "OWNER-STATIC-SET, Numerals/2 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "3",
+    "class_id": "NUM-3",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 3",
+    "reference": "OWNER-STATIC-SET, Numerals/3 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "4",
+    "class_id": "NUM-4",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 4",
+    "reference": "OWNER-STATIC-SET, Numerals/4 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "5",
+    "class_id": "NUM-5",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 5",
+    "reference": "OWNER-STATIC-SET, Numerals/5 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "6",
+    "class_id": "NUM-6",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 6",
+    "reference": "OWNER-STATIC-SET, Numerals/6 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "7",
+    "class_id": "NUM-7",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 7",
+    "reference": "OWNER-STATIC-SET, Numerals/7 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "8",
+    "class_id": "NUM-8",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 8",
+    "reference": "OWNER-STATIC-SET, Numerals/8 (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
+  },
+  {
+    "label": "9",
+    "class_id": "NUM-9",
+    "category": "numbers",
+    "recognition_type": "static",
+    "verification_status": "unverified",
+    "training_status": "blocked_unverified",
+    "source": "OWNER-STATIC-SET",
+    "verified": false,
+    "meaning": "ISL number 9",
+    "reference": "OWNER-STATIC-SET, Numerals/9a, 9b (not yet reviewed)",
+    "signer_confirmed": false,
+    "asset_available": false,
+    "training_ready": false
   }
 ];
 

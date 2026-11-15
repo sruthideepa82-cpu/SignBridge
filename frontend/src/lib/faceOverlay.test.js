@@ -1,7 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 import fixture from '../test/fixtures/face-grace-hopper.json';
 import { FACE_OVAL, LEFT_EYE, RIGHT_EYE, LEFT_EYEBROW, RIGHT_EYEBROW, NOSE, LIPS } from './faceConnections.js';
-import { drawFaceOverlay, FACE_OVERLAY_CONNECTIONS, faceOverlaySegments } from './faceOverlay.js';
+import { coverFrame, drawFaceOverlay, FACE_OVERLAY_CONNECTIONS, faceOverlaySegments } from './faceOverlay.js';
+
+describe('coverFrame', () => {
+  it('crops a 4:3 frame vertically to fill a 16:10 box, centred', () => {
+    const frame = coverFrame(1000, 625, 4 / 3);
+    expect(frame.drawWidth).toBeCloseTo(1000);
+    expect(frame.drawHeight).toBeCloseTo(750);
+    expect(frame.offsetX).toBeCloseTo(0);
+    expect(frame.offsetY).toBeCloseTo(-62.5);
+  });
+});
 
 describe('official face connection sets', () => {
   it('match the MediaPipe definitions that were exported', () => {

@@ -22,12 +22,26 @@ describe('generated fingerspelling vocabulary', () => {
     }
   });
 
-  it('lists A to Z with J and Z as temporal candidates', () => {
-    const labels = FINGERSPELLING_CLASSES.map((item) => item.label);
-    expect(labels).toHaveLength(26);
-    expect(labels[0]).toBe('A');
-    expect(labels[25]).toBe('Z');
+  it('lists A to Z as letters and 0 to 9 as numbers, with J and Z as temporal candidates', () => {
+    const letters = FINGERSPELLING_CLASSES.filter((item) => item.category === 'alphabet').map((item) => item.label);
+    const numbers = FINGERSPELLING_CLASSES.filter((item) => item.category === 'numbers').map((item) => item.label);
+    expect(letters).toHaveLength(26);
+    expect(letters[0]).toBe('A');
+    expect(letters[25]).toBe('Z');
+    expect(numbers).toEqual(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
     expect(FINGERSPELLING_CLASSES.filter((item) => item.recognition_type === 'temporal').map((item) => item.label)).toEqual(['J', 'Z']);
+  });
+
+  it('never places a number under the letters', () => {
+    const letterLabels = FINGERSPELLING_CLASSES.filter((item) => item.category === 'alphabet').map((item) => item.label);
+    expect(letterLabels.some((label) => /\d/.test(label))).toBe(false);
+  });
+
+  it('reports asset and training status separately from approval', () => {
+    for (const item of FINGERSPELLING_CLASSES) {
+      expect(typeof item.asset_available).toBe('boolean');
+      expect(item.training_ready).toBe(false);
+    }
   });
 
   it('marks every class unverified, so nothing can be recorded or trained yet', () => {
