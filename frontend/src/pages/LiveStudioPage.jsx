@@ -1,5 +1,5 @@
 import { Copy, MessageSquare, MessageSquarePlus, MessagesSquare, Sparkles, Trash2, Type } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/app/ConfirmDialog.jsx';
 import ActionMenu from '../components/app/ActionMenu.jsx';
@@ -13,6 +13,7 @@ import SignDraft from '../components/studio/SignDraft.jsx';
 import SignSentencePanel from '../components/studio/SignSentencePanel.jsx';
 import '../styles/liveStudio.css';
 import { appendPhraseToDraft } from '../lib/phraseStabilizer.js';
+import { initialEditor, newlyCommitted, sentenceEditorReducer } from '../lib/sentenceEditor.js';
 import {
   RECOGNITION_MODE_LABELS,
   RECOGNITION_MODES,
@@ -31,7 +32,6 @@ import useRecognition from '../hooks/useRecognition.js';
 import useRecognitionHistory from '../hooks/useRecognitionHistory.js';
 import useSignBuffer from '../hooks/useSignBuffer.js';
 import { activeConversation, conversationActions, transcriptText } from '../lib/conversationStore.js';
-import { nextDraft } from '../lib/signBuffer.js';
 
 export default function LiveStudioPage() {
   const navigate = useNavigate();
@@ -62,8 +62,10 @@ export default function LiveStudioPage() {
   const conversation = activeConversation(store);
   const favourites = usePhraseFavourites();
 
-  const [draft, setDraft] = useState('');
-  const previousBufferText = useRef('');
+  // The editable sentence. Every input (recognition, typing, phrases, undo, clear) changes this one state.
+  const [sentence, dispatchSentence] = useReducer(sentenceEditorReducer, undefined, initialEditor);
+  const draft = sentence.text;
+  const committedSeen = useRef(0);
   const [largeText, setLargeText] = useState(false);
   const [showFaceMesh, setShowFaceMesh] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
@@ -73,21 +75,25 @@ export default function LiveStudioPage() {
     if (!cameraLive) setPaused(false);
   }, [cameraLive]);
 
-  // Recognised letters flow into the draft. Letters added by recognition are appended to whatever the
-  // user has edited; undo, clear or any other change that removes text resets the draft to the recognised text.
+  // Each letter or space the recogniser commits is appended to the sentence once. The buffer already ignores repeated
+  // frames, so a held sign adds one letter. Removing an item from the detected sequence leaves the sentence alone.
   useEffect(() => {
-    const next = signBuffer.text;
-    const previous = previousBufferText.current;
-    previousBufferText.current = next;
-    setDraft((current) => nextDraft(current, previous, next));
-  }, [signBuffer.text]);
+    const items = signBuffer.items;
+    if (items.length < committedSeen.current) {
+      committedSeen.current = items.length;
+      return;
+    }
+    const fresh = newlyCommitted(committedSeen.current, items);
+    committedSeen.current = items.length;
+    if (fresh.length > 0) dispatchSentence({ type: 'recognised', items: fresh });
+  }, [signBuffer.items]);
 
   const chooseMode = (next) => {
     setMode(saveRecognitionMode(next));
   };
 
   const addPhraseToDraft = (phrase) => {
-    setDraft((current) => appendPhraseToDraft(current, phrase));
+    dispatchSentence({ type: 'insert', text: appendPhraseToDraft(draft, phrase) });
   };
 
   const messageCount = conversation?.messages.length ?? 0;
@@ -99,18 +105,17 @@ export default function LiveStudioPage() {
     const experimental = signBuffer.items.some((item) => item.experimental);
     conversationActions.append({ text, speaker: 'deaf', source: 'sign', experimental });
     signBuffer.clear();
-    setDraft('');
+    dispatchSentence({ type: 'clear' });
     setStatus('Sent recognised text to the conversation.');
   };
 
   const discardDraft = () => {
     signBuffer.clear();
-    setDraft('');
+    dispatchSentence({ type: 'clear' });
   };
 
   const addSpace = () => {
-    signBuffer.addSpace();
-    setDraft((current) => (current === '' || current.endsWith(' ') ? current : `${current} `));
+    dispatchSentence({ type: 'space' });
   };
 
   const sendPhrase = (phrase) => {
@@ -128,7 +133,7 @@ export default function LiveStudioPage() {
     camera.stopCamera();
     setPaused(false);
     signBuffer.clear();
-    setDraft('');
+    dispatchSentence({ type: 'clear' });
     setStatus('Session stopped. Unsent draft discarded.');
   };
 
@@ -240,11 +245,13 @@ export default function LiveStudioPage() {
 
           <SignDraft
             draft={draft}
-            onDraftChange={setDraft}
+            onDraftChange={(text) => dispatchSentence({ type: 'type', text, now: Date.now() })}
             items={signBuffer.items}
             holding={signBuffer.holding}
-            onUndo={() => signBuffer.undo()}
+            canUndo={sentence.history.length > 0}
+            onUndo={() => dispatchSentence({ type: 'undo' })}
             onAddSpace={addSpace}
+            onDelete={() => dispatchSentence({ type: 'delete' })}
             onDiscard={discardDraft}
             onSend={sendDraft}
             controls={draftControls}

@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest';
+﻿import { describe, expect, it } from 'vitest';
 import {
-  nextDraft,
   HOLD_FRAMES,
   appendSpace,
   applyRecognition,
@@ -124,31 +123,3 @@ describe('signBuffer: correction and text', () => {
   });
 });
 
-describe('nextDraft', () => {
-  it('appends recognised letters to the draft', () => {
-    expect(nextDraft('', '', 'H')).toBe('H');
-    expect(nextDraft('H', 'H', 'HI')).toBe('HI');
-  });
-
-  it('keeps the words the user edited when new letters arrive', () => {
-    expect(nextDraft('Hallo', 'HA', 'HAT')).toBe('HalloT');
-  });
-
-  it('adds one space when a space was added and then a letter follows it', () => {
-    expect(nextDraft('HI ', 'HI', 'HI T')).toBe('HI T');
-  });
-
-  it('resets to the recognised text when text was removed (undo, clear or send)', () => {
-    expect(nextDraft('Hallo there', 'HI', 'H')).toBe('H');
-    expect(nextDraft('Hallo', 'HI', '')).toBe('');
-  });
-
-  it('takes only the undone letter off the end of an edited draft', () => {
-    expect(nextDraft('Hello HI', 'HI', 'H')).toBe('Hello H');
-    expect(nextDraft('Hello HI', 'HI', '')).toBe('Hello ');
-  });
-
-  it('leaves the draft alone when nothing changed', () => {
-    expect(nextDraft('Edited', 'HI', 'HI')).toBe('Edited');
-  });
-});

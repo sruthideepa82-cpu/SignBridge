@@ -180,4 +180,30 @@ describe('Live Studio sentence box with the camera off', () => {
     expect(box).toHaveValue('HELLO');
     expect(screen.getByRole('button', { name: 'Speak sentence' })).toBeEnabled();
   });
+
+  it('speaks and sends the same edited sentence, including punctuation', () => {
+    const synth = globalThis.speechSynthesis;
+    renderApp('/workspace/live-studio');
+    const box = screen.getByRole('textbox', { name: 'Recognised text, editable before sending' });
+
+    fireEvent.change(box, { target: { value: 'Hi, Ann!' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Speak sentence' }));
+    expect(synth.speak.mock.calls[0][0].text).toBe('Hi, Ann!');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send to conversation' }));
+    const transcript = screen.getByRole('list', { name: 'Conversation' });
+    expect(within(transcript).getByText('Hi, Ann!')).toBeInTheDocument();
+    expect(box).toHaveValue('');
+  });
+
+  it('undoes a typed sentence back to empty', () => {
+    renderApp('/workspace/live-studio');
+    const box = screen.getByRole('textbox', { name: 'Recognised text, editable before sending' });
+
+    expect(screen.getByRole('button', { name: 'Undo' })).toBeDisabled();
+    fireEvent.change(box, { target: { value: 'Hello' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
+
+    expect(box).toHaveValue('');
+  });
 });

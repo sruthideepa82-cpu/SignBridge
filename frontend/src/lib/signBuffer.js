@@ -101,16 +101,3 @@ export function toText(items) {
   return items.map((item) => (item.type === 'space' ? ' ' : item.label)).join('').trim();
 }
 
-// The draft is the text the user reviews before sending. Letters recognised since the last change are appended
-// to the draft, keeping any edits the user has made. When text is removed (undo, clear, sending), the removed part
-// is taken off the end of the draft if it is still there; otherwise the draft resets to the recognised text.
-export function nextDraft(draft, previousText, nextText) {
-  if (nextText === previousText) return draft;
-  if (nextText.startsWith(previousText)) {
-    const addition = nextText.slice(previousText.length);
-    return draft.endsWith(' ') && addition.startsWith(' ') ? draft + addition.slice(1) : draft + addition;
-  }
-  const removed = previousText.startsWith(nextText) ? previousText.slice(nextText.length) : '';
-  if (removed && draft.endsWith(removed)) return draft.slice(0, -removed.length);
-  return nextText;
-}

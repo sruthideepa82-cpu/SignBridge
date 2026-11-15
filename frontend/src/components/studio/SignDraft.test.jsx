@@ -21,7 +21,7 @@ describe('SignDraft', () => {
     render(<SignDraft {...props()} />);
 
     expect(screen.getByText('Not sent yet')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Undo last sign' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Undo' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Send to conversation' })).toBeDisabled();
   });
 
@@ -53,13 +53,15 @@ describe('SignDraft', () => {
     expect(screen.getByText('91%')).toBeInTheDocument();
   });
 
-  it('calls undo, add space and discard from the buttons', () => {
-    const state = props({ draft: 'C', items: [{ type: 'letter', label: 'C', confidence: 0.9 }] });
+  it('calls undo, add space, delete and clear from the buttons', () => {
+    const state = props({ draft: 'C', canUndo: true, items: [{ type: 'letter', label: 'C', confidence: 0.9 }], onDelete: vi.fn() });
     render(<SignDraft {...state} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Undo last sign' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add space' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Discard' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Delete last' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+    expect(state.onDelete).toHaveBeenCalled();
 
     expect(state.onUndo).toHaveBeenCalled();
     expect(state.onAddSpace).toHaveBeenCalled();

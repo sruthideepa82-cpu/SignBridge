@@ -1,26 +1,30 @@
-import { Send, Trash2, Undo2, WrapText, X } from 'lucide-react';
+import { Delete, Send, Trash2, Undo2, WrapText, X } from 'lucide-react';
 import { buttonClass } from '../app/ui.jsx';
 import { CONFIDENCE_RANGE, STABLE_FRAMES_RANGE } from '../../lib/letterSettings.js';
 import { EXPERIMENTAL_LABEL } from '../../lib/recognitionStatus.js';
 import DraftSpeech from './DraftSpeech.jsx';
 
-// Recognised letters waiting for review. This is not a message yet: it is only sent when the user presses Send.
-// Read aloud speaks this same text on request, so what is spoken is what the user has checked.
-// `controls` carries what the letter path needs: correction, settings, and whether the active model is experimental.
+// The editable sentence. It is not a message yet: it is only sent when the user presses Send. Recognised letters are
+// added to it, the user can type anywhere in it, and Read aloud speaks this same text, so what is spoken and sent is
+// what the user has checked. `controls` carries what the letter path needs: correction, settings, and whether the
+// active model is experimental.
 export default function SignDraft({
   draft,
   onDraftChange,
   items,
   holding,
+  canUndo = false,
   onUndo,
   onAddSpace,
+  onDelete,
   onDiscard,
   onSend,
   controls,
   showItems = true,
 }) {
   const hasItems = items.length > 0;
-  const hasDraft = draft.trim().length > 0;
+  const hasDraft = draft.length > 0;
+  const hasText = draft.trim().length > 0;
   const experimentalLetters = items.some((item) => item.experimental);
   const modelExperimental = controls?.experimental === true;
   const settings = controls?.settings;
@@ -139,19 +143,23 @@ export default function SignDraft({
       )}
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <button type="button" onClick={onUndo} disabled={!hasItems} className={buttonClass('secondary', 'px-2.5 py-1.5 text-xs')}>
+        <button type="button" onClick={onUndo} disabled={!canUndo} className={buttonClass('secondary', 'px-2.5 py-1.5 text-xs')}>
           <Undo2 size={14} aria-hidden="true" />
-          Undo last sign
+          Undo
         </button>
-        <button type="button" onClick={onAddSpace} disabled={!hasItems} className={buttonClass('secondary', 'px-2.5 py-1.5 text-xs')}>
+        <button type="button" onClick={onAddSpace} disabled={!hasDraft || draft.endsWith(' ')} className={buttonClass('secondary', 'px-2.5 py-1.5 text-xs')}>
           <WrapText size={14} aria-hidden="true" />
           Add space
         </button>
-        <button type="button" onClick={onDiscard} disabled={!hasItems && !hasDraft} className={buttonClass('ghost', 'px-2.5 py-1.5 text-xs')}>
-          <Trash2 size={14} aria-hidden="true" />
-          Discard
+        <button type="button" onClick={onDelete} disabled={!hasDraft} className={buttonClass('secondary', 'px-2.5 py-1.5 text-xs')}>
+          <Delete size={14} aria-hidden="true" />
+          Delete last
         </button>
-        <button type="button" onClick={onSend} disabled={!hasDraft} className={buttonClass('primary', 'ml-auto px-3 py-1.5 text-xs')}>
+        <button type="button" onClick={onDiscard} disabled={!hasDraft && !hasItems} className={buttonClass('ghost', 'px-2.5 py-1.5 text-xs')}>
+          <Trash2 size={14} aria-hidden="true" />
+          Clear
+        </button>
+        <button type="button" onClick={onSend} disabled={!hasText} className={buttonClass('primary', 'ml-auto px-3 py-1.5 text-xs')}>
           <Send size={14} aria-hidden="true" />
           Send to conversation
         </button>
