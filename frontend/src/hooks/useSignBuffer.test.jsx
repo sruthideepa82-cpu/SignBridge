@@ -22,6 +22,69 @@ describe('useSignBuffer', () => {
     expect(result.current.holding).toBeNull();
   });
 
+  it('a failed request keeps a held letter, and the same letter is not added again', () => {
+    const { result, rerender } = renderHook(({ value, failures }) => useSignBuffer(value, { failures }), {
+      initialProps: { value: null, failures: 0 },
+    });
+    for (let frame = 1; frame <= HOLD_FRAMES; frame += 1) rerender({ value: recognized(frame, 'U'), failures: 0 });
+    expect(result.current.text).toBe('U');
+
+    rerender({ value: null, failures: 1 });
+    expect(result.current.text).toBe('U');
+
+    for (let frame = HOLD_FRAMES + 1; frame <= HOLD_FRAMES * 2; frame += 1) {
+      rerender({ value: recognized(frame, 'U'), failures: 0 });
+    }
+    expect(result.current.text).toBe('U');
+  });
+
+  it('three consecutive failed requests release the held letter', () => {
+    const { result, rerender } = renderHook(({ value, failures }) => useSignBuffer(value, { failures }), {
+      initialProps: { value: null, failures: 0 },
+    });
+    for (let frame = 1; frame <= HOLD_FRAMES; frame += 1) rerender({ value: recognized(frame, 'U'), failures: 0 });
+
+    rerender({ value: null, failures: 1 });
+    rerender({ value: null, failures: 2 });
+    rerender({ value: null, failures: 3 });
+    for (let frame = HOLD_FRAMES + 1; frame <= HOLD_FRAMES * 2; frame += 1) {
+      rerender({ value: recognized(frame, 'U'), failures: 0 });
+    }
+
+    expect(result.current.text).toBe('UU');
+  });
+
+  it('counts each failure once, even when the caller re-renders with the same failure count', () => {
+    const { result, rerender } = renderHook(({ value, failures }) => useSignBuffer(value, { failures }), {
+      initialProps: { value: null, failures: 0 },
+    });
+    for (let frame = 1; frame <= HOLD_FRAMES; frame += 1) rerender({ value: recognized(frame, 'U'), failures: 0 });
+
+    for (let render = 0; render < 5; render += 1) rerender({ value: null, failures: 1 });
+    rerender({ value: null, failures: 2 });
+    expect(result.current.text).toBe('U');
+
+    rerender({ value: null, failures: 3 });
+    for (let frame = HOLD_FRAMES + 1; frame <= HOLD_FRAMES * 2; frame += 1) {
+      rerender({ value: recognized(frame, 'U'), failures: 0 });
+    }
+    expect(result.current.text).toBe('UU');
+  });
+
+  it('a stop with no failed request, such as pausing, releases the held letter at once', () => {
+    const { result, rerender } = renderHook(({ value, failures }) => useSignBuffer(value, { failures }), {
+      initialProps: { value: null, failures: 0 },
+    });
+    for (let frame = 1; frame <= HOLD_FRAMES; frame += 1) rerender({ value: recognized(frame, 'U'), failures: 0 });
+
+    rerender({ value: null, failures: 0 });
+    for (let frame = HOLD_FRAMES + 1; frame <= HOLD_FRAMES * 2; frame += 1) {
+      rerender({ value: recognized(frame, 'U'), failures: 0 });
+    }
+
+    expect(result.current.text).toBe('UU');
+  });
+
   it('undo and clear change the text the panel shows', () => {
     const { result, rerender } = renderHook(({ value }) => useSignBuffer(value), {
       initialProps: { value: null },

@@ -127,6 +127,22 @@ describe('undo, delete and clear', () => {
     expect(state.text).toBe('');
     expect(run(state, { type: 'undo' }).text).toBe('Good morning');
   });
+
+  it('reset clears the text and the undo history, so undo cannot restore a sent sentence', () => {
+    const sent = run(initialEditor(), letter('H'), letter('I'), type('Hi there', 0));
+    const afterSend = run(sent, { type: 'reset' });
+
+    expect(afterSend).toEqual(initialEditor());
+    expect(run(afterSend, { type: 'undo' }).text).toBe('');
+    expect(sentenceEditorReducer(afterSend, { type: 'undo' })).toBe(afterSend);
+  });
+
+  it('after a reset, a new sentence starts a fresh undo history', () => {
+    let state = run(initialEditor(), type('Sent'), { type: 'reset' });
+    state = run(state, letter('O'), letter('K'));
+
+    expect(run(state, { type: 'undo' }, { type: 'undo' }, { type: 'undo' }).text).toBe('');
+  });
 });
 
 describe('duplicate recognition', () => {

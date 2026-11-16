@@ -44,12 +44,12 @@ export default function LiveStudioPage() {
   const recognitionOn = cameraLive && !paused;
   const { landmarks, error: landmarkError } = useHandLandmarks(recognitionOn);
   const { face, error: faceError } = useFaceExpression(recognitionOn);
-  const { result: rawRecognition, error: recognitionError, receivedAt } = useRecognition(recognitionOn && !phraseMode);
+  const { result: rawRecognition, error: recognitionError, receivedAt, failures } = useRecognition(recognitionOn && !phraseMode);
   const [letterSettings, setLetterSettings] = useState(loadLetterSettings);
   // Recognised letters below the user's threshold become UNKNOWN before anything else uses them.
   const recognition = useMemo(() => effectiveRecognition(rawRecognition, letterSettings.minConfidence), [rawRecognition, letterSettings.minConfidence]);
   const history = useRecognitionHistory(recognition, receivedAt);
-  const signBuffer = useSignBuffer(recognition, { holdFrames: letterSettings.stableFrames });
+  const signBuffer = useSignBuffer(recognition, { holdFrames: letterSettings.stableFrames, failures });
   const draftControls = {
     experimental: recognition?.experimental === true,
     backendThreshold: rawRecognition?.threshold ?? null,
@@ -105,7 +105,7 @@ export default function LiveStudioPage() {
     const experimental = signBuffer.items.some((item) => item.experimental);
     conversationActions.append({ text, speaker: 'deaf', source: 'sign', experimental });
     signBuffer.clear();
-    dispatchSentence({ type: 'clear' });
+    dispatchSentence({ type: 'reset' });
     setStatus('Sent recognised text to the conversation.');
   };
 

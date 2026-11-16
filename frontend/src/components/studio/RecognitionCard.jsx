@@ -2,8 +2,8 @@ import { Activity, X } from 'lucide-react';
 import { describeRecognition, EXPERIMENTAL_LABEL, pct } from '../../lib/recognitionStatus.js';
 
 // The Recognition card on Live Studio. It shows the sign the recognizer reports now, its confidence, and the letters
-// already accepted into the sequence. Every value comes from the same state the draft uses. Removing a letter here calls
-// the same handler as the draft, so the two cannot disagree.
+// already accepted into the detected sequence. Removing an item here only removes it from the detected sequence. The
+// sentence text is edited separately and is not changed by this.
 export default function RecognitionCard({
   recognition,
   recognitionError,
@@ -92,7 +92,9 @@ export default function RecognitionCard({
                 item.type === 'space' ? (
                   <li key={`space-${index}`} className="flex items-center">
                     <span className="rounded-lg border border-dashed border-app-border px-2 py-1.5 text-xs text-app-muted">Space</span>
-                    {onRemoveAt && <RemoveButton label="Remove space" onClick={() => onRemoveAt(index)} />}
+                    {onRemoveAt && (
+                      <RemoveButton label="Remove from detected sequence: space" onClick={() => onRemoveAt(index)} />
+                    )}
                   </li>
                 ) : (
                   <li key={`${index}-${item.label}`} className="ls-token">
@@ -107,7 +109,10 @@ export default function RecognitionCard({
                     )}
                     {onRemoveAt && (
                       <span className="absolute right-0.5 top-0.5">
-                        <RemoveButton label={`Remove letter ${item.label}`} onClick={() => onRemoveAt(index)} />
+                        <RemoveButton
+                          label={`Remove from detected sequence: ${item.label}`}
+                          onClick={() => onRemoveAt(index)}
+                        />
                       </span>
                     )}
                   </li>

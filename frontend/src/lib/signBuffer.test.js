@@ -44,7 +44,7 @@ describe('signBuffer: committing letters', () => {
     const still = feed(first, Array.from({ length: HOLD_FRAMES * 2 }, () => seen('O')));
     expect(still.items).toHaveLength(1);
 
-    const released = feed(still, [other('no_hand')]);
+    const released = feed(still, [other('no_hand'), other('no_hand'), other('no_hand')]);
     const again = feed(released, Array.from({ length: HOLD_FRAMES }, () => seen('O')));
     expect(again.items.map((item) => item.label)).toEqual(['O', 'O']);
   });

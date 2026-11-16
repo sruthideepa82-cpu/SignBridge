@@ -196,6 +196,18 @@ describe('Live Studio sentence box with the camera off', () => {
     expect(box).toHaveValue('');
   });
 
+  it('does not let Undo bring back a sentence that has been sent', () => {
+    renderApp('/workspace/live-studio');
+    const box = screen.getByRole('textbox', { name: 'Recognised text, editable before sending' });
+
+    fireEvent.change(box, { target: { value: 'Good morning' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send to conversation' }));
+
+    expect(box).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'Undo' })).toBeDisabled();
+    expect(screen.getByRole('list', { name: 'Conversation' })).toHaveTextContent('Good morning');
+  });
+
   it('undoes a typed sentence back to empty', () => {
     renderApp('/workspace/live-studio');
     const box = screen.getByRole('textbox', { name: 'Recognised text, editable before sending' });

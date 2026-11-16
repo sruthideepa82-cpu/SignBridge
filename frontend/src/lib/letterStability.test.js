@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRecognition, HOLD_FRAMES, initialBuffer, removeAt, RELEASE_FRAMES } from './signBuffer.js';
+import { applyFailedRequests, applyRecognition, HOLD_FRAMES, initialBuffer, removeAt, RELEASE_FRAMES } from './signBuffer.js';
 import { DEFAULT_LETTER_SETTINGS, effectiveRecognition, normaliseLetterSettings } from './letterSettings.js';
 
 let frame = 0;
@@ -43,7 +43,7 @@ describe('a held handshape does not duplicate', () => {
     const stillHeld = run(held, hold('B', HOLD_FRAMES * 2));
     expect(letters(stillHeld)).toEqual(['B']);
 
-    const afterLeaving = run(stillHeld, [noHand(), ...hold('B')]);
+    const afterLeaving = run(stillHeld, [noHand(), noHand(), noHand(), ...hold('B')]);
     expect(letters(afterLeaving)).toEqual(['B', 'B']);
   });
 
@@ -52,6 +52,73 @@ describe('a held handshape does not duplicate', () => {
     const state = run(initialBuffer(), [...hold('C'), ...noisy, ...hold('C', HOLD_FRAMES)]);
 
     expect(letters(state)).toEqual(['C']);
+  });
+});
+
+describe('a dropped frame does not release a held letter', () => {
+  const failed = (state, count = 1) => applyFailedRequests(state, count);
+
+  it('one missing frame (no hand) in the middle of a held letter adds nothing', () => {
+    const state = run(initialBuffer(), [...hold('B'), noHand(), ...hold('B', HOLD_FRAMES * 2)]);
+
+    expect(letters(state)).toEqual(['B']);
+  });
+
+  it('one failed request in the middle of a held letter adds nothing', () => {
+    const state = run(failed(run(initialBuffer(), hold('B'))), hold('B', HOLD_FRAMES * 2));
+
+    expect(letters(state)).toEqual(['B']);
+  });
+
+  it('a failed request and a missing hand count together towards the release', () => {
+    const state = run(failed(run(initialBuffer(), hold('B'))), [noHand(), noHand(), ...hold('B')]);
+
+    expect(letters(state)).toEqual(['B', 'B']);
+  });
+
+  it('a null result with no failed request is a stop, and releases the letter at once', () => {
+    const state = run(initialBuffer(), [...hold('B'), null, ...hold('B')]);
+
+    expect(letters(state)).toEqual(['B', 'B']);
+  });
+
+  it('three consecutive missing frames release the letter', () => {
+    const state = run(initialBuffer(), [...hold('B'), noHand(), noHand(), noHand()]);
+
+    expect(state.committedLabel).toBeNull();
+    expect(state.missCount).toBe(0);
+  });
+
+  it('missing frames must be consecutive: a recognised frame in between starts the count again', () => {
+    const state = run(initialBuffer(), [
+      ...hold('B'),
+      noHand(),
+      noHand(),
+      seen('B'),
+      noHand(),
+      noHand(),
+      ...hold('B', HOLD_FRAMES),
+    ]);
+
+    expect(letters(state)).toEqual(['B']);
+  });
+
+  it('an uncertain frame also breaks the run of missing frames', () => {
+    const state = run(initialBuffer(), [...hold('B'), noHand(), noHand(), uncertain(), noHand(), noHand(), ...hold('B')]);
+
+    expect(letters(state)).toEqual(['B']);
+  });
+
+  it('a genuinely different stable letter is still committed after a dropped frame', () => {
+    const state = run(initialBuffer(), [...hold('B'), noHand(), ...hold('W', HOLD_FRAMES)]);
+
+    expect(letters(state)).toEqual(['B', 'W']);
+  });
+
+  it('a genuinely different stable letter is still committed after missing frames', () => {
+    const state = run(initialBuffer(), [...hold('B'), noHand(), noHand(), noHand(), ...hold('W', HOLD_FRAMES)]);
+
+    expect(letters(state)).toEqual(['B', 'W']);
   });
 });
 

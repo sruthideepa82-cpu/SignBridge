@@ -4,16 +4,20 @@ import { getRecognition } from '../services/recognitionService.js';
 // Polled faster than the camera's frame rate, so every processed frame is seen once. Holds count frames, not polls.
 const RECOGNITION_POLL_INTERVAL_MS = 100;
 
+// `failures` counts consecutive failed requests. Each poll makes one request, so each failure adds one. A successful
+// response, or stopping recognition, sets it back to 0. The sign buffer uses the change to count missing frames.
 export default function useRecognition(enabled) {
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [receivedAt, setReceivedAt] = useState(null);
+  const [failures, setFailures] = useState(0);
 
   useEffect(() => {
     if (!enabled) {
       setResult(null);
       setError('');
       setReceivedAt(null);
+      setFailures(0);
       return undefined;
     }
 
@@ -29,12 +33,14 @@ export default function useRecognition(enabled) {
           setResult(data);
           setError('');
           setReceivedAt(Date.now());
+          setFailures(0);
         }
       } catch (requestError) {
         if (!cancelled) {
           setResult(null);
           setError(requestError.message);
           setReceivedAt(null);
+          setFailures((count) => count + 1);
         }
       } finally {
         inFlight = false;
@@ -50,5 +56,5 @@ export default function useRecognition(enabled) {
     };
   }, [enabled]);
 
-  return { result, error, receivedAt };
+  return { result, error, receivedAt, failures };
 }

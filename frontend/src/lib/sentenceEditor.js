@@ -79,6 +79,9 @@ export function sentenceEditorReducer(state, action) {
       return undo(state);
     case 'clear':
       return clearText(state);
+    // After a sentence is sent: the text and its undo history are both dropped, so Undo cannot bring it back.
+    case 'reset':
+      return initialEditor();
     default:
       return state;
   }
