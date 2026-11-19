@@ -1,0 +1,32 @@
+{
+  "caveat": "dynamic and static labels were defined from the same motion rule; separation is partly circular",
+  "wrist_path_per_window": {
+    "dynamic": {
+      "n": 252,
+      "min": 3.016950140588327,
+      "p05": 3.6013122387999386,
+      "median": 9.739328346723951,
+      "p95": 50.04898464871538,
+      "max": 63.11445756313794
+    },
+    "static": {
+      "n": 99,
+      "min": 0.24205362303733563,
+      "p05": 0.5096372784219081,
+      "median": 3.275100220144705,
+      "p95": 7.196129411124523,
+      "max": 7.791069432064733
+    },
+    "undetermined": {
+      "n": 18,
+      "min": 0.8506150126842238,
+      "p05": 0.8506150126842238,
+      "median": 1.6433065804293228,
+      "p95": 2.0591313882397095,
+      "max": 2.284116217780825
+    }
+  },
+  "auc_dynamic_vs_static": 0.9388728555395222,
+  "auc_dynamic_vs_undetermined": 1.0,
+  "static_windows_above_dynamic_median": 0.0
+}

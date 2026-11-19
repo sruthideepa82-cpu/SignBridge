@@ -1,0 +1,119 @@
+{
+  "dataset_version": "isl_dynamic_recordings_v1",
+  "source_manifest": "ai-engine/dataset/public/isl_phrases/v2/phrase_manifest.csv",
+  "note": "Labels come from the Stage 0 manifest, which includes 'open'. Labels are unverified until ISL review. IDs are assigned alphabetically and are stable for this catalogue version only.",
+  "phrases": [
+    {
+      "phrase_id": "DYN-01",
+      "phrase_label": "again"
+    },
+    {
+      "phrase_id": "DYN-02",
+      "phrase_label": "agree"
+    },
+    {
+      "phrase_id": "DYN-03",
+      "phrase_label": "answer"
+    },
+    {
+      "phrase_id": "DYN-04",
+      "phrase_label": "attendance"
+    },
+    {
+      "phrase_id": "DYN-05",
+      "phrase_label": "book"
+    },
+    {
+      "phrase_id": "DYN-06",
+      "phrase_label": "break"
+    },
+    {
+      "phrase_id": "DYN-07",
+      "phrase_label": "congratulations"
+    },
+    {
+      "phrase_id": "DYN-08",
+      "phrase_label": "email"
+    },
+    {
+      "phrase_id": "DYN-09",
+      "phrase_label": "file"
+    },
+    {
+      "phrase_id": "DYN-10",
+      "phrase_label": "good morning"
+    },
+    {
+      "phrase_id": "DYN-11",
+      "phrase_label": "home"
+    },
+    {
+      "phrase_id": "DYN-12",
+      "phrase_label": "how are you"
+    },
+    {
+      "phrase_id": "DYN-13",
+      "phrase_label": "i need help"
+    },
+    {
+      "phrase_id": "DYN-14",
+      "phrase_label": "join"
+    },
+    {
+      "phrase_id": "DYN-15",
+      "phrase_label": "meet"
+    },
+    {
+      "phrase_id": "DYN-16",
+      "phrase_label": "open"
+    },
+    {
+      "phrase_id": "DYN-17",
+      "phrase_label": "pass"
+    },
+    {
+      "phrase_id": "DYN-18",
+      "phrase_label": "please"
+    },
+    {
+      "phrase_id": "DYN-19",
+      "phrase_label": "practice"
+    },
+    {
+      "phrase_id": "DYN-20",
+      "phrase_label": "pressure"
+    },
+    {
+      "phrase_id": "DYN-21",
+      "phrase_label": "seat"
+    },
+    {
+      "phrase_id": "DYN-22",
+      "phrase_label": "sun"
+    },
+    {
+      "phrase_id": "DYN-23",
+      "phrase_label": "team"
+    },
+    {
+      "phrase_id": "DYN-24",
+      "phrase_label": "thirsty"
+    },
+    {
+      "phrase_id": "DYN-25",
+      "phrase_label": "this"
+    },
+    {
+      "phrase_id": "DYN-26",
+      "phrase_label": "together"
+    },
+    {
+      "phrase_id": "DYN-27",
+      "phrase_label": "wait"
+    },
+    {
+      "phrase_id": "DYN-28",
+      "phrase_label": "where"
+    }
+  ]
+}

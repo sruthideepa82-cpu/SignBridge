@@ -1,0 +1,29 @@
+phrase,windows,eligible_windows,excluded_windows,exclusion_reasons,mean_hand_share,mean_two_hand_frames,nonfinite_features,out_of_range_coords,extreme_z,hand_size_anomalies,motion_wrist_path_mean,velocity_p95_mean,velocity_max,flags
+again,9,9,0,,1.0,32.0,0,0,0,0,6.598,0.2682,0.3266,
+agree,9,9,0,,1.0,27.33,0,0,0,0,9.385,0.8016,0.904,high velocity p95
+answer,9,9,0,,1.0,32.0,0,0,0,0,20.254,1.0827,1.4682,high velocity p95
+attendance,9,9,0,,1.0,10.44,0,0,0,0,7.063,0.5611,0.5978,high velocity p95
+book,9,9,0,,0.6875,5.44,0,0,0,45,11.192,0.8678,0.9899,hand-size anomalies; high velocity p95
+break,9,9,0,,1.0,24.56,0,0,0,0,12.068,1.3163,1.6811,high velocity p95
+congratulations,9,9,0,,1.0,5.33,0,0,0,0,13.675,1.8704,1.9908,high velocity p95
+email,9,9,0,,1.0,15.89,0,0,0,0,8.711,1.1044,1.1474,high velocity p95
+file,9,9,0,,1.0,14.33,0,0,0,0,9.417,0.7374,1.1818,high velocity p95
+good morning,9,9,0,,0.9688,0.0,0,1,0,0,3.669,0.6409,0.9976,coords outside image; high velocity p95
+home,9,9,0,,0.9757,11.33,0,0,0,0,4.792,0.3794,0.6567,
+how are you,9,9,0,,1.0,17.22,0,0,0,0,15.714,1.4144,2.4896,high velocity p95
+i need help,9,9,0,,0.8958,5.33,0,0,0,0,7.251,1.3359,1.5058,high velocity p95
+join,9,9,0,,1.0,0.0,0,0,0,0,15.439,0.927,0.9735,high velocity p95
+meet,9,9,0,,1.0,32.0,0,0,0,0,10.238,0.581,0.7338,high velocity p95
+open,9,9,0,,0.9653,25.89,0,0,0,104,48.006,1.0341,1.3086,hand-size anomalies; high velocity p95
+pass,9,9,0,,1.0,32.0,0,0,0,0,13.198,0.7892,1.0003,high velocity p95
+please,9,9,0,,1.0,0.0,0,0,0,0,7.909,0.7837,0.977,high velocity p95
+practice,9,9,0,,1.0,20.44,0,0,0,6,25.175,1.284,1.5998,hand-size anomalies; high velocity p95
+pressure,9,9,0,,1.0,16.0,0,0,0,0,3.609,0.3733,0.7066,
+seat,9,9,0,,1.0,28.33,0,0,0,0,36.32,5.443,5.7996,high velocity p95
+sun,9,9,0,,1.0,0.0,0,0,0,0,5.567,0.7065,0.9965,high velocity p95
+team,9,9,0,,0.9375,4.0,0,0,0,63,58.259,1.7061,2.1278,hand-size anomalies; high velocity p95
+thirsty,9,9,0,,1.0,0.0,0,0,0,0,8.646,0.5341,0.5582,high velocity p95
+this,9,9,0,,1.0,0.0,0,0,0,0,7.417,0.7677,0.9932,high velocity p95
+together,9,9,0,,1.0,0.56,0,0,0,0,6.064,0.6513,0.8134,high velocity p95
+wait,9,9,0,,1.0,0.0,0,0,0,0,11.73,0.915,1.146,high velocity p95
+where,9,9,0,,1.0,32.0,0,0,0,0,7.514,0.3604,0.4512,

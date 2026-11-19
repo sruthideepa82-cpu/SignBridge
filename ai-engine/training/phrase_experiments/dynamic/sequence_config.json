@@ -1,0 +1,54 @@
+{
+  "stage": 2,
+  "status": "isolated experiment; not activated; not integrated",
+  "dataset": {
+    "manifest": "ai-engine/dataset/public/isl_phrases/v2/phrase_manifest.csv",
+    "landmarks": "ai-engine/dataset/public/isl_phrases/landmarks.npz",
+    "dynamic_classes": 28,
+    "note": "Includes 'open', which the manifest marks as dynamic but the approved 27-name list omitted. Confirm before any headline result.",
+    "clip_frames": 40,
+    "clip_assumption": "each phrase folder is one assumed clip; frame rate unknown"
+  },
+  "windows": {
+    "frames": 32,
+    "stride": 1,
+    "per_clip": 9,
+    "resampling": "none (windows keep original frame indices; no playback speed change)",
+    "timestamps": "none invented; frame index only"
+  },
+  "features": {
+    "source": "signbridge_training/features.py::features (imported read-only through backend loader load_feature_module)",
+    "flat_dim": 4512,
+    "per_frame_dim": 141,
+    "per_frame_layout": "shape 126 | trajectory 6 | velocity 6 | relative hands 3",
+    "missing_hand": "zero blocks, as in the existing window builder",
+    "nonfinite_inputs": "converted to absent hands and reported in the quality report"
+  },
+  "eligibility": {
+    "min_hand_frame_share": 0.3,
+    "source": "signbridge_training/01_extract_landmarks.py rule, MIN_HAND_FRAME_SHARE in sequence_recognizer.py"
+  },
+  "distance": {
+    "method": "classic DTW, no band",
+    "local_cost": "Euclidean over 141 per-frame values",
+    "normalisation": "total cost / (T + S), i.e. 64 for two 32-frame windows"
+  },
+  "rejection": {
+    "threshold_rule": "95th percentile of in-set nearest different-clip distance",
+    "ambiguity_ratio": 1.05,
+    "validation": "none possible with one recording per phrase"
+  },
+  "out_of_set_probes": {
+    "undetermined": ["careful", "chat", "hungry", "stop", "write"],
+    "static": ["change", "happy birthday", "keepsmile", "mistake", "problem", "questions", "remember", "shift", "understand", "sick", "opinion"]
+  },
+  "evaluation": {
+    "reported": ["nearest different-clip distances", "clip-to-clip distance matrix", "accepted/ambiguous/rejected counts", "distance by hand share"],
+    "not_reported": ["accuracy", "precision", "recall", "F1", "any real-world performance"],
+    "reproducibility": "distance matrix computed twice and compared exactly"
+  },
+  "neural_model": {
+    "decision": "not attempted",
+    "reason": "28 assumed clips; no GRU or TensorFlow or PyTorch installed; no independent evaluation possible"
+  }
+}

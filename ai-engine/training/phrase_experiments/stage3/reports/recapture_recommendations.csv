@@ -1,0 +1,29 @@
+phrase,anomaly_runs,confirmed,possible_detector,camera_framing,tier
+again,0,0,0,0,NONE: keep
+agree,0,0,0,0,NONE: keep
+answer,0,0,0,0,NONE: keep
+attendance,0,0,0,0,NONE: keep
+book,6,1,0,0,HIGH: recapture
+break,1,0,1,0,MEDIUM: recapture or review
+congratulations,2,0,2,0,MEDIUM: recapture or review
+email,0,0,0,0,NONE: keep
+file,0,0,0,0,NONE: keep
+good morning,3,0,1,2,MEDIUM: recapture or review
+home,0,0,0,0,NONE: keep
+how are you,9,0,4,4,MEDIUM: recapture or review
+i need help,2,0,0,0,LOW: keep; minor flags
+join,0,0,0,0,NONE: keep
+meet,0,0,0,0,NONE: keep
+open,14,2,0,0,HIGH: recapture
+pass,0,0,0,0,NONE: keep
+please,4,0,0,4,MEDIUM: recapture or review
+practice,5,0,2,0,HIGH: recapture
+pressure,0,0,0,0,NONE: keep
+seat,6,2,4,0,HIGH: recapture
+sun,0,0,0,0,NONE: keep
+team,14,0,4,0,HIGH: recapture
+thirsty,0,0,0,0,NONE: keep
+this,2,0,0,0,LOW: keep; minor flags
+together,0,0,0,0,NONE: keep
+wait,0,0,0,0,NONE: keep
+where,0,0,0,0,NONE: keep

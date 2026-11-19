@@ -1,0 +1,91 @@
+{
+  "in_set": {
+    "n": 252,
+    "accepted": 167,
+    "accepted_rate": 0.663,
+    "ambiguous": 72,
+    "ambiguous_rate": 0.286,
+    "rejected": 13,
+    "rejected_rate": 0.052
+  },
+  "undetermined_out_of_set": {
+    "n": 45,
+    "accepted": 25,
+    "accepted_rate": 0.556,
+    "ambiguous": 20,
+    "ambiguous_rate": 0.444,
+    "rejected": 0,
+    "rejected_rate": 0.0
+  },
+  "static_out_of_set": {
+    "n": 99,
+    "accepted": 90,
+    "accepted_rate": 0.909,
+    "ambiguous": 9,
+    "ambiguous_rate": 0.091,
+    "rejected": 0,
+    "rejected_rate": 0.0
+  },
+  "threshold": 4.340936695802106,
+  "threshold_rule": "95th percentile of in-set nearest different-clip distance",
+  "ambiguity_ratio": 1.05,
+  "nearest_other_clip_distance": {
+    "n": 252,
+    "min": 0.9866738912786724,
+    "p05": 1.010575640939093,
+    "median": 2.5108865263010407,
+    "p95": 4.340936695802106,
+    "max": 4.92689886305552
+  },
+  "undetermined_nearest_distance": {
+    "n": 45,
+    "min": 2.3229405065798026,
+    "p05": 2.335180553118124,
+    "median": 2.6337811912288505,
+    "p95": 3.1440763115920225,
+    "max": 3.17092897665023
+  },
+  "static_nearest_distance": {
+    "n": 99,
+    "min": 1.3639138861681483,
+    "p05": 1.3769615344423582,
+    "median": 1.9234495588592238,
+    "p95": 3.1068183323547633,
+    "max": 3.1128460247449334
+  },
+  "same_clip_overlap_distance": {
+    "n": 252,
+    "min": 0.004613862811545907,
+    "p05": 0.010291238978949863,
+    "median": 0.05043280851359944,
+    "p95": 0.21478096275811892,
+    "max": 0.4258751978478578
+  },
+  "by_hand_share": {
+    "<0.80": {
+      "n": 9,
+      "min": 3.9891514642522834,
+      "p05": 3.9925684429973956,
+      "median": 4.070511342418586,
+      "p95": 4.096443338810282,
+      "max": 4.101829596383181
+    },
+    "0.80-0.95": {
+      "n": 22,
+      "min": 2.1431763748174926,
+      "p05": 2.2384468404147535,
+      "median": 3.0422205109286797,
+      "p95": 3.222022708419568,
+      "max": 4.872797167497019
+    },
+    ">=0.95": {
+      "n": 221,
+      "min": 0.9866738912786724,
+      "p05": 1.0069706889222423,
+      "median": 2.1232730634588095,
+      "p95": 4.34200794907127,
+      "max": 4.92689886305552
+    }
+  },
+  "reproducible_distance_matrix": true
+}
