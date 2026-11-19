@@ -13,6 +13,8 @@ export default defineConfig({
       '/api': {
         target: BACKEND_URL,
         changeOrigin: true,
+        // Lets the live transcription WebSocket (/api/transcription/live) upgrade through the proxy.
+        ws: true,
       },
     },
   },

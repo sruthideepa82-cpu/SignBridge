@@ -31,6 +31,7 @@ import usePhraseFavourites from '../hooks/usePhraseFavourites.js';
 import useRecognition from '../hooks/useRecognition.js';
 import useRecognitionHistory from '../hooks/useRecognitionHistory.js';
 import useSignBuffer from '../hooks/useSignBuffer.js';
+import useSpeechCaptions from '../hooks/useSpeechCaptions.js';
 import { activeConversation, conversationActions, transcriptText } from '../lib/conversationStore.js';
 
 export default function LiveStudioPage() {
@@ -61,6 +62,8 @@ export default function LiveStudioPage() {
   const store = useConversationStore();
   const conversation = activeConversation(store);
   const favourites = usePhraseFavourites();
+  // Held here, not in the conversation panel, so switching tabs does not stop listening or lose the unsent transcript.
+  const captions = useSpeechCaptions();
 
   // The editable sentence. Every input (recognition, typing, phrases, undo, clear) changes this one state.
   const [sentence, dispatchSentence] = useReducer(sentenceEditorReducer, undefined, initialEditor);
@@ -294,6 +297,7 @@ export default function LiveStudioPage() {
             cameraLive={cameraLive}
             recognition={recognition}
             recognitionError={recognitionError}
+            captions={captions}
           />
         </div>
       </div>

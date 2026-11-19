@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { isSpeechSupported, pauseSpeaking, resumeSpeaking, speak, stopSpeaking } from '../lib/speech.js';
+import { publishSpeechPlayback } from '../lib/speechPlayback.js';
 import { SPEECH_PREFS_EVENT, loadSpeechPrefs, saveSpeechPrefs } from '../lib/speechPreferences.js';
 
 // The browser has one speech queue, so only one panel can be speaking at a time. The panel that owns the queue
@@ -32,6 +33,13 @@ export default function useSpeechOutput() {
   const lastMessage = useRef(null);
   const active = useRef(null);
   const supported = isSpeechSupported();
+
+  // Publishes the playback state for speech transcription, which pauses while this is speaking. Publishing is read-only.
+  useEffect(() => {
+    publishSpeechPlayback(playback);
+  }, [playback]);
+
+  useEffect(() => () => publishSpeechPlayback('idle'), []);
 
   useEffect(() => {
     const onPrefsChanged = (event) => setPrefs(event.detail);

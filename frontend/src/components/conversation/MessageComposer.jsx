@@ -1,14 +1,31 @@
 import { Mic, MicOff, Send } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useSpeechRecognition from '../../hooks/useSpeechRecognition.js';
 import { SPEAKERS } from '../../lib/conversationStore.js';
 
+const VOICE_LOCKED_MESSAGE = 'Stop live captions to use voice input here.';
+
 // Typed or spoken text for the conversation. Enter sends. Speech input is offered only where the browser has it.
-export default function MessageComposer({ id = 'composer', onSend, speaker, onSpeakerChange, placeholder, disabled = false }) {
+// voiceLocked is true while live captions own the microphone. Then this composer's voice input cannot start.
+export default function MessageComposer({
+  id = 'composer',
+  onSend,
+  speaker,
+  onSpeakerChange,
+  placeholder,
+  disabled = false,
+  voiceLocked = false,
+}) {
   const [draft, setDraft] = useState('');
   const [fromSpeech, setFromSpeech] = useState(false);
   const speech = useSpeechRecognition();
   const listening = speech.status === 'listening';
+  const voiceNoteId = `${id}-voice-note`;
+
+  // Only one microphone user at a time. If voice input was already listening when captions start, it stops.
+  useEffect(() => {
+    if (voiceLocked && listening) speech.stop();
+  }, [voiceLocked, listening, speech]);
 
   const appendSpeech = (chunk) => {
     setDraft((current) => (current && !current.endsWith(' ') ? `${current} ${chunk}` : `${current}${chunk}`));
@@ -16,6 +33,7 @@ export default function MessageComposer({ id = 'composer', onSend, speaker, onSp
   };
 
   const toggleVoice = () => {
+    if (voiceLocked) return;
     if (listening) speech.stop();
     else speech.start(appendSpeech);
   };
@@ -76,10 +94,17 @@ export default function MessageComposer({ id = 'composer', onSend, speaker, onSp
         <button
           type="button"
           onClick={toggleVoice}
-          disabled={!speech.supported || disabled}
+          disabled={!speech.supported || disabled || voiceLocked}
           aria-pressed={listening}
           aria-label={listening ? 'Stop voice input' : 'Voice input'}
-          title={speech.supported ? (listening ? 'Stop voice input' : 'Voice input') : 'Voice input is not available in this browser'}
+          aria-describedby={voiceLocked ? voiceNoteId : undefined}
+          title={
+            voiceLocked
+              ? VOICE_LOCKED_MESSAGE
+              : speech.supported
+                ? (listening ? 'Stop voice input' : 'Voice input')
+                : 'Voice input is not available in this browser'
+          }
           className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-40 ${
             listening ? 'bg-danger/15 text-danger' : 'text-app-muted hover:bg-white/[0.06] hover:text-app-text'
           }`}
@@ -97,6 +122,12 @@ export default function MessageComposer({ id = 'composer', onSend, speaker, onSp
           <Send size={15} aria-hidden="true" />
         </button>
       </div>
+
+      {voiceLocked && (
+        <p id={voiceNoteId} className="text-xs text-app-muted">
+          {VOICE_LOCKED_MESSAGE}
+        </p>
+      )}
 
       <p className="min-h-4 truncate text-xs text-app-muted" aria-live="polite">
         {!speech.supported

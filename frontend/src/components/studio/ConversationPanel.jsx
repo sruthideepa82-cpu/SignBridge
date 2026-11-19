@@ -8,6 +8,7 @@ import MessageComposer from '../conversation/MessageComposer.jsx';
 import RoadmapPanel from '../translator/RoadmapPanel.jsx';
 import TranslatorStatusPanel from '../translator/TranslatorStatusPanel.jsx';
 import RecognitionStatus from './RecognitionStatus.jsx';
+import SpeechCaptions from './SpeechCaptions.jsx';
 
 const TABS = [
   { id: 'conversation', label: 'Conversation', icon: MessageSquare },
@@ -27,6 +28,7 @@ export default function ConversationPanel({
   cameraLive,
   recognition,
   recognitionError,
+  captions,
 }) {
   const [tab, setTab] = useState('conversation');
   const listRef = useRef(null);
@@ -58,6 +60,12 @@ export default function ConversationPanel({
             >
               <Icon size={15} aria-hidden="true" />
               {item.label}
+              {item.id === 'conversation' && captions?.micActive && (
+                <>
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-danger" />
+                  <span className="sr-only">Microphone on</span>
+                </>
+              )}
             </button>
           );
         })}
@@ -89,8 +97,15 @@ export default function ConversationPanel({
             )}
           </div>
 
-          <div className="border-t border-app-border p-3">
-            <MessageComposer id="live-composer" speaker="hearing" onSend={onSendReply} placeholder="Reply as the hearing participant…" />
+          <div className="space-y-3 border-t border-app-border p-3">
+            {captions && <SpeechCaptions captions={captions} onSend={onSendReply} />}
+            <MessageComposer
+              id="live-composer"
+              speaker="hearing"
+              onSend={onSendReply}
+              placeholder="Reply as the hearing participant…"
+              voiceLocked={captions?.sessionBusy === true}
+            />
           </div>
         </div>
       ) : (
