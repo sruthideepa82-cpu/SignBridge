@@ -8,6 +8,7 @@ import { developerToolsEnabled } from './config/developerTools.js';
 import DatasetCollectorPage from './pages/DatasetCollectorPage.jsx';
 import FingerspellingPage from './pages/FingerspellingPage.jsx';
 import ConversationDetailPage from './pages/ConversationDetailPage.jsx';
+import CollectionStudioPage from './pages/CollectionStudioPage.jsx';
 import ConversationsPage from './pages/ConversationsPage.jsx';
 import DashboardPage from './pages/DashboardPage.jsx';
 import DictionaryPage from './pages/DictionaryPage.jsx';
@@ -51,6 +52,7 @@ export default function App() {
         <Route path="learn/dictionary" element={<DictionaryPage />} />
         <Route path="learn/lessons" element={<GuidedLearningPage />} />
         <Route path="learn/practice" element={<PracticeLabPage />} />
+        <Route path="studio/*" element={<CollectionStudioPage />} />
         <Route path="contribute" element={<ContributePage />} />
         <Route
           path="contribute/collector"
