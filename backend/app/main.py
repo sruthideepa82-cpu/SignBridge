@@ -20,6 +20,7 @@ from app.services.phrase_recognizer import PhraseRecognizer
 from app.services.recognition_service import StaticRecognizer
 from app.services.dataset_store import DatasetStore
 from app.services.sequence_recognizer import SequenceRecognizer
+from app.services.transcription_service import GeminiTranscriptClient, TranscriptionService
 
 logger = logging.getLogger("signbridge")
 
@@ -67,6 +68,7 @@ def register_exception_handlers(app: FastAPI) -> None:
 def create_app(
     settings: Settings | None = None,
     camera_service: CameraService | None = None,
+    transcription_client: GeminiTranscriptClient | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
     logging.basicConfig(level=settings.log_level.upper())
@@ -108,6 +110,7 @@ def create_app(
         settings.sequence_threshold,
         code_dir=settings.sequence_code_dir,
     )
+    app.state.transcription_service = TranscriptionService(settings, transcription_client)
 
     app.add_middleware(
         CORSMiddleware,

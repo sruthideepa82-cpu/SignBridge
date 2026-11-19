@@ -1,16 +1,22 @@
 from typing import Annotated
 
 from fastapi import Depends, Request
+from starlette.requests import HTTPConnection
 
 from app.core.config import Settings
 from app.services.camera_service import CameraService
 from app.services.phrase_recognizer import PhraseRecognizer
 from app.services.recognition_service import StaticRecognizer
 from app.services.sequence_recognizer import SequenceRecognizer
+from app.services.transcription_service import TranscriptionService
 
 
 def get_app_settings(request: Request) -> Settings:
     return request.app.state.settings
+
+
+def get_transcription_service(connection: HTTPConnection) -> TranscriptionService:
+    return connection.app.state.transcription_service
 
 
 def get_camera_service(request: Request) -> CameraService:
@@ -35,3 +41,4 @@ RecognizerDep = Annotated[StaticRecognizer, Depends(get_recognizer)]
 
 SequenceRecognizerDep = Annotated[SequenceRecognizer, Depends(get_sequence_recognizer)]
 PhraseRecognizerDep = Annotated[PhraseRecognizer, Depends(get_phrase_recognizer)]
+TranscriptionServiceDep = Annotated[TranscriptionService, Depends(get_transcription_service)]

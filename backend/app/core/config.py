@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parents[2]
@@ -15,6 +15,7 @@ class Settings(BaseSettings):
         env_file=BACKEND_DIR / ".env",
         env_prefix="SIGNBRIDGE_",
         extra="ignore",
+        populate_by_name=True,
     )
 
     app_name: str = "SignBridge API"
@@ -67,6 +68,23 @@ class Settings(BaseSettings):
     dataset_vocabulary_path: Path = BACKEND_DIR.parent / "ai-engine" / "dataset" / "metadata" / "vocabulary.json"
     dataset_min_frames: int = Field(default=10, ge=1)
     dataset_max_frames: int = Field(default=600, ge=10)
+
+    # Gemini Live transcription. The key keeps its existing name in backend/.env. It is a SecretStr, is used only on the
+    # server, and is never returned by any endpoint.
+    gemini_api_key: SecretStr | None = Field(
+        default=None,
+        validation_alias=AliasChoices("GEMINI_API_KEY", "SIGNBRIDGE_GEMINI_API_KEY"),
+    )
+    transcription_enabled: bool = True
+    transcription_model: str = Field(default="gemini-3.5-transcribe-live", min_length=1)
+    # Length of one Gemini Live session. Gemini caps a live session at 10 minutes, so rotate before that.
+    transcription_gemini_session_seconds: int = Field(default=540, ge=60, le=590)
+    # Total length of one browser connection, including pauses.
+    transcription_max_connection_seconds: int = Field(default=1800, ge=60, le=7200)
+    # 3200 bytes is 100 ms of 16 kHz mono 16-bit PCM. The default allows one second per frame.
+    transcription_max_frame_bytes: int = Field(default=32000, ge=3200, le=65536)
+    transcription_max_concurrent_sessions: int = Field(default=2, ge=1, le=8)
+    transcription_drain_timeout_seconds: float = Field(default=5.0, ge=0.5, le=30.0)
 
 
 @lru_cache

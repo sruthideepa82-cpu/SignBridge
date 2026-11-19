@@ -19,6 +19,11 @@ class CameraNotRunningError(SignBridgeError):
     code = "camera_not_running"
 
 
+class TranscriptionUnavailableError(SignBridgeError):
+    status_code = 503
+    code = "transcription_unavailable"
+
+
 class HandDetectionUnavailableError(SignBridgeError):
     status_code = 503
     code = "hand_detection_unavailable"
